@@ -1,8 +1,11 @@
-# ESP8266-WiFi-Socket-NG
-Alternative Firmware for https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko/p/2291706
+# ESP8266-WiFi-Socket-II
+Alternative Firmware for https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806
+
+## ATTENTION
+At this time this code is not fully testet!
 
 ## Precompiled Firmware
-Find the precompiled firmware in the [firmware](https://github.com/thorsten-l/ESP8266-WiFi-Socket-NG/tree/master/firmware) directory.
+Find the precompiled firmware in the [firmware](https://github.com/thorsten-l/ESP8266-WiFi-Socket-II/tree/master/firmware) directory.
 
 ## Compile
 This is a [PlatformIO](https://platformio.org/) project.
@@ -18,7 +21,7 @@ After a firmware reset the following values are set.
 
 |    | value | description |
 |----|-------|-------------|
-| WiFi SSID | WifiSocket-`esp id` | SSID in accesspoint mode |
+| WiFi SSID | WifiSocketII-`esp id` | SSID in accesspoint mode |
 | IP Address | 192.168.192.1 | ip address in accesspoint mode |
 | Admin password | admin | Setup admin password |
 | OTA Hostname | wifi-socket-1 | *O*ver *T*he *A*ir hostname |
