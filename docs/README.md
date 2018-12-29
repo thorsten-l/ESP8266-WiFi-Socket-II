@@ -17,12 +17,7 @@ Top right menu button pressed
 
 ![](./img/img06.png)
 
-![](./img/img07.png)
-
-![](./img/img08.png)
 
 ### Info Page
 
-![](./img/img09.png)
-
-![](./img/img10.png)
+![](./img/img07.png)
