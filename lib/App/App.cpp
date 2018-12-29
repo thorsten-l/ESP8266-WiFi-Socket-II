@@ -18,6 +18,12 @@ void App::defaultConfig()
   strncpy( appcfg.wifi_password, DEFAULT_WIFI_PASSWORD, 63 );
   appcfg.wifi_mode = DEFAULT_WIFI_MODE;
 
+  appcfg.net_mode = DEFAULT_NET_MODE;
+  strncpy(appcfg.net_host, DEFAULT_NET_HOST, 63);
+  strncpy(appcfg.net_mask, DEFAULT_NET_MASK, 63);
+  strncpy(appcfg.net_gateway, DEFAULT_NET_GATEWAY, 63);
+  strncpy(appcfg.net_dns, DEFAULT_NET_DNS, 63);
+
   strncpy( appcfg.ota_hostname, DEFAULT_OTA_HOSTNAME, 63 );
   strncpy( appcfg.ota_password, DEFAULT_OTA_PASSWORD, 63 );
 
@@ -44,6 +50,12 @@ void App::defaultConfig()
   strncpy( appcfg.mqtt_password, DEFAULT_MQTT_PASSWORD, 63 );
   strncpy( appcfg.mqtt_intopic, DEFAULT_MQTT_INTOPIC, 63 );
   strncpy( appcfg.mqtt_outtopic, DEFAULT_MQTT_OUTTOPIC, 63 );
+
+  appcfg.syslog_enabled = DEFAULT_SYSLOG_ENABLED;
+  strncpy(appcfg.syslog_host, DEFAULT_SYSLOG_HOST, 63);
+  appcfg.syslog_port = DEFAULT_SYSLOG_PORT;
+  strncpy(appcfg.syslog_app_name, DEFAULT_SYSLOG_APP_NAME, 63);
+
   memcpy( &appcfgWR, &appcfg, sizeof(appcfg));
 }
 

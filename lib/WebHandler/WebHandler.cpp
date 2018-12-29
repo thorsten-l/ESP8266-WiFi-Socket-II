@@ -135,6 +135,19 @@ void handleSetupPage( AsyncWebServerRequest *request )
   prTextGroup( response, id++, "SSID", "wifi_ssid", appcfg.wifi_ssid );
   prTextGroup( response, id++, "Password", "wifi_password", appcfg.wifi_password );
 
+  // Network
+  prLegend( response, "Network" );
+
+  prSelectStart( response, id++, "Mode", "net_mode" );
+  prOption( response, WIFI_AP, "DHCP", appcfg.net_mode == NET_MODE_DHCP );
+  prOption( response, WIFI_STA, "Static", appcfg.net_mode == NET_MODE_STATIC );
+  prSelectEnd( response );
+
+  prTextGroup( response, id++, "Host Address", "net_host", appcfg.net_host );
+  prTextGroup( response, id++, "Gateway", "net_gateway", appcfg.net_gateway );
+  prTextGroup( response, id++, "Netmask", "net_mask", appcfg.net_mask );
+  prTextGroup( response, id++, "DNS Server", "net_dns", appcfg.net_dns );
+
   // OTA (Over The Air - firmware update)
   prLegend( response, "Over The Air - firmware update (OTA)");
   prTextGroup( response, id++, "Hostname", "ota_hostname", appcfg.ota_hostname );
@@ -174,6 +187,13 @@ void handleSetupPage( AsyncWebServerRequest *request )
   prTextGroup( response, id++, "Password", "mqtt_password", appcfg.mqtt_password );
   prTextGroup( response, id++, "In Topic", "mqtt_intopic", appcfg.mqtt_intopic );
   prTextGroup( response, id++, "Out Topic", "mqtt_outtopic", appcfg.mqtt_outtopic );
+
+  // Syslog
+  prLegend( response, "Syslog");
+  prCheckBoxGroup( response, id++, "Enabled", "syslog_enabled", appcfg.syslog_enabled );
+  prTextGroup( response, id++, "Host", "syslog_host", appcfg.syslog_host );
+  prTextGroup( response, id++, "Port (TCP)", "syslog_port", appcfg.syslog_port );
+  prTextGroup( response, id++, "App Name", "syslog_app_name", appcfg.syslog_app_name );
 
   response->println("<p><input class='pure-button pure-button-primary' type='submit' value='Save Configuration'></p>");
   response->println("</fieldset></form>");
@@ -260,6 +280,13 @@ void handleSavePage( AsyncWebServerRequest *request )
   paramChars( request, appcfgWR.wifi_ssid, "wifi_ssid", DEFAULT_WIFI_SSID );
   paramChars( request, appcfgWR.wifi_password, "wifi_password", DEFAULT_WIFI_PASSWORD );
 
+  // Network
+  appcfgWR.net_mode = paramInt( request, "net_mode", DEFAULT_NET_MODE );
+  paramChars( request, appcfgWR.net_host, "net_host", DEFAULT_NET_HOST );
+  paramChars( request, appcfgWR.net_gateway, "net_gateway", DEFAULT_NET_GATEWAY );
+  paramChars( request, appcfgWR.net_mask, "net_mask", DEFAULT_NET_MASK );
+  paramChars( request, appcfgWR.net_dns, "net_dns", DEFAULT_NET_DNS );
+
   // OTA
   paramChars( request, appcfgWR.ota_hostname, "ota_hostname", DEFAULT_OTA_HOSTNAME );
   paramChars( request, appcfgWR.ota_password, "ota_password", DEFAULT_OTA_PASSWORD );
@@ -288,6 +315,12 @@ void handleSavePage( AsyncWebServerRequest *request )
   paramChars( request, appcfgWR.mqtt_password, "mqtt_password", DEFAULT_MQTT_PASSWORD );
   paramChars( request, appcfgWR.mqtt_intopic, "mqtt_intopic", DEFAULT_MQTT_INTOPIC );
   paramChars( request, appcfgWR.mqtt_outtopic, "mqtt_outtopic", DEFAULT_MQTT_OUTTOPIC );
+
+  // Syslog
+  appcfgWR.syslog_enabled = paramBool( request, "syslog_enabled" );
+  paramChars( request, appcfgWR.syslog_host, "syslog_host", DEFAULT_SYSLOG_HOST );
+  appcfgWR.syslog_port = paramInt( request, "syslog_port", DEFAULT_SYSLOG_PORT );
+  paramChars( request, appcfgWR.syslog_app_name, "syslog_app_name", DEFAULT_SYSLOG_APP_NAME );
 
   response->println("</pre>");
   response->println("<h2 style='color: red'>Restarting System</h2>");

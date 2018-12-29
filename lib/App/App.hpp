@@ -17,6 +17,10 @@
 #define POWER_BUTTON 5
 #define RELAY_PIN 4
 
+// Network mode
+#define NET_MODE_STATIC 1
+#define NET_MODE_DHCP 2
+
 typedef struct appconfig
 {
   char wifi_ssid[64];
