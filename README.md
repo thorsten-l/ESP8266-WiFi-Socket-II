@@ -48,7 +48,7 @@ After a firmware reset the following values are set.
 | MQTT Enabled | **false** |  |
 | MQTT ClientId | WifiSocket1 |  |
 | MQTT Host | 192.168.1.1 | |
-| MQTT Port | 80 | |
+| MQTT Port | 1883 | |
 | MQTT Use Authentication | false | |
 | MQTT User | user |  |
 | MQTT Password | password | |
