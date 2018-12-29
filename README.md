@@ -21,9 +21,15 @@ After a firmware reset the following values are set.
 
 |    | value | description |
 |----|-------|-------------|
-| WiFi SSID | WifiSocketII-`esp id` | SSID in accesspoint mode |
-| IP Address | 192.168.192.1 | ip address in accesspoint mode |
 | Admin password | admin | Setup admin password |
+| WiFi Mode | AP | Accesspoint- or Station-Mode |
+| WiFi SSID | WifiSocketII-`esp id` | SSID in accesspoint mode |
+| WiFi Password | 12345678 | Default WiFi password |
+| Network Mode | DHCP | Network mode STATIC or DHCP *1 |
+| Network IP-Address | 192.168.192.1 | device ip address *2 |
+| Network Mask | 255.255.255.0 | Subnet mask *2 |
+| Network Gateway | 192.168.192.1 | Default gateway *2 |
+| Network DNS | 192.168.192.1 | DNS server address *2 |
 | OTA Hostname | wifi-socket-1 | *O*ver *T*he *A*ir hostname |
 | OTA Password | otapass | OTA firmware upload password |
 | OpenHAB Callback Enabled | **false** | |
@@ -45,7 +51,14 @@ After a firmware reset the following values are set.
 | MQTT Password | password | |
 | MQTT In Topic | socket1/in | receiving commands |
 | MQTT Out Topic | socket1/out | sending callback |
+| Syslog Enabled | **false** |  |
+| Syslog Host | 192.168.1.1 | |
+| Syslog Port (TCP) | 80 | |
+| Syslog App Name | gateway-doorbell |  |
 
+*1 In WiFi Station-Mode only
+
+*2 will be overwritten from DHCP-Response
 
 ## Hardware
 [OBI Wifi Stecker Schuko](https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko/p/2291706)
