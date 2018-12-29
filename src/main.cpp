@@ -55,6 +55,7 @@ void loop()
    {
      LOG1( "max loop time = %ld\n", maxLoopTime );
      LOG1( "wifi is connected %d\n", wifiHandler.isConnected());
+     LOG1( "free heap %d\n", ESP.getFreeHeap() );
      maxLoopTime = 0l;
      lifeTicker = thisLoopTimestamp;
    }
