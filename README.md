@@ -2,7 +2,7 @@
 Alternative Firmware for https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806
 
 ## Old OBI Wifi Socket
-Find the old repository for old OBI socket [here](https://github.com/thorsten-l/ESP8266-WiFi-Socket-NG).
+Find the repository for old OBI socket [here](https://github.com/thorsten-l/ESP8266-WiFi-Socket-NG).
 
 ## ATTENTION
 At this time this code is not fully testet!
