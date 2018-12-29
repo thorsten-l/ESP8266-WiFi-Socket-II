@@ -1,4 +1,8 @@
 # Documentation
+## Pins for flashing the ESP-WROOM-02
+In my opinion the back side is easier to access the needed pins
+![](./img/img08.jpg)
+
 ## Screenshots
 ### Home Page
 ![](./img/img01.png)
