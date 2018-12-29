@@ -56,7 +56,7 @@ After a firmware reset the following values are set.
 | MQTT Out Topic | socket1/out | sending callback |
 | Syslog Enabled | **false** |  |
 | Syslog Host | 192.168.1.1 | |
-| Syslog Port (TCP) | 80 | |
+| Syslog Port (TCP) | 514 | |
 | Syslog App Name | gateway-doorbell |  |
 
 *1 In WiFi Station-Mode only
