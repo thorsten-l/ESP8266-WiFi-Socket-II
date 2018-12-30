@@ -1,25 +1,32 @@
 # ESP8266-WiFi-Socket-II
-Alternative Firmware for https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806
+
+Alternative Firmware for `https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806`
 
 ## Old OBI Wifi Socket
+
 Find the repository for old OBI socket [here](https://github.com/thorsten-l/ESP8266-WiFi-Socket-NG).
 
 ## ATTENTION
+
 At this time this code is not fully testet!
 
 ## Precompiled Firmware
+
 Find the precompiled firmware in the [firmware](https://github.com/thorsten-l/ESP8266-WiFi-Socket-II/tree/master/firmware) directory.
 
 ## Compile
+
 This is a [PlatformIO](https://platformio.org/) project.
 
 ## Firmware Reset
+
 1. Power on the WiFi Socket (plug in)
 2. Press down and hold the Power-Button during the first 5s
 3. Release Power-Button when the WiFi LED starts rapidly fast blinking
 4. The firmware reset ends after about 30s indicated by a permanent WiFi LED on.
 
 ## Default Settings
+
 After a firmware reset the following values are set.
 
 |    | value | description |
@@ -64,34 +71,39 @@ After a firmware reset the following values are set.
 *2 will be overwritten from DHCP-Response
 
 ## Hardware
-[OBI Wifi Stecker Schuko](https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko/p/2291706)
+
+[OBI Wifi Stecker Schuko](https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806)
 
 ## OpenHAB
 
 ### OpenHAB - HTTP Binding sample
 
-```
+```t
 Switch LivingRoom_Power "Living Room Outlet" {http=">[ON:GET:http://wifi-socket.ip/on] >[OFF:GET:http://wifi-socket.ip/off]"}
 ```
 
 If you like to read the state of the socket by OpenHAB. First create a file `getState.js` in the `transform` directory with the following content:
-```
+
+```javascript
 JSON.parse(input).state;
 ```
 
 add
-```
+
+```t
 <[http://wifi-socket.ip/state:30000:JS(getState.js)]
 ```
+
 to the `Switch` definition. Every 30s the state of the socket will be checked.
 
 ### OpenHAB - MQTT binding sample
 
-```
+```t
 Switch LivingRoom_Power "Living Room Outlet" {mqtt=">[broker1:socket1/in:command:*:default], <[broker1:socket1/out:state:default]"}
 ```
 
 ## References
+
 - [PlatformIO](https://platformio.org/)
 - [Arduino core for ESP8266 WiFi chip](https://github.com/esp8266/Arduino)
 - [Async TCP Library for ESP8266](https://github.com/me-no-dev/ESPAsyncTCP)
