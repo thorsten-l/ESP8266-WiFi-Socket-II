@@ -508,6 +508,8 @@ void WebHandler::setup()
                      (appcfg.alexa_enabled) ? "true" : "false");
     response->printf("<p>MQTT Enabled: %s</p>",
                      (appcfg.mqtt_enabled) ? "true" : "false");
+    response->printf("<p>Syslog Enabled: %s</p>",
+                     (appcfg.syslog_enabled) ? "true" : "false");
 
     response->print("</form>");
     response->print(TEMPLATE_FOOTER);
