@@ -148,6 +148,8 @@ const bool WifiHandler::handle(time_t timestamp)
 
         if (appcfg.syslog_enabled)
         {
+          syslog.logInfo(APP_NAME ", Version " APP_VERSION ", by " APP_AUTHOR);
+          syslog.logInfo("Build date: " __DATE__ " " __TIME__);
           syslog.logInfo("WiFi connected");
           syslog.logInfo("  host ip addr:", appcfg.net_host);
           syslog.logInfo("  netmask:", appcfg.net_mask);

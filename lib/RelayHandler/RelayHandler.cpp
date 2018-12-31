@@ -2,6 +2,7 @@
 #include <OpenHabHandler.hpp>
 #include <MqttHandler.hpp>
 #include <AlexaHandler.hpp>
+#include <Syslog.hpp>
 #include "RelayHandler.hpp"
 
 RelayHandler relayHandler;
@@ -25,6 +26,7 @@ void RelayHandler::on()
     openHabHandler.sendValue("ON");
     mqttHandler.sendValue("ON");
     alexaHandler.sendValue(true);
+    syslog.logInfo( "power on" );
   }
 }
 
@@ -40,6 +42,7 @@ void RelayHandler::off()
     openHabHandler.sendValue("OFF");
     mqttHandler.sendValue("OFF");
     alexaHandler.sendValue(false);
+    syslog.logInfo( "power off" );
   }
 }
 
