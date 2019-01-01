@@ -34,10 +34,11 @@ String jsonInfo()
           "\"cpu_freq\":\"%dMhz\","
           "\"flash_size\":\"%u\","
           "\"flash_speed\":\"%u\","
-          "\"ide_size\":\"%u\""
+          "\"ide_size\":\"%u\","
+          "\"free_heap\":\"%u\""
           "}",
           ESP.getChipId(), ESP.getCpuFreqMHz(), ESP.getFlashChipRealSize(),
-          ESP.getFlashChipSpeed(), ESP.getFlashChipSize());
+          ESP.getFlashChipSpeed(), ESP.getFlashChipSize(), ESP.getFreeHeap());
   String message(buffer);
   return message;
 }
