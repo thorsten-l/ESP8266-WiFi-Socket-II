@@ -35,10 +35,22 @@ String jsonInfo()
           "\"flash_size\":\"%u\","
           "\"flash_speed\":\"%u\","
           "\"ide_size\":\"%u\","
+          "\"fw_name\":\"%s\","
+          "\"fw_version\":\"%s\","
+
+#if OBI_VERSION == 1
+          "\"obi_version\":\"1\","
+#endif
+
+#if OBI_VERSION == 2
+          "\"obi_version\":\"2\","
+#endif
+
           "\"free_heap\":\"%u\""
           "}",
           ESP.getChipId(), ESP.getCpuFreqMHz(), ESP.getFlashChipRealSize(),
-          ESP.getFlashChipSpeed(), ESP.getFlashChipSize(), ESP.getFreeHeap());
+          ESP.getFlashChipSpeed(), ESP.getFlashChipSize(), 
+          APP_NAME, APP_VERSION, ESP.getFreeHeap());
   String message(buffer);
   return message;
 }
@@ -483,6 +495,15 @@ void WebHandler::setup()
     response->print(
         "<p>Name: " APP_NAME "</p>"
         "<p>Version: " APP_VERSION "</p>"
+
+#if OBI_VERSION == 1
+        "<p>OBI Socket Version: 1</p>"
+#endif
+
+#if OBI_VERSION == 2
+        "<p>OBI Socket Version: 2</p>"
+#endif
+
         "<p>Author: Dr. Thorsten Ludewig &lt;t.ludewig@gmail.com></p>");
 
     prLegend(response, "RESTful API");
