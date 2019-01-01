@@ -78,12 +78,25 @@ void App::setup()
 
   pinMode(POWER_BUTTON, INPUT_PULLUP);
   pinMode(WIFI_LED, OUTPUT);
+  digitalWrite(WIFI_LED, 0);
+
+#if OBI_VERSION == 1
+  pinMode(RELAY_TRIGGER_OFF, OUTPUT);
+  pinMode(RELAY_TRIGGER_ON, OUTPUT);
+  digitalWrite(RELAY_TRIGGER_ON, 1);
+  digitalWrite(RELAY_TRIGGER_OFF, 1);
+  delay(50);
+  digitalWrite(RELAY_TRIGGER_OFF, 0);
+  delay(50);
+  digitalWrite(RELAY_TRIGGER_OFF, 1);
+#endif
+
+#if OBI_VERSION == 2
   pinMode(POWER_LED, OUTPUT);
   pinMode(RELAY_PIN, OUTPUT);
-
-  digitalWrite(WIFI_LED, 0);
   digitalWrite(POWER_LED, 0);
   digitalWrite(RELAY_PIN, 0);
+#endif
 
   for (int i = 0; i < 5; i++)
   {

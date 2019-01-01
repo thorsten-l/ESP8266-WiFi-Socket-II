@@ -20,8 +20,17 @@ void RelayHandler::on()
 
   if( powerOn == false )
   {
-    digitalWrite( POWER_LED, 1 );
-    digitalWrite( RELAY_PIN, 1 );
+    #if OBI_VERSION == 1
+      digitalWrite( RELAY_TRIGGER_ON, 0 );
+      delay(5);
+      digitalWrite( RELAY_TRIGGER_ON, 1 );
+    #endif
+
+    #if OBI_VERSION == 2
+      digitalWrite( POWER_LED, 1 );
+      digitalWrite( RELAY_PIN, 1 );
+    #endif
+
     powerOn = true;
     openHabHandler.sendValue("ON");
     mqttHandler.sendValue("ON");
@@ -36,8 +45,17 @@ void RelayHandler::off()
 
   if( powerOn == true )
   {
-    digitalWrite( POWER_LED, 0 );
-    digitalWrite( RELAY_PIN, 0 );
+    #if OBI_VERSION == 1
+      digitalWrite( RELAY_TRIGGER_OFF, 0 );
+      delay(5);
+      digitalWrite( RELAY_TRIGGER_OFF, 1 );
+    #endif
+
+    #if OBI_VERSION == 2
+      digitalWrite( POWER_LED, 0 );
+      digitalWrite( RELAY_PIN, 0 );
+    #endif
+
     powerOn = false;
     openHabHandler.sendValue("OFF");
     mqttHandler.sendValue("OFF");
