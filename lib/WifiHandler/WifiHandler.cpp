@@ -3,9 +3,11 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <Syslog.hpp>
+#include <LinkedList.hpp>
 #include "WifiHandler.hpp"
 
 WifiHandler wifiHandler;
+SimpleLinkedList wifiNetworkLists;
 
 static time_t lastTimestamp;
 
@@ -210,6 +212,7 @@ const char* WifiHandler::scanNetworks()
       l += sprintf( networkBuffer+l, "%2d: %s (%d)%s\n", i+1,
                     WiFi.SSID(i).c_str(), WiFi.RSSI(i),
                     (WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*");
+      wifiNetworkLists.put(WiFi.SSID(i).c_str());
       delay( 5 );
     }
   }
@@ -221,9 +224,9 @@ const char* WifiHandler::scanNetworks()
   return networkBuffer;
 }
 
-const char* WifiHandler::getScannedNetworks()
+ListNode* WifiHandler::getScannedNetworks()
 {
-  return networkBuffer;
+  return wifiNetworkLists.getRootNode();
 }
 
 char ipBuffer[32];

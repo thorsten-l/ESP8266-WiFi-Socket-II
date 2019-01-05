@@ -1,6 +1,7 @@
-#include <AlexaHandler.hpp>
-#include <App.hpp>
 #include <Arduino.h>
+#include <App.hpp>
+#include <fauxmoESP.h>
+#include <AlexaHandler.hpp>
 #include <MqttHandler.hpp>
 #include <OtaHandler.hpp>
 #include <RelayHandler.hpp>

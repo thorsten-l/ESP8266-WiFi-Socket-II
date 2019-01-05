@@ -1,4 +1,5 @@
 #include <App.hpp>
+#include <fauxmoESP.h>
 #include <OpenHabHandler.hpp>
 #include <MqttHandler.hpp>
 #include <AlexaHandler.hpp>
@@ -26,7 +27,7 @@ void RelayHandler::on()
       digitalWrite( RELAY_TRIGGER_ON, 1 );
     #endif
 
-    #if OBI_VERSION == 2
+    #if OBI_VERSION == 2 || DEVELOPMENT_VERSION == 1
       digitalWrite( POWER_LED, 1 );
       digitalWrite( RELAY_PIN, 1 );
     #endif
@@ -51,7 +52,7 @@ void RelayHandler::off()
       digitalWrite( RELAY_TRIGGER_OFF, 1 );
     #endif
 
-    #if OBI_VERSION == 2
+    #if OBI_VERSION == 2 || DEVELOPMENT_VERSION == 1
       digitalWrite( POWER_LED, 0 );
       digitalWrite( RELAY_PIN, 0 );
     #endif

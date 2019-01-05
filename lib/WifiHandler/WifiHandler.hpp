@@ -1,6 +1,8 @@
 #ifndef __WIFI_HANDLER_H__
 #define __WIFI_HANDLER_H__
 
+#include "LinkedList.hpp"
+
 class WifiHandler
 {
 private:
@@ -13,7 +15,7 @@ public:
   const bool isReady();
   const bool isConnected();
   const bool isInStationMode();
-  const char* getScannedNetworks();
+  ListNode* getScannedNetworks();
   const bool handle( time_t timestamp );
   const char *getLocalIP();
 };

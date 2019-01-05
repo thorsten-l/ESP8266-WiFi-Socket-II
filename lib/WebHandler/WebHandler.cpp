@@ -7,6 +7,7 @@
 #include <ESPAsyncWebServer.h>
 #include <RelayHandler.hpp>
 #include <WifiHandler.hpp>
+#include <LinkedList.hpp>
 
 #include "WebHandler.hpp"
 #include "layout-css-gz.h"
@@ -138,9 +139,22 @@ void handleSetupPage(AsyncWebServerRequest *request)
   prTextGroup(response, id++, "Password", "admin_password",
               appcfg.admin_password);
 
+  /* 
   // WiFi
   prLegend(response, "WiFi Network Scan");
-  response->printf("<pre>%s</pre>\n", wifiHandler.getScannedNetworks());
+  response->printf("<pre>");
+
+  ListNode* node = wifiHandler.getScannedNetworks();
+
+  while( node != NULL )
+  {
+    response->print("- ");
+    response->println(*node->value);
+    node = node->next;
+  }
+
+  response->printf("</pre>\n");
+  */
 
   prLegend(response, "WiFi");
 
@@ -148,6 +162,20 @@ void handleSetupPage(AsyncWebServerRequest *request)
   prOption(response, WIFI_AP, "Access Point", appcfg.wifi_mode == WIFI_AP);
   prOption(response, WIFI_STA, "Station", appcfg.wifi_mode == WIFI_STA);
   prSelectEnd(response);
+
+  response->printf("<div class='pure-control-group'><label for='scannedNetwork'>Scanned Networks</label><select id='scannedNetwork' onchange=\"document.getElementById('pgid%d').value = this.value\">", id );
+  response->print("<option> </option>");
+
+  ListNode* node = wifiHandler.getScannedNetworks();
+  while( node != NULL )
+  {
+    response->print("<option>");
+    response->print(*node->value);
+    response->print("</option>");
+    node = node->next;
+  }
+
+  response->printf("</select></div>");
 
   prTextGroup(response, id++, "SSID", "wifi_ssid", appcfg.wifi_ssid);
   prTextGroup(response, id++, "Password", "wifi_password",
@@ -502,6 +530,10 @@ void WebHandler::setup()
 
 #if OBI_VERSION == 2
         "<p>OBI Socket Version: 2</p>"
+#endif
+
+#if DEVELOPMENT_VERSION == 1
+        "<p>Development Version: 1</p>"
 #endif
 
         "<p>Author: Dr. Thorsten Ludewig &lt;t.ludewig@gmail.com></p>");
