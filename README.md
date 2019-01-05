@@ -68,7 +68,9 @@ After a firmware reset the following values are set.
 
 ## Hardware
 
-[OBI Wifi Stecker Schuko](https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806)
+- [OBI Wifi Stecker Schuko - Version 2](https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806)
+
+- [OBI Wifi Stecker Schuko - Version 1](https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko/p/2291706)
 
 ## OpenHAB
 
