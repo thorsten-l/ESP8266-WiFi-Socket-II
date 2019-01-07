@@ -8,6 +8,15 @@ Alternative Firmware for `https://www.obi.de/hausfunksteuerung/wifi-stecker-schu
 
 ## Precompiled Firmware
 
+### Attention - update OTA from 1.1.x to 2.x for OBI Version 1 only
+
+> If you like to update from firmware 1.1.x (OBI Version 1) to 2.x over the air (OTA) please first flash firmware version 1.2.0migration.
+>
+> If you try to update direct from 1.1.x to the current 2.x firmware
+version you will get an "out of memory" error
+>
+> Due to a new memory model the firmware will reset all settings to the default values
+
 Find the precompiled firmware in the [firmware](https://github.com/thorsten-l/ESP8266-WiFi-Socket-II/tree/master/firmware) directory.
 
 ## Compile
