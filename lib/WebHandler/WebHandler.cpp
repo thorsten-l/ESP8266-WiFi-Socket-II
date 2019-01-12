@@ -29,30 +29,30 @@ String jsonStatus()
 
 String jsonInfo()
 {
-  char buffer[512];
+  char buffer[768];
   sprintf(buffer,
           "{"
+          "\"host_name\":\"%s\","
+          "\"pioenv_name\":\"%s\","
           "\"chip_id\":\"%08X\","
           "\"cpu_freq\":\"%dMhz\","
-          "\"flash_size\":\"%u\","
-          "\"flash_speed\":\"%u\","
-          "\"ide_size\":\"%u\","
+          "\"flash_size\":%u,"
+          "\"flash_speed\":%u,"
+          "\"ide_size\":%u,"
           "\"fw_name\":\"%s\","
           "\"fw_version\":\"%s\","
-
-#if OBI_VERSION == 1
-          "\"obi_version\":\"1\","
-#endif
-
-#if OBI_VERSION == 2
-          "\"obi_version\":\"2\","
-#endif
-
-          "\"free_heap\":\"%u\""
+          "\"build_date\":\"%s\","
+          "\"build_time\":\"%s\","
+          "\"spiffs_total\":%u,"
+          "\"spiffs_used\":%u,"
+          "\"free_heap\":%u"
           "}",
-          ESP.getChipId(), ESP.getCpuFreqMHz(), ESP.getFlashChipRealSize(),
+          appcfg.ota_hostname, PIOENV_NAME, 
+          ESP.getChipId(), ESP.getCpuFreqMHz(), 
+          ESP.getFlashChipRealSize(),
           ESP.getFlashChipSpeed(), ESP.getFlashChipSize(), APP_NAME,
-          APP_VERSION, ESP.getFreeHeap());
+          APP_VERSION, __DATE__, __TIME__, 
+          app.fsTotalBytes, app.fsUsedBytes, ESP.getFreeHeap());
   String message(buffer);
   return message;
 }
@@ -455,20 +455,8 @@ void WebHandler::setup()
     response->print(
         "<p>Name: " APP_NAME "</p>"
         "<p>Version: " APP_VERSION "</p>"
-
-#if OBI_VERSION == 1
-        "<p>OBI Socket Version: 1</p>"
-#endif
-
-#if OBI_VERSION == 2
-        "<p>OBI Socket Version: 2</p>"
-#endif
-
-#if DEVELOPMENT_VERSION == 1
-        "<p>Development Version: 1</p>"
-#endif
-
-        "<p>Author: Dr. Thorsten Ludewig &lt;t.ludewig@gmail.com></p>");
+        "<p>PlatformIO Environment: " PIOENV_NAME "</p>"
+        "<p>Author: Dr. Thorsten Ludewig &lt;t.ludewig@gmail.com></p>" );
 
     prLegend(response, "RESTful API");
 
