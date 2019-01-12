@@ -13,7 +13,7 @@ static time_t lastTimestamp;
 
 static void wifiOff()
 {
-  digitalWrite(WIFI_LED, 0);
+  digitalWrite(WIFI_LED, WIFI_LED_OFF);
   WiFi.persistent(false);
   WiFi.mode(WIFI_OFF);
   WiFi.setOutputPower(0.0f);
@@ -78,21 +78,27 @@ void WifiHandler::setup()
 
     WiFi.mode(WIFI_AP);
 
+    
+    strcpy( appcfg.net_host, DEFAULT_NET_HOST );
+    strcpy( appcfg.net_gateway, DEFAULT_NET_GATEWAY );
+    strcpy( appcfg.net_mask, DEFAULT_NET_MASK );
+    strcpy( appcfg.net_dns, DEFAULT_NET_DNS );
+    strcpy( appcfg.wifi_password, DEFAULT_WIFI_PASSWORD );
+    
+
     IPAddress host;
     host.fromString(appcfg.net_host);
     IPAddress gateway;
     gateway.fromString(appcfg.net_gateway);
     IPAddress mask;
     mask.fromString(appcfg.net_mask);
-    IPAddress dns;
-    dns.fromString(appcfg.net_dns);
 
     WiFi.softAPConfig(host, gateway, mask);
     WiFi.softAP(appcfg.wifi_ssid, appcfg.wifi_password);
     Serial.print("AP IP address: ");
     Serial.println(WiFi.softAPIP());
 
-    digitalWrite( WIFI_LED, true );
+    digitalWrite( WIFI_LED, WIFI_LED_ON );
     connected = true;
   }
 }
@@ -160,7 +166,7 @@ const bool WifiHandler::handle(time_t timestamp)
         }
 
         Serial.println();
-        digitalWrite(WIFI_LED, 1 );
+        digitalWrite(WIFI_LED, WIFI_LED_ON );
         connected = true;
       }
       else
