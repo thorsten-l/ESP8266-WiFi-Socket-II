@@ -78,7 +78,7 @@ void App::setup()
 
   pinMode(POWER_BUTTON, INPUT_PULLUP);
   pinMode(WIFI_LED, OUTPUT);
-  digitalWrite(WIFI_LED, 0);
+  digitalWrite( WIFI_LED, WIFI_LED_OFF );
 
 #if OBI_VERSION == 1
   pinMode(RELAY_TRIGGER_OFF, OUTPUT);
@@ -100,9 +100,9 @@ void App::setup()
 
   for (int i = 0; i < 5; i++)
   {
-    digitalWrite(WIFI_LED, 1);
+    digitalWrite(WIFI_LED, WIFI_LED_ON );
     delay(500);
-    digitalWrite(WIFI_LED, 0);
+    digitalWrite(WIFI_LED, WIFI_LED_OFF );
     delay(500);
   }
 
@@ -122,13 +122,13 @@ void App::setup()
 
     for (int i = 0; i < 15; i++)
     {
-      digitalWrite(WIFI_LED, 1);
+      digitalWrite(WIFI_LED, WIFI_LED_ON);
       delay(100);
-      digitalWrite(WIFI_LED, 0);
+      digitalWrite(WIFI_LED, WIFI_LED_OFF);
       delay(100);
     }
 
-    digitalWrite(WIFI_LED, 1);
+    digitalWrite(WIFI_LED, WIFI_LED_ON);
 
     ESP.eraseConfig();
 
@@ -140,7 +140,7 @@ void App::setup()
       SPIFFS.end();
     }
 
-    digitalWrite(WIFI_LED, 0);
+    digitalWrite(WIFI_LED, WIFI_LED_OFF);
     restartSystem();
   }
 

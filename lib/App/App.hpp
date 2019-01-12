@@ -7,7 +7,7 @@
 #define LOG1( format, x) Serial.printf( "(%ld) " format, millis(), x )
 
 #define APP_NAME "WiFi Socket II"
-#define APP_VERSION "2.1.0"
+#define APP_VERSION "2.2.1dev"
 #define APP_AUTHOR "Dr. Thorsten Ludewig <t.ludewig@gmail.com>"
 #define APP_CONFIG_FILE "/config.bin"
 
@@ -17,6 +17,8 @@
   #define POWER_LED     13
   #define POWER_BUTTON  5
   #define RELAY_PIN     4
+  #define WIFI_LED_ON   1
+  #define WIFI_LED_OFF  0
 #endif
 
 #if OBI_VERSION == 1
@@ -25,6 +27,8 @@
   #define POWER_BUTTON      14
   #define RELAY_TRIGGER_OFF 5
   #define RELAY_TRIGGER_ON  12
+  #define WIFI_LED_ON       1
+  #define WIFI_LED_OFF      0
 #endif
 
 #if DEVELOPMENT_VERSION == 1
@@ -32,6 +36,8 @@
   #define POWER_LED     D6          // GPIO12
   #define POWER_BUTTON  D7          // GPIO13
   #define RELAY_PIN     D5          // GPIO14
+  #define WIFI_LED_ON   0
+  #define WIFI_LED_OFF  1
 #endif
 
 // Network mode
