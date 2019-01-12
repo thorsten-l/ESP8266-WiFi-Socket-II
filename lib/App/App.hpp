@@ -7,7 +7,7 @@
 #define LOG1( format, x) Serial.printf( "(%ld) " format, millis(), x )
 
 #define APP_NAME "WiFi Socket II"
-#define APP_VERSION "2.2.2"
+#define APP_VERSION "2.2.3dev"
 #define APP_AUTHOR "Dr. Thorsten Ludewig <t.ludewig@gmail.com>"
 #define APP_CONFIG_FILE "/config.bin"
 
@@ -101,6 +101,9 @@ private:
   void restartSystem();
 
 public:
+  size_t fsTotalBytes;
+  size_t fsUsedBytes;
+
   App();
 
   void setup();

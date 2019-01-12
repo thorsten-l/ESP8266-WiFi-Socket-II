@@ -219,6 +219,9 @@ void App::writeConfig()
     FSInfo fs_info;
     SPIFFS.info(fs_info);
 
+    fsTotalBytes = fs_info.totalBytes;
+    fsUsedBytes = fs_info.usedBytes;
+
     Serial.printf("\n--- SPIFFS Info ---\ntotal bytes = %d\n", fs_info.totalBytes);
     Serial.printf("used bytes = %d\n", fs_info.usedBytes);
     Serial.printf("block size = %d\n", fs_info.blockSize);
