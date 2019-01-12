@@ -64,62 +64,6 @@ void prLegend(AsyncResponseStream *response, const char *name)
   response->printf("<legend>%s</legend>", name);
 }
 
-void prGroupLabel(AsyncResponseStream *response, int id, const char *label)
-{
-  response->printf("<div class='pure-control-group'>"
-                   "<label for='pgid%d'>%s</label>",
-                   id, label);
-}
-
-void prTextGroup(AsyncResponseStream *response, int id, const char *label,
-                 const char *name, const char *value)
-{
-  prGroupLabel(response, id, label);
-  response->printf(
-      "<input id='pgid%d' type='text' name='%s' maxlength='64' value='%s'>"
-      "</div>",
-      id, name, value);
-}
-
-void prTextGroup(AsyncResponseStream *response, int id, const char *label,
-                 const char *name, int value)
-{
-  prGroupLabel(response, id, label);
-  response->printf(
-      "<input id='pgid%d' type='text' name='%s' maxlength='64' value='%d'>"
-      "</div>",
-      id, name, value);
-}
-
-void prCheckBoxGroup(AsyncResponseStream *response, int id, const char *label,
-                     const char *name, bool value)
-{
-  prGroupLabel(response, id, label);
-  response->printf(
-      "<input id='pgid%d' type='checkbox' name='%s' value='true' %s>"
-      "</div>",
-      id, name, value ? "checked" : "");
-}
-
-void prSelectStart(AsyncResponseStream *response, int id, const char *label,
-                   const char *name)
-{
-  prGroupLabel(response, id, label);
-  response->printf("<select id='pgid%d' name='%s'>", id, name);
-}
-
-void prSelectEnd(AsyncResponseStream *response)
-{
-  response->print("</select></div>");
-}
-
-void prOption(AsyncResponseStream *response, int value, const char *name,
-              bool selected)
-{
-  response->printf("<option %s value='%d'>%s</option>",
-                   selected ? "selected" : "", value, name);
-}
-
 void paramChars(AsyncWebServerRequest *request, char *dest,
                 const char *paramName, const char *defaultValue)
 {
