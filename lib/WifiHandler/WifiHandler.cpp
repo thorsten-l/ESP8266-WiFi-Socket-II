@@ -78,14 +78,6 @@ void WifiHandler::setup()
 
     WiFi.mode(WIFI_AP);
 
-    
-    strcpy( appcfg.net_host, DEFAULT_NET_HOST );
-    strcpy( appcfg.net_gateway, DEFAULT_NET_GATEWAY );
-    strcpy( appcfg.net_mask, DEFAULT_NET_MASK );
-    strcpy( appcfg.net_dns, DEFAULT_NET_DNS );
-    strcpy( appcfg.wifi_password, DEFAULT_WIFI_PASSWORD );
-    
-
     IPAddress host;
     host.fromString(appcfg.net_host);
     IPAddress gateway;
