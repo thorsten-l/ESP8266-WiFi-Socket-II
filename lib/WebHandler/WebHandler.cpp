@@ -5,378 +5,22 @@
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <AlexaHandler.hpp>
-#include <LinkedList.hpp>
 #include <RelayHandler.hpp>
-#include <WifiHandler.hpp>
 
 #include "WebHandler.hpp"
 #include "layout-css-gz.h"
 #include "pure-min-css-gz.h"
-#include "setup-html.h"
 #include "template-html.h"
+
+#include "pages/Pages.h"
 
 WebHandler webHandler;
 
 static AsyncWebServer server(80);
-static bool webPowerState;
 
-String jsonStatus()
-{
-  String message = "{\"state\":";
-  message += (relayHandler.isPowerOn()) ? "1}\r\n" : "0}\r\n";
-  return message;
-}
-
-String jsonInfo()
-{
-  char buffer[768];
-  sprintf(buffer,
-          "{"
-          "\"host_name\":\"%s\","
-          "\"pioenv_name\":\"%s\","
-          "\"chip_id\":\"%08X\","
-          "\"cpu_freq\":\"%dMhz\","
-          "\"flash_size\":%u,"
-          "\"flash_speed\":%u,"
-          "\"ide_size\":%u,"
-          "\"fw_name\":\"%s\","
-          "\"fw_version\":\"%s\","
-          "\"build_date\":\"%s\","
-          "\"build_time\":\"%s\","
-          "\"spiffs_total\":%u,"
-          "\"spiffs_used\":%u,"
-          "\"free_heap\":%u"
-          "}",
-          appcfg.ota_hostname, PIOENV_NAME, 
-          ESP.getChipId(), ESP.getCpuFreqMHz(), 
-          ESP.getFlashChipRealSize(),
-          ESP.getFlashChipSpeed(), ESP.getFlashChipSize(), APP_NAME,
-          APP_VERSION, __DATE__, __TIME__, 
-          app.fsTotalBytes, app.fsUsedBytes, ESP.getFreeHeap());
-  String message(buffer);
-  return message;
-}
-
-void handlePageNotFound(AsyncWebServerRequest *request) { request->send(404); }
-
-void prLegend(AsyncResponseStream *response, const char *name)
-{
-  response->printf("<legend>%s</legend>", name);
-}
-
-void paramChars(AsyncWebServerRequest *request, char *dest,
-                const char *paramName, const char *defaultValue)
-{
-  const char *value = defaultValue;
-
-  if (request->hasParam(paramName, true))
-  {
-    AsyncWebParameter *p = request->getParam(paramName, true);
-    value = p->value().c_str();
-    if (value == 0 || strlen(value) == 0)
-    {
-      value = defaultValue;
-    }
-  }
-
-  strncpy(dest, value, 63);
-  dest[63] = 0;
-}
-
-int paramInt(AsyncWebServerRequest *request, const char *paramName,
-             int defaultValue)
-{
-  int value = defaultValue;
-
-  if (request->hasParam(paramName, true))
-  {
-    AsyncWebParameter *p = request->getParam(paramName, true);
-    const char *pv = p->value().c_str();
-    if (pv != 0 && strlen(pv) > 0)
-    {
-      value = atoi(pv);
-    }
-  }
-
-  return value;
-}
-
-bool paramBool(AsyncWebServerRequest *request, const char *paramName)
-{
-  bool value = false;
-
-  if (request->hasParam(paramName, true))
-  {
-    AsyncWebParameter *p = request->getParam(paramName, true);
-    const char *pv = p->value().c_str();
-    if (pv != 0 && strlen(pv) > 0)
-    {
-      value = strcmp("true", pv) == 0;
-    }
-  }
-  return value;
-}
-
-void handleSavePage(AsyncWebServerRequest *request)
-{
-  if (!request->authenticate("admin", appcfg.admin_password))
-  {
-    return request->requestAuthentication();
-  }
-
-  AsyncResponseStream *response = request->beginResponseStream("text/html");
-  response->printf(TEMPLATE_HEADER, APP_NAME " - Save Configuration");
-  response->print("<pre>");
-
-  int params = request->params();
-
-  for (int i = 0; i < params; i++)
-  {
-    AsyncWebParameter *p = request->getParam(i);
-    response->printf("%s = '%s'\n", p->name().c_str(), p->value().c_str());
-  }
-
-  // Security
-  paramChars(request, appcfgWR.admin_password, "admin_password",
-             DEFAULT_ADMIN_PASSWORD);
-
-  // WIFI
-  appcfgWR.wifi_mode = paramInt(request, "wifi_mode", DEFAULT_WIFI_MODE);
-  paramChars(request, appcfgWR.wifi_ssid, "wifi_ssid", DEFAULT_WIFI_SSID);
-  paramChars(request, appcfgWR.wifi_password, "wifi_password",
-             DEFAULT_WIFI_PASSWORD);
-
-  // Network
-  appcfgWR.net_mode = paramInt(request, "net_mode", DEFAULT_NET_MODE);
-  paramChars(request, appcfgWR.net_host, "net_host", DEFAULT_NET_HOST);
-  paramChars(request, appcfgWR.net_gateway, "net_gateway", DEFAULT_NET_GATEWAY);
-  paramChars(request, appcfgWR.net_mask, "net_mask", DEFAULT_NET_MASK);
-  paramChars(request, appcfgWR.net_dns, "net_dns", DEFAULT_NET_DNS);
-
-  // OTA
-  paramChars(request, appcfgWR.ota_hostname, "ota_hostname",
-             DEFAULT_OTA_HOSTNAME);
-  paramChars(request, appcfgWR.ota_password, "ota_password",
-             DEFAULT_OTA_PASSWORD);
-
-  // OpenHAB
-  appcfgWR.ohab_enabled = paramBool(request, "ohab_enabled");
-  appcfgWR.ohab_version =
-      paramInt(request, "ohab_version", DEFAULT_OHAB_VERSION);
-  paramChars(request, appcfgWR.ohab_itemname, "ohab_itemname",
-             DEFAULT_OHAB_ITEMNAME);
-  paramChars(request, appcfgWR.ohab_host, "ohab_host", DEFAULT_OHAB_HOST);
-  appcfgWR.ohab_port = paramInt(request, "ohab_port", DEFAULT_OHAB_PORT);
-  appcfgWR.ohab_useauth = paramBool(request, "ohab_useauth");
-  paramChars(request, appcfgWR.ohab_user, "ohab_user", DEFAULT_OHAB_USER);
-  paramChars(request, appcfgWR.ohab_password, "ohab_password",
-             DEFAULT_OHAB_PASSWORD);
-
-  // Alexa
-  appcfgWR.alexa_enabled = paramBool(request, "alexa_enabled");
-  paramChars(request, appcfgWR.alexa_devicename, "alexa_devicename",
-             DEFAULT_ALEXA_DEVICENAME);
-
-  // MQTT
-  appcfgWR.mqtt_enabled = paramBool(request, "mqtt_enabled");
-  paramChars(request, appcfgWR.mqtt_clientid, "mqtt_clientid",
-             DEFAULT_MQTT_CLIENTID);
-  paramChars(request, appcfgWR.mqtt_host, "mqtt_host", DEFAULT_MQTT_HOST);
-  appcfgWR.mqtt_port = paramInt(request, "mqtt_port", DEFAULT_MQTT_PORT);
-  appcfgWR.mqtt_useauth = paramBool(request, "mqtt_useauth");
-  paramChars(request, appcfgWR.mqtt_user, "mqtt_user", DEFAULT_MQTT_USER);
-  paramChars(request, appcfgWR.mqtt_password, "mqtt_password",
-             DEFAULT_MQTT_PASSWORD);
-  paramChars(request, appcfgWR.mqtt_intopic, "mqtt_intopic",
-             DEFAULT_MQTT_INTOPIC);
-  paramChars(request, appcfgWR.mqtt_outtopic, "mqtt_outtopic",
-             DEFAULT_MQTT_OUTTOPIC);
-
-  // Syslog
-  appcfgWR.syslog_enabled = paramBool(request, "syslog_enabled");
-  paramChars(request, appcfgWR.syslog_host, "syslog_host", DEFAULT_SYSLOG_HOST);
-  appcfgWR.syslog_port = paramInt(request, "syslog_port", DEFAULT_SYSLOG_PORT);
-  paramChars(request, appcfgWR.syslog_app_name, "syslog_app_name",
-             DEFAULT_SYSLOG_APP_NAME);
-
-  response->println("</pre>");
-  response->println("<h2 style='color: red'>Restarting System</h2>");
-  response->print(TEMPLATE_FOOTER);
-  request->send(response);
-  app.delayedSystemRestart();
-}
-
-void handleRootPage(AsyncWebServerRequest *request)
-{
-  webPowerState = relayHandler.isPowerOn();
-
-  if (request->hasParam("power"))
-  {
-    AsyncWebParameter *p = request->getParam("power");
-    const char *pv = p->value().c_str();
-    if (pv != 0 && strlen(pv) > 0)
-    {
-      if (strcmp("ON", pv) == 0)
-      {
-        webPowerState = true;
-        relayHandler.delayedOn();
-      }
-      if (strcmp("OFF", pv) == 0)
-      {
-        webPowerState = false;
-        relayHandler.delayedOff();
-      }
-    }
-    request->redirect("/");
-    return;
-  }
-
-  char titleBuffer[100];
-  sprintf(titleBuffer, APP_NAME " - %s", appcfg.ota_hostname);
-
-  AsyncResponseStream *response = request->beginResponseStream("text/html");
-  response->printf(TEMPLATE_HEADER, titleBuffer);
-
-  response->print("<form class='pure-form'>");
-  prLegend(response, "Current Status");
-
-  response->printf("<div id='idpwr' class='pure-button' "
-                   "style='background-color: #%s'>Power is %s</div>",
-                   webPowerState ? "80ff80" : "ff8080",
-                   webPowerState ? "ON" : "OFF");
-  prLegend(response, "Actions");
-  response->print(
-      "<a href=\"/?power=ON\" class=\"pure-button button-on\">ON</a>"
-      "<a href=\"/?power=OFF\" class=\"pure-button button-off\">OFF</a>");
-
-  response->print("</form>");
-
-  response->print(
-      "<script>function getPowerState(){var e = "
-      "document.getElementById(\"idpwr\");fetch(\"/state\").then((resp) => "
-      "resp.json()).then(function(data){if(data.state===1){e.textContent="
-      "\"Power is ON\";e.style=\"background-color: #80ff80\";} else "
-      "{e.textContent=\"Power is OFF\";e.style=\"background-color: "
-      "#ff8080\";}});} setInterval(getPowerState,10000);</script>");
-
-  response->print(TEMPLATE_FOOTER);
-  request->send(response);
-}
-
-WebHandler::WebHandler() { initialized = false; }
-
-String setupProcessor(const String &var)
-{
-  String selected = F("selected");
-  String checked = F("checked");
-
-  if (var == "admin_password")
-    return String(appcfg.admin_password);
-
-  // Wifi
-  if (var == "wifi_mode_ap" && appcfg.wifi_mode == WIFI_AP)
-    return selected;
-  if (var == "wifi_mode_station" && appcfg.wifi_mode == WIFI_STA)
-    return selected;
-
-  if (var == "scanned_network_options")
-  {
-    ListNode *node = wifiHandler.getScannedNetworks();
-    String options = "";
-
-    while (node != NULL)
-    {
-      options += F("<option>");
-      options += String(*node->value);
-      options += F("</option>");
-      node = node->next;
-    }
-
-    return options;
-  }
-
-  if (var == "wifi_ssid")
-    return String(appcfg.wifi_ssid);
-  if (var == "wifi_password")
-    return String(appcfg.wifi_password);
-
-  // Network
-  if (var == "net_mode_dhcp" && appcfg.net_mode == NET_MODE_DHCP)
-    return selected;
-  if (var == "net_mode_static" && appcfg.net_mode == NET_MODE_STATIC)
-    return selected;
-  if (var == "net_host")
-    return String(appcfg.net_host);
-  if (var == "net_gateway")
-    return String(appcfg.net_gateway);
-  if (var == "net_mask")
-    return String(appcfg.net_mask);
-  if (var == "net_dns")
-    return String(appcfg.net_dns);
-
-  // OTA
-  if (var == "ota_hostname")
-    return String(appcfg.ota_hostname);
-  if (var == "ota_password")
-    return String(appcfg.ota_password);
-
-  // OpenHAB
-  if (var == "ohab_enabled" && appcfg.ohab_enabled == true)
-    return checked;
-  if (var == "ohab_v1" && appcfg.ohab_version == 1)
-    return selected;
-  if (var == "ohab_v2" && appcfg.ohab_version == 2)
-    return selected;
-  if (var == "ohab_itemname")
-    return String(appcfg.ohab_itemname);
-  if (var == "ohab_host")
-    return String(appcfg.ohab_host);
-  if (var == "ohab_port")
-    return String(appcfg.ohab_port);
-  if (var == "ohab_useauth" && appcfg.ohab_useauth == true)
-    return checked;
-  if (var == "ohab_user")
-    return String(appcfg.ohab_user);
-  if (var == "ohab_password")
-    return String(appcfg.ohab_password);
-
-  // Alexa
-  if (var == "alexa_enabled" && appcfg.alexa_enabled == true)
-    return checked;
-  if (var == "alexa_devicename")
-    return String(appcfg.alexa_devicename);
-
-  // MQTT
-  if (var == "mqtt_enabled" && appcfg.mqtt_enabled == true)
-    return checked;
-  if (var == "mqtt_clientid")
-    return String(appcfg.mqtt_clientid);
-  if (var == "mqtt_host")
-    return String(appcfg.mqtt_host);
-  if (var == "mqtt_port")
-    return String(appcfg.mqtt_port);
-  if (var == "mqtt_useauth" && appcfg.mqtt_useauth == true)
-    return checked;
-  if (var == "mqtt_user")
-    return String(appcfg.mqtt_user);
-  if (var == "mqtt_password")
-    return String(appcfg.mqtt_password);
-  if (var == "mqtt_intopic")
-    return String(appcfg.mqtt_intopic);
-  if (var == "mqtt_outtopic")
-    return String(appcfg.mqtt_outtopic);
-
-  // Syslog
-  if (var == "syslog_enabled" && appcfg.syslog_enabled == true)
-    return checked;
-  if (var == "syslog_host")
-    return String(appcfg.syslog_host);
-  if (var == "syslog_port")
-    return String(appcfg.syslog_port);
-  if (var == "syslog_app_name")
-    return String(appcfg.syslog_app_name);
-
-  return String();
+WebHandler::WebHandler() 
+{ 
+  initialized = false; 
 }
 
 void WebHandler::setup()
@@ -384,50 +28,23 @@ void WebHandler::setup()
   LOG0("HTTP server setup...\n");
 
   server.on("/", HTTP_GET, handleRootPage);
-  server.on("/setup.html", HTTP_GET, [](AsyncWebServerRequest *request) {
-    if (!request->authenticate("admin", appcfg.admin_password))
-    {
-      return request->requestAuthentication();
-    }
-
-    AsyncWebServerResponse *response =
-        request->beginResponse_P(200, "text/html", SETUP_HTML, setupProcessor);
-    response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-    response->addHeader("Pragma", "no-cache");
-    response->addHeader("Expires", "0");
-    request->send(response);
-  });
-
+  server.on("/setup.html", HTTP_GET, handleSetupPage );
+  server.on("/info.html", HTTP_GET, handleInfoPage );
   server.on("/savecfg", HTTP_POST, handleSavePage);
+  server.on("/info", HTTP_GET, handleJsonInfo );
 
   server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request) {
     relayHandler.delayedOn();
-    AsyncWebServerResponse *response =
-        request->beginResponse(200, "application/json", "{\"state\":1}\r\n");
-    response->addHeader("Access-Control-Allow-Origin", "*");
-    request->send(response);
+    handleJsonStatus( request, JSON_RELAY_ON );
   });
 
   server.on("/off", HTTP_GET, [](AsyncWebServerRequest *request) {
     relayHandler.delayedOff();
-    AsyncWebServerResponse *response =
-        request->beginResponse(200, "application/json", "{\"state\":0}\r\n");
-    response->addHeader("Access-Control-Allow-Origin", "*");
-    request->send(response);
+    handleJsonStatus( request, JSON_RELAY_OFF );
   });
 
   server.on("/state", HTTP_GET, [](AsyncWebServerRequest *request) {
-    AsyncWebServerResponse *response =
-        request->beginResponse(200, "application/json", jsonStatus());
-    response->addHeader("Access-Control-Allow-Origin", "*");
-    request->send(response);
-  });
-
-  server.on("/info", HTTP_GET, [](AsyncWebServerRequest *request) {
-    AsyncWebServerResponse *response =
-        request->beginResponse(200, "application/json", jsonInfo());
-    response->addHeader("Access-Control-Allow-Origin", "*");
-    request->send(response);
+    handleJsonStatus( request, JSON_RELAY_STATE );
   });
 
   server.on("/pure-min.css", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -444,53 +61,6 @@ void WebHandler::setup()
     request->send(response);
   });
 
-  server.on("/info.html", HTTP_GET, [](AsyncWebServerRequest *request) {
-    AsyncResponseStream *response = request->beginResponseStream("text/html");
-    response->printf(TEMPLATE_HEADER, APP_NAME " - Info");
-
-    response->print("<form class='pure-form'>");
-
-    prLegend(response, "Application");
-
-    response->print(
-        "<p>Name: " APP_NAME "</p>"
-        "<p>Version: " APP_VERSION "</p>"
-        "<p>PlatformIO Environment: " PIOENV_NAME "</p>"
-        "<p>Author: Dr. Thorsten Ludewig &lt;t.ludewig@gmail.com></p>" );
-
-    prLegend(response, "RESTful API");
-
-    char ipAddress[16];
-    strncpy(ipAddress, appcfg.net_host, 15);
-    ipAddress[15] = 0;
-
-    response->printf(
-        "<p><a href='http://%s/on'>http://%s/on</a> - Socket ON</p>"
-        "<p><a href='http://%s/off'>http://%s/off</a> - Socket OFF</p>"
-        "<p><a href='http://%s/state'>http://%s/state</a> - Socket JSON status "
-        "(0 or 1)</p>"
-        "<p><a href='http://%s/info'>http://%s/info</a> - ESP8266 Info</p>",
-        ipAddress, ipAddress, ipAddress, ipAddress, ipAddress, ipAddress,
-        ipAddress, ipAddress);
-
-    prLegend(response, "Build");
-    response->print("<p>Date: " __DATE__ "</p>"
-                    "<p>Time: " __TIME__ "</p>");
-
-    prLegend(response, "Services");
-    response->printf("<p>OpenHAB Callback Enabled: %s</p>",
-                     (appcfg.ohab_enabled) ? "true" : "false");
-    response->printf("<p>Alexa Enabled: %s</p>",
-                     (appcfg.alexa_enabled) ? "true" : "false");
-    response->printf("<p>MQTT Enabled: %s</p>",
-                     (appcfg.mqtt_enabled) ? "true" : "false");
-    response->printf("<p>Syslog Enabled: %s</p>",
-                     (appcfg.syslog_enabled) ? "true" : "false");
-
-    response->print("</form>");
-    response->print(TEMPLATE_FOOTER);
-    request->send(response);
-  });
 
   if (appcfg.alexa_enabled == true)
   {
@@ -511,12 +81,12 @@ void WebHandler::setup()
       if (fauxmo.process(request->client(), request->method() == HTTP_GET,
                          request->url(), body))
         return;
-      handlePageNotFound(request);
+      request->send(404);
     });
   }
   else
   {
-    server.onNotFound(handlePageNotFound);
+    server.onNotFound([](AsyncWebServerRequest *request) { request->send(404); });
   }
 
   MDNS.addService("http", "tcp", 80);

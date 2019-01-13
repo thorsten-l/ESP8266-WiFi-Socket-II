@@ -1,3 +1,6 @@
+#ifndef __TEMPLATE_HTML_H__
+#define __TEMPLATE_HTML_H__
+
 // file name = info.html, length = 2183
 const char TEMPLATE_HEADER[] =
   "<!DOCTYPE html>"
@@ -39,3 +42,5 @@ const char TEMPLATE_FOOTER[] =
   "</script>"
   "</body>"
   "</html>";
+
+#endif
