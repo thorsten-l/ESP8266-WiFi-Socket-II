@@ -1,6 +1,3 @@
-#ifndef __INFO_PAGE_H__
-#define __INFO_PAGE_H__
-
 #include "pages/Pages.h"
 
 void handleInfoPage(AsyncWebServerRequest *request)
@@ -51,5 +48,3 @@ void handleInfoPage(AsyncWebServerRequest *request)
     response->print(TEMPLATE_FOOTER);
     request->send(response);
 }
-
-#endif

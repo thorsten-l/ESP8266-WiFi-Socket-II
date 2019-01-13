@@ -1,6 +1,3 @@
-#ifndef __JSON_UTIL_H__
-#define __JSON_UTIL_H__
-
 #include "pages/Pages.h"
 #include <RelayHandler.hpp>
 
@@ -62,5 +59,3 @@ void handleJsonInfo(AsyncWebServerRequest *request)
   response->addHeader("Access-Control-Allow-Origin", "*");
   request->send(response);
 }
-
-#endif

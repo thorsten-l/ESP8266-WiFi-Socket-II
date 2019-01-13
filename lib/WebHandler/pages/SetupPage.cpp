@@ -1,6 +1,3 @@
-#ifndef __SETUP_PAGE_H__
-#define __SETUP_PAGE_H__
-
 #include "pages/Pages.h"
 #include "setup-html.h"
 #include <LinkedList.hpp>
@@ -134,5 +131,3 @@ if (!request->authenticate("admin", appcfg.admin_password))
     response->addHeader("Expires", "0");
     request->send(response);
 }
-
-#endif

@@ -1,6 +1,3 @@
-#ifndef __SAVE_CONFIG_H__
-#define __SAVE_CONFIG_H__
-
 #include "pages/Pages.h"
 
 void paramChars(AsyncWebServerRequest *request, char *dest,
@@ -144,5 +141,3 @@ void handleSavePage(AsyncWebServerRequest *request)
   request->send(response);
   app.delayedSystemRestart();
 }
-
-#endif

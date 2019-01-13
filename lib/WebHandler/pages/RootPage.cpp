@@ -1,6 +1,3 @@
-#ifndef __ROOT_PAGE_H__
-#define __ROOT_PAGE_H__
-
 #include "pages/Pages.h"
 #include <RelayHandler.hpp>
 
@@ -62,5 +59,3 @@ void handleRootPage(AsyncWebServerRequest *request)
   response->print(TEMPLATE_FOOTER);
   request->send(response);
 }
-
-#endif

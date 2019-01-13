@@ -21,4 +21,6 @@ void handleSavePage(AsyncWebServerRequest *request);
 void handleJsonStatus(AsyncWebServerRequest *request, int json_state );
 void handleJsonInfo(AsyncWebServerRequest *request );
 
+void handleCssFile(AsyncWebServerRequest *request, const uint8_t *data, size_t length );
+
 #endif

@@ -48,19 +48,12 @@ void WebHandler::setup()
   });
 
   server.on("/pure-min.css", HTTP_GET, [](AsyncWebServerRequest *request) {
-    AsyncWebServerResponse *response = request->beginResponse_P(
-        200, "text/css", PURE_MIN_CSS_GZ, PURE_MIN_CSS_GZ_LEN);
-    response->addHeader("Content-Encoding", "gzip");
-    request->send(response);
+    handleCssFile( request, PURE_MIN_CSS_GZ, PURE_MIN_CSS_GZ_LEN );
   });
 
   server.on("/layout.css", HTTP_GET, [](AsyncWebServerRequest *request) {
-    AsyncWebServerResponse *response = request->beginResponse_P(
-        200, "text/css", LAYOUT_CSS_GZ, LAYOUT_CSS_GZ_LEN);
-    response->addHeader("Content-Encoding", "gzip");
-    request->send(response);
+    handleCssFile( request, LAYOUT_CSS_GZ, LAYOUT_CSS_GZ_LEN );
   });
-
 
   if (appcfg.alexa_enabled == true)
   {
@@ -71,10 +64,9 @@ void WebHandler::setup()
       if (fauxmo.process(request->client(), request->method() == HTTP_GET,
                          request->url(), String((char *)data)))
         return;
-      // Handle any other body request here...
     });
+    
     server.onNotFound([](AsyncWebServerRequest *request) {
-      // LOG0("server.onNotFound");
       String body = (request->hasParam("body", true))
                         ? request->getParam("body", true)->value()
                         : String();
