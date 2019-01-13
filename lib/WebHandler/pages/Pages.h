@@ -6,6 +6,8 @@
 #include <ESPAsyncWebServer.h>
 
 #include "template-html.h"
+#include "layout-css-gz.h"
+#include "pure-min-css-gz.h"
 
 #define JSON_RELAY_ON    1
 #define JSON_RELAY_OFF   2

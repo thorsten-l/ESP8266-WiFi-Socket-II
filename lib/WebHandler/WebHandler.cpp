@@ -1,21 +1,11 @@
-#include <App.hpp>
-#include <DefaultAppConfig.h>
-#include <ESP8266WiFi.h>
+#include "WebHandler.hpp"
+#include "pages/Pages.h"
+
 #include <ESP8266mDNS.h>
-#include <ESPAsyncTCP.h>
-#include <ESPAsyncWebServer.h>
 #include <AlexaHandler.hpp>
 #include <RelayHandler.hpp>
 
-#include "WebHandler.hpp"
-#include "layout-css-gz.h"
-#include "pure-min-css-gz.h"
-#include "template-html.h"
-
-#include "pages/Pages.h"
-
 WebHandler webHandler;
-
 static AsyncWebServer server(80);
 
 WebHandler::WebHandler() 
