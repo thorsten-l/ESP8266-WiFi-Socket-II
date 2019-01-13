@@ -119,15 +119,15 @@ String setupProcessor(const String &var)
 
 void handleSetupPage(AsyncWebServerRequest *request)
 {
-if (!request->authenticate("admin", appcfg.admin_password))
-    {
-      return request->requestAuthentication();
-    }
+  if (!request->authenticate("admin", appcfg.admin_password))
+  {
+    return request->requestAuthentication();
+  }
 
-    AsyncWebServerResponse *response =
-        request->beginResponse_P(200, "text/html", SETUP_HTML, setupProcessor);
-    response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-    response->addHeader("Pragma", "no-cache");
-    response->addHeader("Expires", "0");
-    request->send(response);
+  AsyncWebServerResponse *response =
+      request->beginResponse_P(200, "text/html", SETUP_HTML, setupProcessor);
+  response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  response->addHeader("Pragma", "no-cache");
+  response->addHeader("Expires", "0");
+  request->send(response);
 }
