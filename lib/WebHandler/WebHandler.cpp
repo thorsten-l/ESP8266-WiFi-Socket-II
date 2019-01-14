@@ -2,6 +2,7 @@
 #include "pages/Pages.h"
 
 #include <ESP8266mDNS.h>
+#include <ESP8266HTTPUpdateServer.h>
 #include <AlexaHandler.hpp>
 #include <RelayHandler.hpp>
 
@@ -22,6 +23,7 @@ void WebHandler::setup()
   server.on("/info.html", HTTP_GET, handleInfoPage );
   server.on("/savecfg", HTTP_POST, handleSavePage);
   server.on("/info", HTTP_GET, handleJsonInfo );
+  server.on("/update-firmware", HTTP_POST, handleUpdateFirmware, handleUpdateProgressCB );
 
   server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request) {
     relayHandler.delayedOn();
@@ -88,4 +90,6 @@ void WebHandler::handle()
   {
     setup();
   }
+
+  MDNS.update();
 }

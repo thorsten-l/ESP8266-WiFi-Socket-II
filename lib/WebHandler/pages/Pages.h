@@ -25,4 +25,8 @@ void handleJsonInfo(AsyncWebServerRequest *request );
 
 void handleCssFile(AsyncWebServerRequest *request, const uint8_t *data, size_t length );
 
+void handleUpdateFirmware(AsyncWebServerRequest *request);
+void handleUpdateProgressCB(AsyncWebServerRequest *request, String filename,
+                               size_t index, uint8_t *data, size_t len,
+                               bool final);
 #endif
