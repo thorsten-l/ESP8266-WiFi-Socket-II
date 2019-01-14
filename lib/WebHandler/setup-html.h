@@ -74,7 +74,7 @@ const char SETUP_HTML[] PROGMEM =
   "<form class=\"pure-form pure-form-aligned\" method='POST' action='/update-firmware' enctype='multipart/form-data'>"
   "<fieldset>"
   "<legend>Upload new firmware</legend>"
-  "<div class=\"pure-control-group\"><label for=\"pgid34\">Firmware File</label><input class=\"pure-button\" id=\"pgid34\" type='file' name='update'></div>"
+  "<div class=\"pure-control-group\"><label for=\"pgid34\">Firmware File (" PIOENV_NAME ")</label><input class=\"pure-button\" id=\"pgid34\" type='file' name='update'></div>"
   "<p><input class=\"pure-button pure-button-primary\" type='submit' value='Upload'></p>"
   "</fieldset>"
   "</form>"
