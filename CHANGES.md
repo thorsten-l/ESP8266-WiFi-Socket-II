@@ -1,5 +1,9 @@
 # CHANGES
 
+## release 2.3.1
+
+- show PIOENV_NAME in firmware upload label
+
 ## release 2.3.0
 
 - update firmware over HTTP in setup page
