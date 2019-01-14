@@ -27,6 +27,7 @@ void handleUpdateProgressCB(AsyncWebServerRequest *request, String filename,
   else
   {
     Serial.printf("\rprogress: %u", Update.progress());
+    digitalWrite( WIFI_LED, 1 ^ digitalRead(WIFI_LED));
   }
 
   if (Update.write(data, len) != len)
@@ -41,10 +42,12 @@ void handleUpdateProgressCB(AsyncWebServerRequest *request, String filename,
 
     if (!Update.end(true))
     {
+      digitalWrite( WIFI_LED, WIFI_LED_ON );
       Update.printError(Serial);
     }
     else
     {
+      digitalWrite( WIFI_LED, WIFI_LED_OFF );
       updateSucceed = true;
       app.delayedSystemRestart();
       Serial.println("Update complete");
@@ -66,7 +69,7 @@ void handleUpdateFirmware(AsyncWebServerRequest *request)
 
   if( updateSucceed )
   {
-    response->print(F("Upload succeed... restart in about 5sec."));
+    response->print(F("Upload succeed... restart in about 15sec."));
   }
   else
   {
