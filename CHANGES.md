@@ -1,5 +1,13 @@
 # CHANGES
 
+## release 2.3.0
+
+- update firmware over HTTP in setup page
+- optimized platformio file structure
+- web pages (handler) are now in seperate files
+- added PIOENV_NAME to every platformio env
+- show pioenv_name, hostname, spiffs_total and spiffs_used in info json
+
 ## release 2.2.2
 
 - debug code removed
