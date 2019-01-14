@@ -1,6 +1,7 @@
 #include "pages/Pages.h"
 
 static bool updateSucceed;
+static int alter;
 
 void handleUpdateProgressCB(AsyncWebServerRequest *request, String filename,
                             size_t index, uint8_t *data, size_t len,
@@ -17,6 +18,7 @@ void handleUpdateProgressCB(AsyncWebServerRequest *request, String filename,
   {
     Serial.println("Update firmware via HTTP");
     updateSucceed = false;
+    alter = 0;
 
     Update.runAsync(true);
     if (!Update.begin(free_space))
@@ -27,7 +29,8 @@ void handleUpdateProgressCB(AsyncWebServerRequest *request, String filename,
   else
   {
     Serial.printf("\rprogress: %u", Update.progress());
-    digitalWrite( WIFI_LED, 1 ^ digitalRead(WIFI_LED));
+    alter ^= 1;
+    digitalWrite( WIFI_LED, alter );
   }
 
   if (Update.write(data, len) != len)
