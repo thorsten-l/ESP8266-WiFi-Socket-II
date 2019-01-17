@@ -1,5 +1,9 @@
 # CHANGES
 
+## release 2.4.0
+
+- html redesign of the setup page
+
 ## release 2.3.1
 
 - show PIOENV_NAME in firmware upload label
