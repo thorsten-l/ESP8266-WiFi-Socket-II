@@ -17,14 +17,34 @@ Top right menu button pressed
 
 ### Setup Page
 
-![setup01](./img/img03.png)
+![setup01](./img/img101.png)
 
-![setup02](./img/img04.png)
+#### Security
 
-![setup03](./img/img05.png)
+![setup02](./img/img102.png)
 
-![setup04](./img/img06.png)
+#### Network
+
+![setup03](./img/img103.png)
+
+![setup04](./img/img104.png)
+
+![setup04](./img/img105.png)
+
+#### Services
+
+![setup02](./img/img106.png)
+
+![setup03](./img/img107.png)
+
+![setup04](./img/img108.png)
+
+![setup04](./img/img109.png)
+
+#### Maintenance
+
+![setup02](./img/img110.png)
 
 ### Info Page
 
-![info page](./img/img07.png)
+![info page](./img/img111.png)
