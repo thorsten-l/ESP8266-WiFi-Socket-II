@@ -114,6 +114,10 @@ String setupProcessor(const String &var)
   if (var == "syslog_app_name")
     return String(appcfg.syslog_app_name);
 
+  // Firmware upload
+  if (var == "pioenv_name")
+    return String(PIOENV_NAME);
+
   return String();
 }
 
