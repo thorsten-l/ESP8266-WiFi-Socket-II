@@ -112,7 +112,7 @@ const char SETUP_HTML[] PROGMEM =
   "\n<p><input class=\"pure-button pure-button-primary\" type=\"submit\" value=\"Save Configuration\"></p>\n"
   "</form>\n"
 
-           "<div style='margin-top: 2em' class='accordion'>Maintanance</div>\n"
+           "<div style='margin-top: 2em' class='accordion'>Maintenance</div>\n"
             "<div class='panel sub-panel'>\n"
                 "<form class='pure-form pure-form-aligned' method='POST' action='/update-firmware' enctype='multipart/form-data'>\n"
                     "<fieldset>\n"
