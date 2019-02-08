@@ -91,7 +91,7 @@ void App::setup()
   digitalWrite(RELAY_TRIGGER_OFF, 1);
 #endif
 
-#if OBI_VERSION == 2
+#if OBI_VERSION == 2 || DEVELOPMENT_VERSION == 1
   pinMode(POWER_LED, OUTPUT);
   pinMode(RELAY_PIN, OUTPUT);
   digitalWrite(POWER_LED, 0);
