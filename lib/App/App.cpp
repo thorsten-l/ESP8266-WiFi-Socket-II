@@ -6,6 +6,46 @@ App app;
 AppConfig appcfg;
 AppConfig appcfgWR;
 
+static void showChipInfo()
+{
+  Serial.println("-- CHIPINFO --");
+  Serial.printf("Chip Id = %08X\n", ESP.getChipId());
+
+  Serial.printf("CPU Frequency = %dMHz\n", ESP.getCpuFreqMHz());
+
+  uint32_t realSize = ESP.getFlashChipRealSize();
+  uint32_t ideSize = ESP.getFlashChipSize();
+  FlashMode_t ideMode = ESP.getFlashChipMode();
+
+  Serial.printf("\nFlash real id:   %08X\n", ESP.getFlashChipId());
+  Serial.printf("Flash real size: %u\n", realSize);
+  Serial.printf("Flash ide  size: %u\n", ideSize);
+  Serial.printf("Flash chip speed: %u\n", ESP.getFlashChipSpeed());
+  Serial.printf("Flash ide mode:  %s\n",
+                (ideMode == FM_QIO
+                     ? "QIO"
+                     : ideMode == FM_QOUT
+                           ? "QOUT"
+                           : ideMode == FM_DIO
+                                 ? "DIO"
+                                 : ideMode == FM_DOUT ? "DOUT" : "UNKNOWN"));
+
+  if (ideSize != realSize)
+  {
+    Serial.println("Flash Chip configuration wrong!\n");
+  }
+  else
+  {
+    Serial.println("Flash Chip configuration ok.\n");
+  }
+
+  Serial.printf( "Free Heap         : %u\n", ESP.getFreeHeap());
+  Serial.printf( "Sketch Size       : %u\n", ESP.getSketchSize() );
+  Serial.printf( "Free Sketch Space : %u\n", ESP.getFreeSketchSpace() );
+
+  Serial.println();
+}
+
 App::App()
 {
   defaultConfig();
@@ -112,6 +152,8 @@ void App::setup()
   Serial.println(F(APP_NAME ", Version " APP_VERSION ", by " APP_AUTHOR));
   Serial.println("Build date: " __DATE__ " " __TIME__);
   Serial.printf("appcfg file size: %d bytes\n\n", sizeof(appcfg));
+
+  showChipInfo();
 
   if (digitalRead(POWER_BUTTON) == false)
   {
