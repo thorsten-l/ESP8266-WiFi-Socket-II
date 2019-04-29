@@ -1,5 +1,17 @@
 # CHANGES
 
+## release 2.4.2
+
+- show chipinfo added
+- new dns setting
+- platform version 2.0.4
+- initial travis configuration
+- additional vscode exceptions
+
+## release 2.4.1
+
+- Pin initialization for development version was missing
+
 ## release 2.4.0
 
 - html redesign of the setup page
