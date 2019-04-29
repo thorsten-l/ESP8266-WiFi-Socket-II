@@ -26,7 +26,7 @@ static void wifiInitStationMode()
   ESP.eraseConfig();
   delay(500);
 
-  LOG0("Starting Wifi in Station Mode");
+  LOG0("Starting Wifi in Station Mode\n");
   if (appcfg.net_mode == NET_MODE_STATIC)
   {
     LOG0("use static ip address");
@@ -38,8 +38,8 @@ static void wifiInitStationMode()
     mask.fromString(appcfg.net_mask);
     IPAddress dns;
     dns.fromString(appcfg.net_dns);
-    WiFi.config(host, gateway, mask);
-    WiFi.dnsIP(dns);
+    WiFi.config(host, gateway, mask, dns);
+    // DNS WiFi.dnsIP(dns); // platform <= espressif8266@1.8.0
   }
   else
   {
@@ -133,18 +133,11 @@ const bool WifiHandler::handle(time_t timestamp)
           strncpy(appcfg.net_mask, WiFi.subnetMask().toString().c_str(), 63);
           strncpy(appcfg.net_dns, WiFi.dnsIP().toString().c_str(), 63);
         }
-        else
-        {
-          Serial.println("setting dns server");
-          IPAddress dns;
-          dns.fromString(appcfg.net_dns);
-          WiFi.dnsIP(dns);
-        }
-
-        Serial.printf(" - host ip address: %s\n", appcfg.net_host);
-        Serial.printf(" - gateway: %s\n", appcfg.net_gateway);
-        Serial.printf(" - mask: %s\n", appcfg.net_mask);
-        Serial.printf(" - dns server: %s\n", appcfg.net_dns);
+        
+        Serial.printf(" - host ip address: %s\n", WiFi.localIP().toString().c_str());
+        Serial.printf(" - gateway: %s\n", WiFi.gatewayIP().toString().c_str());
+        Serial.printf(" - mask: %s\n", WiFi.subnetMask().toString().c_str());
+        Serial.printf(" - dns server: %s\n", WiFi.dnsIP().toString().c_str());
 
         if (appcfg.syslog_enabled)
         {
