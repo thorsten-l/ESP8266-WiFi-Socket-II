@@ -1,5 +1,10 @@
 # CHANGES
 
+## release 2.5.0
+
+- reset firmware to system defaults added in setup page
+- paramBool function moved to WebUtils
+
 ## release 2.4.2
 
 - show chipinfo added

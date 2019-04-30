@@ -7,7 +7,7 @@
 #define LOG1( format, x) Serial.printf( "(%ld) " format, millis(), x )
 
 #define APP_NAME "WiFi Socket II"
-#define APP_VERSION "2.4.2"
+#define APP_VERSION "2.5.0"
 #define APP_AUTHOR "Dr. Thorsten Ludewig <t.ludewig@gmail.com>"
 #define APP_CONFIG_FILE "/config.bin"
 
@@ -96,7 +96,6 @@ private:
   bool doSystemRestart;
   time_t systemRestartTimestamp;
 
-  void defaultConfig();
   void loadConfig();
   void restartSystem();
 
@@ -107,6 +106,7 @@ public:
   App();
 
   void setup();
+  void defaultConfig();
   void writeConfig();
   void printConfig();
   void delayedSystemRestart();
