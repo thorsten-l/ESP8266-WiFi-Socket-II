@@ -24,6 +24,7 @@ void WebHandler::setup()
   server.on("/savecfg", HTTP_POST, handleSavePage);
   server.on("/info", HTTP_GET, handleJsonInfo );
   server.on("/update-firmware", HTTP_POST, handleUpdateFirmware, handleUpdateProgressCB );
+  server.on("/reset-firmware", HTTP_POST, handleResetFirmware );
 
   server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request) {
     relayHandler.delayedOn();

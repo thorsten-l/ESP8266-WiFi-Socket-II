@@ -14,6 +14,7 @@
 #define JSON_RELAY_STATE 3
 
 void prLegend(AsyncResponseStream *response, const char *name);
+bool paramBool(AsyncWebServerRequest *request, const char *paramName);
 
 void handleRootPage(AsyncWebServerRequest *request);
 void handleInfoPage(AsyncWebServerRequest *request);
@@ -29,4 +30,7 @@ void handleUpdateFirmware(AsyncWebServerRequest *request);
 void handleUpdateProgressCB(AsyncWebServerRequest *request, String filename,
                                size_t index, uint8_t *data, size_t len,
                                bool final);
+
+void handleResetFirmware(AsyncWebServerRequest *request);
+
 #endif

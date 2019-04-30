@@ -124,6 +124,17 @@ const char SETUP_HTML[] PROGMEM =
                         "<p><input class='pure-button pure-button-primary' type='submit' value='Upload'></p>\n"
                     "</fieldset>\n"
                 "</form>\n"
+
+                "<form class='pure-form pure-form-aligned' method='POST' action='/reset-firmware' >\n"
+                    "<fieldset>\n"
+                        "<legend>Firmware Reset</legend>\n"
+                        "<div>\n"
+                            "<div class='pure-control-group'><label for='pgid35'>Really reset to system defaults?</label><select id='pgid35' name='doreset'><option selected='' value='false'>No</option><option value='true'>Yes</option></select></div>\n"
+                        "</div>\n"
+                        "<p><input class='pure-button pure-button-primary' type='submit' value='Reset'></p>\n"
+                    "</fieldset>\n"
+                "</form>\n"
+
             "</div>\n"
 
   "<p>&nbsp;</p></div>\n"
