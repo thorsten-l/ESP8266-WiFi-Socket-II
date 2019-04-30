@@ -37,22 +37,6 @@ int paramInt(AsyncWebServerRequest *request, const char *paramName,
   return value;
 }
 
-bool paramBool(AsyncWebServerRequest *request, const char *paramName)
-{
-  bool value = false;
-
-  if (request->hasParam(paramName, true))
-  {
-    AsyncWebParameter *p = request->getParam(paramName, true);
-    const char *pv = p->value().c_str();
-    if (pv != 0 && strlen(pv) > 0)
-    {
-      value = strcmp("true", pv) == 0;
-    }
-  }
-  return value;
-}
-
 void handleSavePage(AsyncWebServerRequest *request)
 {
   if (!request->authenticate("admin", appcfg.admin_password))
