@@ -10,6 +10,7 @@ void OpenHabHandler::sendValueV1( const char* value )
 {
   LOG1( "OpenHabHandler::sendValueV1 : %s\n", value );
 
+  WiFiClient client;
   HTTPClient http;
   char urlBuffer[256];
 
@@ -18,7 +19,7 @@ void OpenHabHandler::sendValueV1( const char* value )
 
   LOG1("URL=%s\n",urlBuffer);
 
-  http.begin( urlBuffer );
+  http.begin( client, urlBuffer );
   if ( appcfg.ohab_useauth )
   {
     http.setAuthorization(appcfg.ohab_user, appcfg.ohab_password);
@@ -47,6 +48,7 @@ void OpenHabHandler::sendValueV2( const char* value )
 {
   LOG1( "OpenHabHandler::sendValueV2 : %s\n", value );
 
+  WiFiClient client;
   HTTPClient http;
   char urlBuffer[256];
 
@@ -55,7 +57,7 @@ void OpenHabHandler::sendValueV2( const char* value )
 
   LOG1("URL=%s\n",urlBuffer);
 
-  http.begin( urlBuffer );
+  http.begin( client, urlBuffer );
   http.addHeader("Cache-Control", "no-cache");
   http.addHeader("Accept", "application/json");
   http.addHeader("Content-Type", "text/plain");
