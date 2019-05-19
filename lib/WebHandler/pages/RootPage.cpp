@@ -72,7 +72,9 @@ void handleRootPage(AsyncWebServerRequest *request)
       "{e.textContent=\"Power is OFF\";e.style=\"background-color: "
       "#ff8080\";}});} setInterval(getPowerState,10000);</script>");
 
+#ifdef BW_SHP6
   response->print( "<script>function getPowerState2(){var e=document.getElementById('pgid0'),t=document.getElementById('pgid1'),n=document.getElementById('pgid2');fetch('/state').then(resp=>resp.json()).then(function(o){e.value=o.voltage_v.toFixed(1)+'V',t.value=o.current_a.toFixed(2)+'A',n.value=o.power_va.toFixed(1)+'W'})}setInterval(getPowerState2,5e3);</script>" );
+#endif
 
   response->print(TEMPLATE_FOOTER);
   request->send(response);
