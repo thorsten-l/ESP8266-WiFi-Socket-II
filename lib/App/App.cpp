@@ -118,7 +118,7 @@ void App::setup()
 
   pinMode(POWER_BUTTON, INPUT_PULLUP);
   pinMode(WIFI_LED, OUTPUT);
-  digitalWrite( WIFI_LED, WIFI_LED_OFF );
+  digitalWrite(WIFI_LED, WIFI_LED_OFF);
 
 #if OBI_VERSION == 1
   pinMode(RELAY_TRIGGER_OFF, OUTPUT);
@@ -136,6 +136,13 @@ void App::setup()
   pinMode(RELAY_PIN, OUTPUT);
   digitalWrite(POWER_LED, 0);
   digitalWrite(RELAY_PIN, 0);
+#endif
+
+#ifdef BW_SHP6
+  pinMode(POWER_LED, OUTPUT);
+  pinMode(RELAY_PIN, OUTPUT);
+  digitalWrite(POWER_LED, WIFI_LED_OFF );
+  digitalWrite(RELAY_PIN, LOW );
 #endif
 
   for (int i = 0; i < 5; i++)
@@ -157,7 +164,6 @@ void App::setup()
 
   if (digitalRead(POWER_BUTTON) == false)
   {
-
     Serial.println();
     LOG0("*** RESET appcfguration ***\n");
     Serial.println();
@@ -340,4 +346,6 @@ void App::handle()
     writeConfig();
     restartSystem();
   }
+  
+  delay(5); // time for IP stack
 }

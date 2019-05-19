@@ -29,3 +29,19 @@ bool paramBool(AsyncWebServerRequest *request, const char *paramName)
   }
   return value;
 }
+
+void prGroupLabel( AsyncResponseStream *response, int id, const char *label )
+{
+  response->printf(
+    "<div class='pure-control-group'>"
+      "<label for='pgid%d'>%s</label>", id, label );
+}
+
+void prTextGroupReadOnly( AsyncResponseStream *response, int id, const char *label,
+  const char *value )
+{
+  prGroupLabel( response, id, label );
+  response->printf(
+      "<input id='pgid%d' type='text' maxlength='64' readonly value='%s'>"
+    "</div>", id, value );
+}

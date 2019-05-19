@@ -7,6 +7,9 @@
 #include <RelayHandler.hpp>
 #include <WebHandler.hpp>
 #include <WifiHandler.hpp>
+#ifdef BW_SHP6
+#include <Hlw8012Handler.hpp>
+#endif
 
 time_t lifeTicker;
 time_t maxLoopTime;
@@ -15,7 +18,7 @@ time_t thisLoopTimestamp;
 time_t debounceTimestamp;
 bool buttonPressed;
 
-void powerButtonPressed()
+void ICACHE_RAM_ATTR powerButtonPressed()
 {
   if ((millis() - debounceTimestamp > 500)) // button debouncing
   {
@@ -36,6 +39,10 @@ void setup()
 
   attachInterrupt(digitalPinToInterrupt(POWER_BUTTON), &powerButtonPressed,
                   FALLING);
+
+#ifdef BW_SHP6
+  hlw8012Handler.setup();
+#endif
 
   maxLoopTime = 0l;
   lifeTicker = lastLoopTimestamp = millis();
@@ -69,6 +76,10 @@ void loop()
     alexaHandler.handle();
     mqttHandler.handle();
   }
+
+#ifdef BW_SHP6
+  hlw8012Handler.handle(thisLoopTimestamp);
+#endif
 
   relayHandler.handle();
   app.handle();

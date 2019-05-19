@@ -13,9 +13,12 @@
 #define JSON_RELAY_OFF   2
 #define JSON_RELAY_STATE 3
 
+void prGroupLabel( AsyncResponseStream *response, int id, const char *label );
 void prLegend(AsyncResponseStream *response, const char *name);
 bool paramBool(AsyncWebServerRequest *request, const char *paramName);
-
+void prTextGroupReadOnly( AsyncResponseStream *response, int id, const char *label,
+  const char *value );
+   
 void handleRootPage(AsyncWebServerRequest *request);
 void handleInfoPage(AsyncWebServerRequest *request);
 void handleSetupPage(AsyncWebServerRequest *request);

@@ -32,6 +32,11 @@ void RelayHandler::on()
       digitalWrite( RELAY_PIN, 1 );
     #endif
 
+    #ifdef BW_SHP6
+      digitalWrite( POWER_LED, WIFI_LED_ON );
+      digitalWrite( RELAY_PIN, HIGH );
+    #endif
+
     powerOn = true;
     openHabHandler.sendValue("ON");
     mqttHandler.sendValue("ON");
@@ -55,6 +60,11 @@ void RelayHandler::off()
     #if OBI_VERSION == 2 || DEVELOPMENT_VERSION == 1
       digitalWrite( POWER_LED, 0 );
       digitalWrite( RELAY_PIN, 0 );
+    #endif
+
+    #ifdef BW_SHP6
+      digitalWrite( POWER_LED, WIFI_LED_OFF );
+      digitalWrite( RELAY_PIN, LOW );
     #endif
 
     powerOn = false;

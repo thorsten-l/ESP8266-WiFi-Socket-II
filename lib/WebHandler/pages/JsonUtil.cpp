@@ -1,5 +1,9 @@
+#include <App.hpp>
 #include "pages/Pages.h"
 #include <RelayHandler.hpp>
+#ifdef BW_SHP6
+#include <Hlw8012Handler.hpp>
+#endif
 
 void handleJsonStatus(AsyncWebServerRequest *request, int json_state)
 {
@@ -18,6 +22,16 @@ void handleJsonStatus(AsyncWebServerRequest *request, int json_state)
   default:
     message += (relayHandler.isPowerOn()) ? "1" : "0";
   };
+
+#ifdef BW_SHP6
+  char buffer[256];
+  sprintf( buffer, ",\"voltage_v\":%.2f,\"current_a\":%.2f,\"power_va\":%.2f", 
+    hlw8012Handler.getVoltage(), hlw8012Handler.getCurrent(), 
+    hlw8012Handler.getPower()
+  );
+  String m2(buffer);
+  message += m2;
+#endif
 
   message += "}\r\n";
 
@@ -45,13 +59,17 @@ void handleJsonInfo(AsyncWebServerRequest *request)
           "\"build_time\":\"%s\","
           "\"spiffs_total\":%u,"
           "\"spiffs_used\":%u,"
-          "\"free_heap\":%u"
+          "\"free_heap\":%u,"
+          "\"sketch_size\":%u,"
+          "\"free_sketch_space\":%u"
           "}",
           appcfg.ota_hostname, PIOENV_NAME, ESP.getChipId(),
           ESP.getCpuFreqMHz(), ESP.getFlashChipRealSize(),
           ESP.getFlashChipSpeed(), ESP.getFlashChipSize(), APP_NAME,
           APP_VERSION, __DATE__, __TIME__, app.fsTotalBytes, app.fsUsedBytes,
-          ESP.getFreeHeap());
+          ESP.getFreeHeap(), ESP.getSketchSize(), ESP.getFreeSketchSpace()
+          );
+
   String message(buffer);
 
   AsyncWebServerResponse *response =

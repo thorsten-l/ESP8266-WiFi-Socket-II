@@ -22,9 +22,12 @@ static void wifiOff()
 
 static void wifiInitStationMode()
 {
-  WiFi.disconnect();
-  ESP.eraseConfig();
-  delay(500);
+  WiFi.persistent(false);
+  WiFi.disconnect(true);
+  delay(200);
+  WiFi.mode(WIFI_STA);
+  WiFi.hostname(appcfg.ota_hostname);
+  WiFi.setSleepMode(WIFI_NONE_SLEEP);
 
   LOG0("Starting Wifi in Station Mode\n");
   if (appcfg.net_mode == NET_MODE_STATIC)
@@ -46,11 +49,7 @@ static void wifiInitStationMode()
     LOG0("use dhcp server");
   }
 
-  WiFi.begin();
-  WiFi.hostname(appcfg.ota_hostname);
   WiFi.begin( appcfg.wifi_ssid, appcfg.wifi_password );
-  WiFi.setAutoConnect(true);
-  WiFi.setAutoReconnect(true);
 }
 
 void WifiHandler::setup()
