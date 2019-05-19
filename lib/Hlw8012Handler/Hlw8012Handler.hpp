@@ -1,3 +1,4 @@
+#ifdef BW_SHP6
 #ifndef __HLW8012_HANDLER_H__
 #define __HLW8012_HANDLER_H__
 
@@ -24,4 +25,5 @@ public:
 extern Hlw8012Handler hlw8012Handler;
 extern HLW8012 hlw8012;
 
+#endif
 #endif

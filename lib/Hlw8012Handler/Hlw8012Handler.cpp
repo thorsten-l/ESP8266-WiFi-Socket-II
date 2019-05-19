@@ -1,3 +1,4 @@
+#ifdef BW_SHP6
 #include "Hlw8012Handler.hpp"
 #include <App.hpp>
 #include <ESP8266WiFi.h>
@@ -73,3 +74,5 @@ double Hlw8012Handler::getPower()
 {
   return (double)voltage * current;
 }
+
+#endif
