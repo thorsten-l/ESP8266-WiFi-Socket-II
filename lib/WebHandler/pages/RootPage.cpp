@@ -45,6 +45,11 @@ void handleRootPage(AsyncWebServerRequest *request)
                    webPowerState ? "80ff80" : "ff8080",
                    webPowerState ? "ON" : "OFF");
 
+  prLegend(response, "Actions");
+  response->print(
+      "<a href=\"/?power=ON\" class=\"pure-button button-on\">ON</a>"
+      "<a href=\"/?power=OFF\" class=\"pure-button button-off\">OFF</a>");
+
 #ifdef BW_SHP6
   prLegend(response, "Power");
   int rid=0;
@@ -56,11 +61,6 @@ void handleRootPage(AsyncWebServerRequest *request)
   sprintf( valueBuffer, "%0.1fW", hlw8012Handler.getPower() );
   prTextGroupReadOnly( response, rid++, "Power", valueBuffer );
 #endif
-
-  prLegend(response, "Actions");
-  response->print(
-      "<a href=\"/?power=ON\" class=\"pure-button button-on\">ON</a>"
-      "<a href=\"/?power=OFF\" class=\"pure-button button-off\">OFF</a>");
 
   response->print("</fieldset></form>");
 
