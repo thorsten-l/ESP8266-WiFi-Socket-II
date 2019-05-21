@@ -1,6 +1,7 @@
+#include <App.hpp>
 #include "pages/Pages.h"
 #include <RelayHandler.hpp>
-#ifdef BW_SHP6
+#ifdef HAVE_HLW8012
 #include <Hlw8012Handler.hpp>
 #endif
 
@@ -50,7 +51,7 @@ void handleRootPage(AsyncWebServerRequest *request)
       "<a href=\"/?power=ON\" class=\"pure-button button-on\">ON</a>"
       "<a href=\"/?power=OFF\" class=\"pure-button button-off\">OFF</a>");
 
-#ifdef BW_SHP6
+#ifdef HAVE_ENERGY_SENSOR
   prLegend(response, "Power");
   int rid=0;
   char valueBuffer[32];
@@ -64,6 +65,25 @@ void handleRootPage(AsyncWebServerRequest *request)
 
   response->print("</fieldset></form>");
 
+#ifdef HAVE_ENERGY_SENSOR
+  response->print( "<script>function getPowerState(){"
+    "var v=document.getElementById('pgid0'),"
+        "c=document.getElementById('pgid1'),"
+        "p=document.getElementById('pgid2');"
+        "s=document.getElementById('idpwr');"
+    "fetch('/state').then(resp=>resp.json()).then(function(o){"
+      "v.value=o.voltage.toFixed(1)+'V',"
+      "c.value=o.current.toFixed(2)+'A',"
+      "p.value=o.power.toFixed(1)+'W';"
+      "if(o.state===1){"
+         "s.textContent=\"Power is ON\";"
+         "s.style=\"background-color: #80ff80\";"
+      "} else { "
+         "s.textContent=\"Power is OFF\";"
+         "s.style=\"background-color: #ff8080\";"
+      "}"
+    "})}setInterval(getPowerState,5e3);</script>" );
+#else
   response->print(
       "<script>function getPowerState(){var e = "
       "document.getElementById(\"idpwr\");fetch(\"/state\").then((resp) => "
@@ -71,9 +91,6 @@ void handleRootPage(AsyncWebServerRequest *request)
       "\"Power is ON\";e.style=\"background-color: #80ff80\";} else "
       "{e.textContent=\"Power is OFF\";e.style=\"background-color: "
       "#ff8080\";}});} setInterval(getPowerState,10000);</script>");
-
-#ifdef BW_SHP6
-  response->print( "<script>function getPowerState2(){var e=document.getElementById('pgid0'),t=document.getElementById('pgid1'),n=document.getElementById('pgid2');fetch('/state').then(resp=>resp.json()).then(function(o){e.value=o.voltage_v.toFixed(1)+'V',t.value=o.current_a.toFixed(2)+'A',n.value=o.power_va.toFixed(1)+'W'})}setInterval(getPowerState2,5e3);</script>" );
 #endif
 
   response->print(TEMPLATE_FOOTER);
