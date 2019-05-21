@@ -40,5 +40,5 @@ install:
   - platformio update
 
 script:
-  - platformio run -e dev1 -e dev1lite -e obi_v1 -e obi_v2
+  - platformio run -e dev1 -e dev1lite -e obi_v1 -e obi_v2 -e bw_shp6
 
