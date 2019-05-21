@@ -200,7 +200,11 @@ void App::setup()
       LOG0("File system format finished.\n");
       SPIFFS.end();
     }
-
+    else
+    {
+      LOG0( "\nERROR: format filesystem.\n" );
+    }
+    
     digitalWrite(WIFI_LED, WIFI_LED_OFF);
     restartSystem();
   }
