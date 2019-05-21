@@ -52,7 +52,7 @@ void handleRootPage(AsyncWebServerRequest *request)
       "<a href=\"/?power=OFF\" class=\"pure-button button-off\">OFF</a>");
 
 #ifdef HAVE_ENERGY_SENSOR
-  prLegend(response, "Power");
+  prLegend(response, "Energy Sensor");
   int rid=0;
   char valueBuffer[32];
   sprintf( valueBuffer, "%0.1fV", hlw8012Handler.getVoltage() );
