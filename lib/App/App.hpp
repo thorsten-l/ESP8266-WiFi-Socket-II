@@ -7,7 +7,7 @@
 #define LOG1( format, x) Serial.printf( "(%ld) " format, millis(), x )
 
 #define APP_NAME "WiFi Socket II"
-#define APP_VERSION "2.6.0beta02"
+#define APP_VERSION "2.6.0beta03"
 #define APP_AUTHOR "Dr. Thorsten Ludewig <t.ludewig@gmail.com>"
 #define APP_CONFIG_FILE "/config.bin"
 
@@ -48,6 +48,8 @@
   #define WIFI_LED_ON   0
   #define WIFI_LED_OFF  1
 
+  #define HAVE_ENERGY_SENSOR
+  #define HAVE_HLW8012
   #define SEL_PIN 12
   #define CF1_PIN 14
   #define CF_PIN 5
@@ -84,7 +86,12 @@ typedef struct appconfig
   char ohab_user[64];
   char ohab_password[64];
   char ohab_itemname[64];
-
+#ifdef HAVE_ENERGY_SENSOR
+  char ohab_item_voltage[64];
+  char ohab_item_current[64];
+  char ohab_item_power[64];
+  time_t ohab_sending_interval;
+#endif
   bool alexa_enabled;
   char alexa_devicename[64];
 
@@ -97,6 +104,13 @@ typedef struct appconfig
   char mqtt_password[64];
   char mqtt_intopic[64];
   char mqtt_outtopic[64];
+#ifdef HAVE_ENERGY_SENSOR
+  char mqtt_topic_voltage[64];
+  char mqtt_topic_current[64];
+  char mqtt_topic_power[64];
+  char mqtt_topic_json[64];
+  time_t mqtt_sending_interval;
+#endif
 
   bool syslog_enabled;
   char syslog_host[64];
