@@ -1,4 +1,5 @@
-#ifdef BW_SHP6
+#include <App.hpp>
+#ifdef HAVE_HLW8012
 #ifndef __HLW8012_HANDLER_H__
 #define __HLW8012_HANDLER_H__
 

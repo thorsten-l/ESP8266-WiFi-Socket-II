@@ -1,6 +1,6 @@
-#ifdef BW_SHP6
-#include "Hlw8012Handler.hpp"
 #include <App.hpp>
+#ifdef HAVE_HLW8012
+#include "Hlw8012Handler.hpp"
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <HLW8012.h>
