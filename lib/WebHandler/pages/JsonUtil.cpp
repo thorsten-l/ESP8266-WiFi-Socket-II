@@ -1,34 +1,46 @@
 #include <App.hpp>
 #include "pages/Pages.h"
 #include <RelayHandler.hpp>
-#ifdef BW_SHP6
 #include <Hlw8012Handler.hpp>
-#endif
 
 void handleJsonStatus(AsyncWebServerRequest *request, int json_state)
 {
+  bool powerIsOn;
+
   String message = F("{\"state\":");
 
   switch (json_state)
   {
   case JSON_RELAY_ON:
     message += "1";
+    powerIsOn = true;
     break;
 
   case JSON_RELAY_OFF:
     message += "0";
+    powerIsOn = false;
     break;
 
   default:
-    message += (relayHandler.isPowerOn()) ? "1" : "0";
+    powerIsOn = relayHandler.isPowerOn();
+    message += (powerIsOn) ? "1" : "0";
   };
 
-#ifdef BW_SHP6
+#ifdef HAVE_ENERGY_SENSOR
   char buffer[256];
-  sprintf( buffer, ",\"voltage\":%.2f,\"current\":%.2f,\"power\":%.2f", 
-    hlw8012Handler.getVoltage(), hlw8012Handler.getCurrent(), 
-    hlw8012Handler.getPower()
-  );
+  if ( powerIsOn )
+  {
+    sprintf( buffer, ",\"voltage\":%.2f,\"current\":%.2f,\"power\":%.2f", 
+      hlw8012Handler.getVoltage(), hlw8012Handler.getCurrent(), 
+      hlw8012Handler.getPower()
+    );
+  }
+  else
+  {
+    sprintf( buffer, ",\"voltage\":%.2f,\"current\":0.0,\"power\":0.0", 
+      hlw8012Handler.getVoltage()
+    );
+  }
   String m2(buffer);
   message += m2;
 #endif
