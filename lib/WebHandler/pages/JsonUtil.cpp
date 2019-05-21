@@ -25,7 +25,7 @@ void handleJsonStatus(AsyncWebServerRequest *request, int json_state)
 
 #ifdef BW_SHP6
   char buffer[256];
-  sprintf( buffer, ",\"voltage_v\":%.2f,\"current_a\":%.2f,\"power_va\":%.2f", 
+  sprintf( buffer, ",\"voltage\":%.2f,\"current\":%.2f,\"power\":%.2f", 
     hlw8012Handler.getVoltage(), hlw8012Handler.getCurrent(), 
     hlw8012Handler.getPower()
   );
