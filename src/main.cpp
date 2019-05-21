@@ -7,9 +7,7 @@
 #include <RelayHandler.hpp>
 #include <WebHandler.hpp>
 #include <WifiHandler.hpp>
-#ifdef BW_SHP6
 #include <Hlw8012Handler.hpp>
-#endif
 
 time_t lifeTicker;
 time_t maxLoopTime;
@@ -40,7 +38,7 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(POWER_BUTTON), &powerButtonPressed,
                   FALLING);
 
-#ifdef BW_SHP6
+#ifdef HAVE_HLW8012
   hlw8012Handler.setup();
 #endif
 
@@ -77,7 +75,7 @@ void loop()
     mqttHandler.handle();
   }
 
-#ifdef BW_SHP6
+#ifdef HAVE_HLW8012
   hlw8012Handler.handle(thisLoopTimestamp);
 #endif
 
