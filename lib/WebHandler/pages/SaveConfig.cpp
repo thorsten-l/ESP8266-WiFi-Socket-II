@@ -92,6 +92,13 @@ void handleSavePage(AsyncWebServerRequest *request)
   paramChars(request, appcfgWR.ohab_password, "ohab_password",
              DEFAULT_OHAB_PASSWORD);
 
+#ifdef HAVE_ENERGY_SENSOR
+  paramChars(request, appcfgWR.ohab_item_voltage, "ohab_item_voltage", DEFAULT_OHAB_ITEM_VOLTAGE);
+  paramChars(request, appcfgWR.ohab_item_current, "ohab_item_current", DEFAULT_OHAB_ITEM_CURRENT);
+  paramChars(request, appcfgWR.ohab_item_power, "ohab_item_power", DEFAULT_OHAB_ITEM_POWER);
+  appcfgWR.ohab_sending_interval = paramInt(request, "ohab_sending_interval", DEFAULT_OHAB_SENDING_INTERVAL);
+#endif
+
   // Alexa
   appcfgWR.alexa_enabled = paramBool(request, "alexa_enabled");
   paramChars(request, appcfgWR.alexa_devicename, "alexa_devicename",
@@ -111,6 +118,14 @@ void handleSavePage(AsyncWebServerRequest *request)
              DEFAULT_MQTT_INTOPIC);
   paramChars(request, appcfgWR.mqtt_outtopic, "mqtt_outtopic",
              DEFAULT_MQTT_OUTTOPIC);
+
+#ifdef HAVE_ENERGY_SENSOR
+  paramChars(request, appcfgWR.mqtt_topic_voltage, "mqtt_topic_voltage", DEFAULT_MQTT_TOPIC_VOLTAGE);
+  paramChars(request, appcfgWR.mqtt_topic_current, "mqtt_topic_current", DEFAULT_MQTT_TOPIC_CURRENT);
+  paramChars(request, appcfgWR.mqtt_topic_power, "mqtt_topic_power", DEFAULT_MQTT_TOPIC_POWER);
+  paramChars(request, appcfgWR.mqtt_topic_json, "mqtt_topic_json", DEFAULT_MQTT_TOPIC_JSON);
+  appcfgWR.mqtt_sending_interval = paramInt(request, "mqtt_sending_interval", DEFAULT_MQTT_SENDING_INTERVAL);
+#endif
 
   // Syslog
   appcfgWR.syslog_enabled = paramBool(request, "syslog_enabled");

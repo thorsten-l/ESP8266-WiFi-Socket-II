@@ -26,6 +26,10 @@
 #define DEFAULT_OHAB_USER "user"
 #define DEFAULT_OHAB_PASSWORD "password"
 #define DEFAULT_OHAB_ITEMNAME "WifiSocket1"
+#define DEFAULT_OHAB_ITEM_VOLTAGE "WifiSocket1Voltage"
+#define DEFAULT_OHAB_ITEM_CURRENT "WifiSocket1Current"
+#define DEFAULT_OHAB_ITEM_POWER "WifiSocket1Power"
+#define DEFAULT_OHAB_SENDING_INTERVAL 60
 
 #define DEFAULT_ALEXA_ENABLED false
 #define DEFAULT_ALEXA_DEVICENAME "Socket"
@@ -39,6 +43,11 @@
 #define DEFAULT_MQTT_PASSWORD "password"
 #define DEFAULT_MQTT_INTOPIC "socket1/in"
 #define DEFAULT_MQTT_OUTTOPIC "socket1/out"
+#define DEFAULT_MQTT_TOPIC_VOLTAGE "socket1/voltage"
+#define DEFAULT_MQTT_TOPIC_CURRENT "socket1/current"
+#define DEFAULT_MQTT_TOPIC_POWER "socket1/power"
+#define DEFAULT_MQTT_TOPIC_JSON "socket1/json"
+#define DEFAULT_MQTT_SENDING_INTERVAL 60
 
 #define DEFAULT_SYSLOG_ENABLED false
 #define DEFAULT_SYSLOG_HOST "192.168.1.1"

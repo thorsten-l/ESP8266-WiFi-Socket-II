@@ -78,6 +78,17 @@ String setupProcessor(const String &var)
   if (var == "ohab_password")
     return String(appcfg.ohab_password);
 
+#ifdef HAVE_ENERGY_SENSOR
+  if (var == "ohab_item_voltage")
+    return String(appcfg.ohab_item_voltage);
+  if (var == "ohab_item_current")
+    return String(appcfg.ohab_item_current);
+  if (var == "ohab_item_power")
+    return String(appcfg.ohab_item_power);
+  if (var == "ohab_sending_interval")
+    return String(appcfg.ohab_sending_interval);
+#endif
+
   // Alexa
   if (var == "alexa_enabled" && appcfg.alexa_enabled == true)
     return checked;
@@ -103,6 +114,18 @@ String setupProcessor(const String &var)
     return String(appcfg.mqtt_intopic);
   if (var == "mqtt_outtopic")
     return String(appcfg.mqtt_outtopic);
+#ifdef HAVE_ENERGY_SENSOR
+  if (var == "mqtt_topic_voltage")
+    return String(appcfg.mqtt_topic_voltage);
+  if (var == "mqtt_topic_current")
+    return String(appcfg.mqtt_topic_current);
+  if (var == "mqtt_topic_power")
+    return String(appcfg.mqtt_topic_power);
+  if (var == "mqtt_topic_json")
+    return String(appcfg.mqtt_topic_json);
+  if (var == "mqtt_sending_interval")
+    return String(appcfg.mqtt_sending_interval);
+#endif
 
   // Syslog
   if (var == "syslog_enabled" && appcfg.syslog_enabled == true)

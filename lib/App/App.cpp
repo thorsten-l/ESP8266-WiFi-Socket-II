@@ -96,6 +96,19 @@ void App::defaultConfig()
   appcfg.syslog_port = DEFAULT_SYSLOG_PORT;
   strncpy(appcfg.syslog_app_name, DEFAULT_SYSLOG_APP_NAME, 63);
 
+#ifdef HAVE_ENERGY_SENSOR
+  strncpy(appcfg.ohab_item_voltage, DEFAULT_OHAB_ITEM_VOLTAGE, 63);
+  strncpy(appcfg.ohab_item_current, DEFAULT_OHAB_ITEM_CURRENT, 63);
+  strncpy(appcfg.ohab_item_power, DEFAULT_OHAB_ITEM_POWER, 63);
+  appcfg.ohab_sending_interval = DEFAULT_OHAB_SENDING_INTERVAL;
+  
+  strncpy(appcfg.mqtt_topic_voltage, DEFAULT_MQTT_TOPIC_VOLTAGE, 63);
+  strncpy(appcfg.mqtt_topic_current, DEFAULT_MQTT_TOPIC_CURRENT, 63);
+  strncpy(appcfg.mqtt_topic_power, DEFAULT_MQTT_TOPIC_POWER, 63);
+  strncpy(appcfg.mqtt_topic_json, DEFAULT_MQTT_TOPIC_JSON, 63);
+  appcfg.mqtt_sending_interval = DEFAULT_MQTT_SENDING_INTERVAL;
+#endif
+
   memcpy(&appcfgWR, &appcfg, sizeof(appcfg));
 }
 
