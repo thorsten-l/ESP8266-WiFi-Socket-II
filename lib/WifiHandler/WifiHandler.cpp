@@ -25,6 +25,7 @@ static void wifiInitStationMode()
   WiFi.persistent(false);
   WiFi.disconnect(true);
   delay(200);
+  WiFi.begin();
   WiFi.mode(WIFI_STA);
   WiFi.hostname(appcfg.ota_hostname);
   WiFi.setSleepMode(WIFI_NONE_SLEEP);
