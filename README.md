@@ -1,10 +1,10 @@
 # ESP8266-WiFi-Socket-II
 
-Alternative Firmware for `https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806` (OBI Version 2)
+Alternative Firmware for [https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806](https://www.blitzwolf.com/2300W-EU-WIFI-Smart-Socket-p-300.html) (BlitzWolf SHP6)
 
-and
+Alternative Firmware for [https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806](https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806) (OBI Version 2)
 
-Alternative Firmware for `https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko/p/2291706` (OBI Version 1)
+Alternative Firmware for [https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko/p/2291706](https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko/p/2291706) (OBI Version 1)
 
 ## Precompiled Firmware
 
@@ -49,12 +49,16 @@ After a firmware reset the following values are set.
 | OTA Password | otapass | OTA firmware upload password |
 | OpenHAB Callback Enabled | **false** | |
 | OpenHAB Version | 1 | Callback for OpenHAB version 1 or 2 |
+| OpenHAB Item Voltage |  PowerMeter1Voltage | |
+| OpenHAB Item Current |  PowerMeter1Current | |
+| OpenHAB Item Power |  PowerMeter1Power | |
 | OpenHAB Item Name | WifiSocket1 | |
 | OpenHAB Host | 192.168.1.1 | |
 | OpenHAB Port | 80 | |
 | OpenHAB Use Authentication | false | |
 | OpenHAB User | user |  |
 | OpenHAB Password | password | |
+| OpenHAB SendingInterval | 60 | interval time in seconds (0=disable) |
 | Alexa enabled | **false** |  |
 | Alexa devicename | Socket | Devicename for Alexa HA |
 | MQTT Enabled | **false** |  |
@@ -66,6 +70,11 @@ After a firmware reset the following values are set.
 | MQTT Password | password | |
 | MQTT In Topic | socket1/in | receiving commands |
 | MQTT Out Topic | socket1/out | sending callback |
+| MQTT Topic Voltage| powermeter1/voltage | ('-' = disables this topic) |
+| MQTT Topic Current| powermeter1/current | ('-' = disables this topic) |
+| MQTT Topic Power| powermeter1/power | ('-' = disables this topic) |
+| MQTT Topic JSON| powermeter1/json | sending all values in JSON format |
+| MQTT Sending Interval | 60 | interval time in seconds (0=disable) |
 | Syslog Enabled | **false** |  |
 | Syslog Host | 192.168.1.1 | |
 | Syslog Port (TCP) | 514 | |
@@ -76,6 +85,8 @@ After a firmware reset the following values are set.
 *2 will be overwritten from DHCP-Response
 
 ## Hardware
+
+- [BlitzWolf SHP6](https://www.blitzwolf.com/2300W-EU-WIFI-Smart-Socket-p-300.html)
 
 - [OBI Wifi Stecker Schuko - Version 2](https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806)
 
