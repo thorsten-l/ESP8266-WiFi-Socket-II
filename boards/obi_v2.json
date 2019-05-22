@@ -13,10 +13,7 @@
         "wifi"
     ],
     "frameworks": [
-        "arduino",
-        "simba",
-        "esp8266-rtos-sdk",
-        "esp8266-nonos-sdk"
+        "arduino"
     ],
     "name": "Obi WiFi Socket V2",
     "upload": {
@@ -26,6 +23,6 @@
         "resetmethod": "nodemcu",
         "speed": 115200
     },
-    "url": "http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family",
-    "vendor": "Espressif"
+    "url": "https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806",
+    "vendor": "OBI"
 }
