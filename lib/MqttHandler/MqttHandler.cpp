@@ -111,7 +111,8 @@ void MqttHandler::handle(time_t now)
       client.loop();
 
 #ifdef HAVE_ENERGY_SENSOR
-      if (( now - lastPublishTimestamp ) > (appcfg.mqtt_sending_interval*1000))
+      if ( appcfg.mqtt_sending_interval > 0 &&
+       ( now - lastPublishTimestamp ) > (appcfg.mqtt_sending_interval*1000))
       {
         char buffer[128];
         lastPublishTimestamp = now;
