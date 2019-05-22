@@ -4,6 +4,7 @@
 #include <RelayHandler.hpp>
 #include <WiFiClient.h>
 #include <WifiHandler.hpp>
+#include <Hlw8012Handler.hpp>
 #include "MqttHandler.hpp"
 
 MqttHandler mqttHandler;
@@ -82,7 +83,7 @@ void MqttHandler::setup()
   initialized = true;
 }
 
-void MqttHandler::handle()
+void MqttHandler::handle(time_t now)
 {
   if (appcfg.mqtt_enabled && wifiHandler.isReady())
   {
@@ -108,14 +109,41 @@ void MqttHandler::handle()
     else
     {
       client.loop();
+
+#ifdef HAVE_ENERGY_SENSOR
+      if (( now - lastPublishTimestamp ) > (appcfg.mqtt_sending_interval*1000))
+      {
+        char buffer[128];
+        lastPublishTimestamp = now;
+        sendValue( appcfg.mqtt_topic_voltage, hlw8012Handler.getVoltage());
+        delay(5);
+        sendValue( appcfg.mqtt_topic_current, hlw8012Handler.getCurrent());
+        delay(5);
+        sendValue( appcfg.mqtt_topic_power, hlw8012Handler.getPower());
+        delay(5);
+        sprintf( buffer, "{\"voltage\":%0.1f,\"current\":%0.2f,\"power\":%0.1f}", 
+        hlw8012Handler.getVoltage(), hlw8012Handler.getCurrent(), hlw8012Handler.getPower() );
+        sendValue( appcfg.mqtt_topic_json, buffer );
+      }
+#endif
     }
   }
 }
 
-void MqttHandler::sendValue(const char *value)
+void MqttHandler::sendValue( const char* topic, const char *value )
 {
-  if (appcfg.mqtt_enabled && wifiHandler.isReady() && client.connected())
+  if( appcfg.mqtt_enabled && wifiHandler.isReady() && client.connected())
   {
-    client.publish(appcfg.mqtt_outtopic, value);
+    if ( topic != NULL && value != NULL && strlen(topic) > 0 && topic[0] != '-' )
+    {
+      client.publish( topic, value );
+    }
   }
+}
+
+void MqttHandler::sendValue( const char* topic, const float value )
+{
+  char buffer[32];
+  sprintf( buffer, "%0.2f", value );
+  sendValue( topic, buffer );
 }

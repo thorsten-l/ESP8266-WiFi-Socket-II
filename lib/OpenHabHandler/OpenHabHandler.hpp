@@ -4,11 +4,17 @@
 class OpenHabHandler
 {
 private:
+  time_t lastSendTimestamp;
+  void sendValueV1( const char* itemname, const float value );
+  void sendValueV2( const char* itemname, const float value );  
   void sendValueV1( const char* value );
   void sendValueV2( const char* value );
 
 public:
+  OpenHabHandler();
   void sendValue( const char* value );
+  void sendValue( const char* itemname, const float value );
+  void handle( time_t now );
 };
 
 extern OpenHabHandler openHabHandler;

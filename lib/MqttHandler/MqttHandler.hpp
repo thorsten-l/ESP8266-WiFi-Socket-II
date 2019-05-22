@@ -7,11 +7,13 @@ private:
   bool initialized;
   bool reconnect();
   void setup();
+  time_t lastPublishTimestamp;
 
 public:
   MqttHandler();
-  void handle();
-  void sendValue( const char* value );
+  void handle( time_t now );
+  void sendValue( const char* topic, const char* value );
+  void sendValue( const char* topic, const float value );
 };
 
 extern MqttHandler mqttHandler;

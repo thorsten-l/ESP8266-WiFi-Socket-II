@@ -2,6 +2,7 @@
 #include <App.hpp>
 #include <fauxmoESP.h>
 #include <AlexaHandler.hpp>
+#include <OpenHabHandler.hpp>
 #include <MqttHandler.hpp>
 #include <OtaHandler.hpp>
 #include <RelayHandler.hpp>
@@ -72,7 +73,8 @@ void loop()
     otaHandler.handle();
     webHandler.handle();
     alexaHandler.handle();
-    mqttHandler.handle();
+    openHabHandler.handle(thisLoopTimestamp);
+    mqttHandler.handle(thisLoopTimestamp);
   }
 
 #ifdef HAVE_HLW8012
