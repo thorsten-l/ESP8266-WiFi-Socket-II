@@ -39,7 +39,7 @@ void RelayHandler::on()
 
     powerOn = true;
     openHabHandler.sendValue("ON");
-    mqttHandler.sendValue("ON");
+    mqttHandler.sendValue( appcfg.mqtt_outtopic, "ON");
     alexaHandler.sendValue(true);
     syslog.logInfo( "power on" );
   }
@@ -69,7 +69,7 @@ void RelayHandler::off()
 
     powerOn = false;
     openHabHandler.sendValue("OFF");
-    mqttHandler.sendValue("OFF");
+    mqttHandler.sendValue( appcfg.mqtt_outtopic, "OFF");
     alexaHandler.sendValue(false);
     syslog.logInfo( "power off" );
   }
