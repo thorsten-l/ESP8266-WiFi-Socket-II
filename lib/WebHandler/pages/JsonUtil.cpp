@@ -60,6 +60,9 @@ void handleJsonInfo(AsyncWebServerRequest *request)
           "{"
           "\"host_name\":\"%s\","
           "\"pioenv_name\":\"%s\","
+          "\"esp_full_version\":\"%s\","
+          "\"esp_core_version\":\"%s\","
+          "\"esp_sdk_version\":\"%s\","
           "\"chip_id\":\"%08X\","
           "\"cpu_freq\":\"%dMhz\","
           "\"flash_size\":%u,"
@@ -75,7 +78,13 @@ void handleJsonInfo(AsyncWebServerRequest *request)
           "\"sketch_size\":%u,"
           "\"free_sketch_space\":%u"
           "}",
-          appcfg.ota_hostname, PIOENV_NAME, ESP.getChipId(),
+          appcfg.ota_hostname, PIOENV_NAME, 
+
+          ESP.getFullVersion().c_str(), 
+          ESP.getCoreVersion().c_str(), 
+          ESP.getSdkVersion(), 
+
+          ESP.getChipId(),
           ESP.getCpuFreqMHz(), ESP.getFlashChipRealSize(),
           ESP.getFlashChipSpeed(), ESP.getFlashChipSize(), APP_NAME,
           APP_VERSION, __DATE__, __TIME__, app.fsTotalBytes, app.fsUsedBytes,
