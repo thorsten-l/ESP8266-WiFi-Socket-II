@@ -7,6 +7,8 @@
 
 OpenHabHandler openHabHandler;
 
+static WiFiClient wifiClient;
+
 OpenHabHandler::OpenHabHandler()
 {
   lastSendTimestamp = 0;
@@ -16,7 +18,6 @@ void OpenHabHandler::sendValueV1( const char* value )
 {
   LOG1( "OpenHabHandler::sendValueV1 : %s\n", value );
 
-  WiFiClient client;
   HTTPClient http;
   char urlBuffer[256];
 
@@ -25,7 +26,7 @@ void OpenHabHandler::sendValueV1( const char* value )
 
   LOG1("URL=%s\n",urlBuffer);
 
-  http.begin( client, urlBuffer );
+  http.begin( wifiClient, urlBuffer );
   if ( appcfg.ohab_useauth )
   {
     http.setAuthorization(appcfg.ohab_user, appcfg.ohab_password);
@@ -54,7 +55,6 @@ void OpenHabHandler::sendValueV2( const char* value )
 {
   LOG1( "OpenHabHandler::sendValueV2 : %s\n", value );
 
-  WiFiClient client;
   HTTPClient http;
   char urlBuffer[256];
 
@@ -63,7 +63,7 @@ void OpenHabHandler::sendValueV2( const char* value )
 
   LOG1("URL=%s\n",urlBuffer);
 
-  http.begin( client, urlBuffer );
+  http.begin( wifiClient, urlBuffer );
   http.addHeader("Cache-Control", "no-cache");
   http.addHeader("Accept", "application/json");
   http.addHeader("Content-Type", "text/plain");
@@ -109,7 +109,6 @@ void OpenHabHandler::sendValue( const char* value )
 
 void OpenHabHandler::sendValueV1( const char* itemname, const float value )
 {
-  WiFiClient client;
   HTTPClient http;
   char urlBuffer[256];
 
@@ -118,7 +117,7 @@ void OpenHabHandler::sendValueV1( const char* itemname, const float value )
 
   LOG1("URL=%s\n",urlBuffer);
 
-  http.begin( client, urlBuffer );
+  http.begin( wifiClient, urlBuffer );
 
   if ( appcfg.ohab_useauth )
   {
@@ -146,7 +145,6 @@ void OpenHabHandler::sendValueV1( const char* itemname, const float value )
 
 void OpenHabHandler::sendValueV2( const char* itemname, const float value )
 {
-  WiFiClient client;
   HTTPClient http;
   char urlBuffer[256];
   char buffer[32];
@@ -158,7 +156,7 @@ void OpenHabHandler::sendValueV2( const char* itemname, const float value )
 
   LOG1("URL=%s\n",urlBuffer);
 
-  http.begin( client, urlBuffer );
+  http.begin( wifiClient, urlBuffer );
   http.addHeader("Cache-Control", "no-cache");
   http.addHeader("Accept", "application/json");
   http.addHeader("Content-Type", "text/plain");
@@ -189,8 +187,6 @@ void OpenHabHandler::sendValueV2( const char* itemname, const float value )
 
 void OpenHabHandler::sendValue( const char* itemname, const float value )
 {
-  if( appcfg.ohab_enabled && wifiHandler.isReady() )
-  {
     if ( itemname != NULL && strlen(itemname) > 0 && itemname[0] != '-' )
     {
       if( appcfg.ohab_version == 1 )
@@ -202,24 +198,21 @@ void OpenHabHandler::sendValue( const char* itemname, const float value )
         sendValueV2( itemname, value );
       }
     }
-  }
 }
 
 void OpenHabHandler::handle( time_t now )
 {
 #ifdef HAVE_ENERGY_SENSOR
-  if ( appcfg.ohab_enabled && wifiHandler.isReady() 
-        && appcfg.ohab_sending_interval > 0 )
+  if ( appcfg.ohab_enabled && appcfg.ohab_sending_interval > 0 )
   {
     if (( now - lastSendTimestamp ) > (appcfg.ohab_sending_interval*1000))
     {
       LOG1( "OpenHAB sending values. (%lu)\n", now );
-
+#ifdef HAVE_HLW8012
       sendValue( appcfg.ohab_item_voltage, hlw8012Handler.getVoltage() );
-      delay(5);
       sendValue( appcfg.ohab_item_current, hlw8012Handler.getCurrent() );
-      delay(5);
       sendValue( appcfg.ohab_item_power, hlw8012Handler.getPower() );
+#endif
       lastSendTimestamp = now;
     }
   }
