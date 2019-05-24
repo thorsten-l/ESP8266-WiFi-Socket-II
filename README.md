@@ -1,10 +1,12 @@
 # ESP8266-WiFi-Socket-II
 
-Alternative Firmware for [https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806](https://www.blitzwolf.com/2300W-EU-WIFI-Smart-Socket-p-300.html) (BlitzWolf SHP6)
+## Alternative Firmware for
 
-Alternative Firmware for [https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806](https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806) (OBI Version 2)
+- BlitzWolf SHP6, [https://www.blitzwolf.com/2300W-EU-WIFI-Smart-Socket-p-300.html](https://www.blitzwolf.com/2300W-EU-WIFI-Smart-Socket-p-300.html)
 
-Alternative Firmware for [https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko/p/2291706](https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko/p/2291706) (OBI Version 1)
+- OBI Version 2, [https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806](https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806)
+
+- OBI Version 1, [https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko/p/2291706](https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko/p/2291706)
 
 ## Precompiled Firmware
 
