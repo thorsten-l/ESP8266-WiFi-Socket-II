@@ -4,6 +4,8 @@
 
 - BlitzWolf SHP6, [https://www.blitzwolf.com/2300W-EU-WIFI-Smart-Socket-p-300.html](https://www.blitzwolf.com/2300W-EU-WIFI-Smart-Socket-p-300.html)
 
+> At this it time the performance of the OpenHAB Callbacks for the energy monitor is really bad!. It is much faster to use a MQTT broker or the RESTFul API. In a future release i will implement the HTTP requests asynchronously and non-blocking.
+
 - OBI Version 2, [https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806](https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806)
 
 - OBI Version 1, [https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko/p/2291706](https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko/p/2291706)
@@ -51,9 +53,9 @@ After a firmware reset the following values are set.
 | OTA Password | otapass | OTA firmware upload password |
 | OpenHAB Callback Enabled | **false** | |
 | OpenHAB Version | 1 | Callback for OpenHAB version 1 or 2 |
-| OpenHAB Item Voltage |  PowerMeter1Voltage | |
-| OpenHAB Item Current |  PowerMeter1Current | |
-| OpenHAB Item Power |  PowerMeter1Power | |
+| OpenHAB Item Voltage |  PowerMeter1Voltage | ('-' = disables this item) |
+| OpenHAB Item Current |  PowerMeter1Current | ('-' = disables this item) |
+| OpenHAB Item Power |  PowerMeter1Power | ('-' = disables this item) |
 | OpenHAB Item Name | WifiSocket1 | |
 | OpenHAB Host | 192.168.1.1 | |
 | OpenHAB Port | 80 | |
