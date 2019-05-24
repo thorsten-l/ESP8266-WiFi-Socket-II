@@ -1,5 +1,11 @@
 # CHANGES
 
+## release 2.6.0
+
+- Implementation for BlitzWolf SHP6 inclusive energy monitor
+- platform updated to version espressif8266@2.2.0
+- own board definitions
+  
 ## release 2.5.0
 
 - reset firmware to system defaults added in setup page

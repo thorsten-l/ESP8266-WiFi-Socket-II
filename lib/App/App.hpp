@@ -7,7 +7,7 @@
 #define LOG1( format, x) Serial.printf( "(%ld) " format, millis(), x )
 
 #define APP_NAME "WiFi Socket II"
-#define APP_VERSION "2.6.0beta05"
+#define APP_VERSION "2.6.0"
 #define APP_AUTHOR "Dr. Thorsten Ludewig <t.ludewig@gmail.com>"
 #define APP_CONFIG_FILE "/config.bin"
 
