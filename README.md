@@ -118,10 +118,16 @@ add
 
 to the `Switch` definition. Every 30s the state of the socket will be checked.
 
-### OpenHAB - MQTT binding sample
+### OpenHAB - MQTT binding sample for the switch and the energy monitor values
 
 ```t
-Switch LivingRoom_Power "Living Room Outlet" {mqtt=">[broker1:socket1/in:command:*:default], <[broker1:socket1/out:state:default]"}
+Switch WifiSocketBwShp6 "BW SHP6 Ein / Aus" {mqtt=">[mosquitto:socket-bw/in:command:ON:1],>[mosquitto:socket-bw/in:command:OFF:0],<[mosquitto:socket-bw/out:state:default]"}
+
+Number WifiSocketBwShp6Voltage "BW SHP6 Voltage [%.1fV]" {mqtt="<[mosquitto:socket-bw/voltage:state:default]"}
+
+Number WifiSocketBwShp6Current "BW SHP6 Current [%.2fA]" {mqtt="<[mosquitto:socket-bw/current:state:default]"}
+
+Number WifiSocketBwShp6Power "BW SHP6 Power [%.1fW]" {mqtt="<[mosquitto:socket-bw/power:state:default]"}
 ```
 
 ## References
