@@ -133,7 +133,7 @@ void App::setup()
   pinMode(WIFI_LED, OUTPUT);
   digitalWrite(WIFI_LED, WIFI_LED_OFF);
 
-#if OBI_VERSION == 1
+#if defined(BOARD_TYPE_OBI_V1)
   pinMode(RELAY_TRIGGER_OFF, OUTPUT);
   pinMode(RELAY_TRIGGER_ON, OUTPUT);
   digitalWrite(RELAY_TRIGGER_ON, 1);
@@ -144,17 +144,10 @@ void App::setup()
   digitalWrite(RELAY_TRIGGER_OFF, 1);
 #endif
 
-#if OBI_VERSION == 2 || DEVELOPMENT_VERSION == 1
+#if defined(BOARD_TYPE_OBI_V2) || defined(BOARD_TYPE_DEV1) || defined(BOARD_TYPE_BW_SHP6)
   pinMode(POWER_LED, OUTPUT);
   pinMode(RELAY_PIN, OUTPUT);
-  digitalWrite(POWER_LED, 0);
-  digitalWrite(RELAY_PIN, 0);
-#endif
-
-#ifdef BW_SHP6
-  pinMode(POWER_LED, OUTPUT);
-  pinMode(RELAY_PIN, OUTPUT);
-  digitalWrite(POWER_LED, WIFI_LED_OFF );
+  digitalWrite(POWER_LED, POWER_LED_OFF);
   digitalWrite(RELAY_PIN, LOW );
 #endif
 

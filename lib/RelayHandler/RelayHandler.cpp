@@ -21,20 +21,15 @@ void RelayHandler::on()
 
   if( powerOn == false )
   {
-    #if OBI_VERSION == 1
+    #if defined(BOARD_TYPE_OBI_V1)
       digitalWrite( RELAY_TRIGGER_ON, 0 );
       delay(5);
       digitalWrite( RELAY_TRIGGER_ON, 1 );
     #endif
 
-    #if OBI_VERSION == 2 || DEVELOPMENT_VERSION == 1
-      digitalWrite( POWER_LED, 1 );
+    #if defined(BOARD_TYPE_OBI_V2) || defined(BOARD_TYPE_DEV1) || defined(BOARD_TYPE_BW_SHP6)
+      digitalWrite( POWER_LED, POWER_LED_ON );
       digitalWrite( RELAY_PIN, 1 );
-    #endif
-
-    #ifdef BW_SHP6
-      digitalWrite( POWER_LED, WIFI_LED_ON );
-      digitalWrite( RELAY_PIN, HIGH );
     #endif
 
     powerOn = true;
@@ -51,19 +46,14 @@ void RelayHandler::off()
 
   if( powerOn == true )
   {
-    #if OBI_VERSION == 1
+    #if defined(BOARD_TYPE_OBI_V1)
       digitalWrite( RELAY_TRIGGER_OFF, 0 );
       delay(5);
       digitalWrite( RELAY_TRIGGER_OFF, 1 );
     #endif
 
-    #if OBI_VERSION == 2 || DEVELOPMENT_VERSION == 1
-      digitalWrite( POWER_LED, 0 );
-      digitalWrite( RELAY_PIN, 0 );
-    #endif
-
-    #ifdef BW_SHP6
-      digitalWrite( POWER_LED, WIFI_LED_OFF );
+    #if defined(BOARD_TYPE_OBI_V2) || defined(BOARD_TYPE_DEV1) || defined(BOARD_TYPE_BW_SHP6)
+      digitalWrite( POWER_LED, POWER_LED_OFF );
       digitalWrite( RELAY_PIN, LOW );
     #endif
 
