@@ -1,13 +1,14 @@
 #include "App.hpp"
 #include "DefaultAppConfig.h"
 #include <FS.h>
+#include <MicroJson.hpp>
 
 App app;
 AppConfig appcfg;
 AppConfig appcfgWR;
+AppConfig appcfgRD;
 
-static void showChipInfo()
-{
+static void showChipInfo() {
   Serial.println("-- CHIPINFO --");
   Serial.printf("Chip Id = %08X\n", ESP.getChipId());
 
@@ -30,30 +31,28 @@ static void showChipInfo()
                                  ? "DIO"
                                  : ideMode == FM_DOUT ? "DOUT" : "UNKNOWN"));
 
-  if (ideSize != realSize)
-  {
+  if (ideSize != realSize) {
     Serial.println("Flash Chip configuration wrong!\n");
-  }
-  else
-  {
+  } else {
     Serial.println("Flash Chip configuration ok.\n");
   }
 
-  Serial.printf( "Free Heap         : %u\n", ESP.getFreeHeap());
-  Serial.printf( "Sketch Size       : %u\n", ESP.getSketchSize() );
-  Serial.printf( "Free Sketch Space : %u\n", ESP.getFreeSketchSpace() );
+  Serial.printf("Free Heap         : %u\n", ESP.getFreeHeap());
+  Serial.printf("Sketch Size       : %u\n", ESP.getSketchSize());
+  Serial.printf("Free Sketch Space : %u\n", ESP.getFreeSketchSpace());
 
   Serial.println();
 }
 
-App::App()
-{
+App::App() {
+  sprintf( initFilename, "/%08X.ini", ESP.getChipId());
   defaultConfig();
+  initSPIFFS = false;
   initialized = true;
+  doSystemRestart = false;
 }
 
-void App::defaultConfig()
-{
+void App::defaultConfig() {
   strncpy(appcfg.wifi_ssid, DEFAULT_WIFI_SSID, 63);
   strncpy(appcfg.wifi_password, DEFAULT_WIFI_PASSWORD, 63);
   appcfg.wifi_mode = DEFAULT_WIFI_MODE;
@@ -101,7 +100,7 @@ void App::defaultConfig()
   strncpy(appcfg.ohab_item_current, DEFAULT_OHAB_ITEM_CURRENT, 63);
   strncpy(appcfg.ohab_item_power, DEFAULT_OHAB_ITEM_POWER, 63);
   appcfg.ohab_sending_interval = DEFAULT_OHAB_SENDING_INTERVAL;
-  
+
   strncpy(appcfg.mqtt_topic_voltage, DEFAULT_MQTT_TOPIC_VOLTAGE, 63);
   strncpy(appcfg.mqtt_topic_current, DEFAULT_MQTT_TOPIC_CURRENT, 63);
   strncpy(appcfg.mqtt_topic_power, DEFAULT_MQTT_TOPIC_POWER, 63);
@@ -110,10 +109,35 @@ void App::defaultConfig()
 #endif
 
   memcpy(&appcfgWR, &appcfg, sizeof(appcfg));
+  memcpy(&appcfgRD, &appcfg, sizeof(appcfg));
 }
 
-void App::restartSystem()
-{
+void App::firmwareReset() {
+  if (SPIFFS.begin()) {
+    LOG0("Removing init file\n");
+    SPIFFS.remove( initFilename );
+    SPIFFS.end();
+  }  
+  delayedSystemRestart();
+}
+
+void App::formatSPIFFS() {
+  digitalWrite(WIFI_LED, WIFI_LED_ON);
+
+  ESP.eraseConfig();
+
+  if (SPIFFS.begin()) {
+    LOG0("File system format started...\n");
+    SPIFFS.format();
+    LOG0("File system format finished.\n");
+    SPIFFS.end();
+  } else {
+    LOG0("\nERROR: format filesystem.\n");
+  }
+  digitalWrite(WIFI_LED, WIFI_LED_OFF);
+}
+
+void App::restartSystem() {
   // watchdogTicker.detach();
   ESP.eraseConfig();
   LOG0("*** restarting system ***\n");
@@ -123,12 +147,8 @@ void App::restartSystem()
   ESP.reset();
 }
 
-void App::setup()
-{
+void App::setup() {
   Serial.begin(74880);
-
-  doSystemRestart = false;
-
   pinMode(POWER_BUTTON, INPUT_PULLUP);
   pinMode(WIFI_LED, OUTPUT);
   digitalWrite(WIFI_LED, WIFI_LED_OFF);
@@ -144,18 +164,18 @@ void App::setup()
   digitalWrite(RELAY_TRIGGER_OFF, 1);
 #endif
 
-#if defined(BOARD_TYPE_OBI_V2) || defined(BOARD_TYPE_DEV1) || defined(BOARD_TYPE_BW_SHP6)
+#if defined(BOARD_TYPE_OBI_V2) || defined(BOARD_TYPE_DEV1) ||                  \
+    defined(BOARD_TYPE_BW_SHP6)
   pinMode(POWER_LED, OUTPUT);
   pinMode(RELAY_PIN, OUTPUT);
   digitalWrite(POWER_LED, POWER_LED_OFF);
-  digitalWrite(RELAY_PIN, LOW );
+  digitalWrite(RELAY_PIN, LOW);
 #endif
 
-  for (int i = 0; i < 5; i++)
-  {
-    digitalWrite(WIFI_LED, WIFI_LED_ON );
+  for (int i = 0; i < 5; i++) {
+    digitalWrite(WIFI_LED, WIFI_LED_ON);
     delay(500);
-    digitalWrite(WIFI_LED, WIFI_LED_OFF );
+    digitalWrite(WIFI_LED, WIFI_LED_OFF);
     delay(500);
   }
 
@@ -168,111 +188,151 @@ void App::setup()
 
   showChipInfo();
 
-  if (digitalRead(POWER_BUTTON) == false)
+  if ( SPIFFS.begin())
   {
+    if ( SPIFFS.exists(initFilename))
+    {
+      LOG1( "Init file %s found.\n", initFilename );
+      initSPIFFS = false;
+    }
+    else
+    {
+      LOG1( "WARNING: Init file %s does not exist.\n", initFilename );
+      initSPIFFS = true;
+    }
+    
+    SPIFFS.end();
+  }
+  else
+  {
+    initSPIFFS = true;
+  }
+  
+  if (digitalRead(POWER_BUTTON) == false) {
     Serial.println();
-    LOG0("*** RESET appcfguration ***\n");
+    LOG0("*** Firmware RESET ***\n");
     Serial.println();
 
-    for (int i = 0; i < 15; i++)
-    {
+    for (int i = 0; i < 15; i++) {
       digitalWrite(WIFI_LED, WIFI_LED_ON);
       delay(100);
       digitalWrite(WIFI_LED, WIFI_LED_OFF);
       delay(100);
     }
+    
+    initSPIFFS = true;
+  }
 
-    digitalWrite(WIFI_LED, WIFI_LED_ON);
+  if(initSPIFFS == true)
+  {
+    formatSPIFFS();
 
-    ESP.eraseConfig();
-
-    if (SPIFFS.begin())
+    if ( SPIFFS.begin() )
     {
-      LOG0("File system format started...\n");
-      SPIFFS.format();
-      LOG0("File system format finished.\n");
+      LOG0( "writing init file\n" );
+      File initFile = SPIFFS.open(initFilename, "w");
+      initFile.write( "true" );
+      initFile.close();
       SPIFFS.end();
     }
-    else
-    {
-      LOG0( "\nERROR: format filesystem.\n" );
-    }
-    
-    digitalWrite(WIFI_LED, WIFI_LED_OFF);
+
     restartSystem();
   }
 
   ESP.eraseConfig();
+  memcpy(&appcfgRD, &appcfg, sizeof(appcfg));
   loadConfig();
   memcpy(&appcfgWR, &appcfg, sizeof(appcfg));
 }
 
-void App::loadConfig()
-{
-  if (!SPIFFS.begin())
-  {
+void App::loadConfig() {
+  if (!SPIFFS.begin()) {
     LOG0("ERROR: Failed to mount file system");
-  }
-  else
-  {
-    if (SPIFFS.exists(APP_CONFIG_FILE))
-    {
-      File configFile = SPIFFS.open(APP_CONFIG_FILE, "r");
-
-      if (!configFile)
-      {
-        LOG1("ERROR: file %s not found.\n", APP_CONFIG_FILE);
-      }
-      else
-      {
-        LOG1("Loading appcfguration from %s file...\n", APP_CONFIG_FILE);
-
-        if (configFile.size() != sizeof(appcfg))
-        {
-          Serial.printf("ERROR: %s file size not match appcfg structure %d != "
-                        "%d bytes.\n",
-                        APP_CONFIG_FILE, configFile.size(), sizeof(appcfg));
-        }
-        else
-        {
-          int bytesRead = configFile.readBytes((char *)&appcfg, sizeof(appcfg));
-          LOG1("%d bytes read from appcfg file.\n", bytesRead);
-          configFile.close();
-        }
-      }
-    }
-    else
-    {
-      LOG0("WARNING: appcfg file " APP_CONFIG_FILE
+  } else {
+    if (SPIFFS.exists(APP_CONFIG_FILE_JSON)) {
+       if( loadJsonConfig(APP_CONFIG_FILE_JSON) == false )
+       {
+         memcpy(&appcfg, &appcfgRD, sizeof(appcfg));
+       }
+       else
+       {
+         LOG0( "ERROR: loading config.json file. Using default config.\n" );
+       }
+    } else {
+      LOG0("WARNING: appcfg file " APP_CONFIG_FILE_JSON
            " does not exist. Using default appcfg.\n");
     }
     SPIFFS.end();
   }
 }
 
-void App::writeConfig()
-{
-  if (!SPIFFS.begin())
-  {
+void App::writeConfig() {
+  if (!SPIFFS.begin()) {
     LOG0("ERROR: Failed to mount file system");
-  }
-  else
-  {
-    LOG1("writing file %s.\n", APP_CONFIG_FILE);
+  } else {
+     LOG0( "Writing " APP_CONFIG_FILE_JSON " file.\n" );
+     File configJson = SPIFFS.open(APP_CONFIG_FILE_JSON, "w");
+     uJson j = uJson( configJson );
 
-    File configFile = SPIFFS.open(APP_CONFIG_FILE, "w");
+     j.writeHeader();
+     j.writeEntry( "wifi_ssid", appcfgWR.wifi_ssid );
+     j.writeEntry( "wifi_password", appcfgWR.wifi_password );
+     j.writeEntry( "wifi_mode", appcfgWR.wifi_mode );
 
-    if (!configFile)
-    {
-      LOG1("ERROR: Failed to open appcfg file %s for writing.\n",
-           APP_CONFIG_FILE);
-      return;
-    }
+     j.writeEntry( "net_mode", appcfgWR.net_mode );
+     j.writeEntry( "net_host", appcfgWR.net_host );
+     j.writeEntry( "net_mask", appcfgWR.net_mask );
+     j.writeEntry( "net_gateway", appcfgWR.net_gateway );
+     j.writeEntry( "net_dns", appcfgWR.net_dns );
 
-    int length = configFile.write((const uint8_t *)&appcfgWR, sizeof(appcfgWR));
-    LOG1("%d bytes written to appcfg file.\n", length);
+     j.writeEntry( "ota_hostname", appcfgWR.ota_hostname );
+     j.writeEntry( "ota_password", appcfgWR.ota_password );
 
-    configFile.close();
+     j.writeEntry( "admin_password", appcfgWR.admin_password );
+
+     j.writeEntry( "ohab_enabled", appcfgWR.ohab_enabled );
+     j.writeEntry( "ohab_version", appcfgWR.ohab_version );
+     j.writeEntry( "ohab_host", appcfgWR.ohab_host );
+     j.writeEntry( "ohab_port", appcfgWR.ohab_port );
+     j.writeEntry( "ohab_itemname", appcfgWR.ohab_itemname );
+     j.writeEntry( "ohab_useauth", appcfgWR.ohab_useauth );
+     j.writeEntry( "ohab_user", appcfgWR.ohab_user );
+     j.writeEntry( "ohab_password", appcfgWR.ohab_password );
+#ifdef HAVE_ENERGY_SENSOR
+     j.writeEntry( "ohab_item_voltage", appcfgWR.ohab_item_voltage );
+     j.writeEntry( "ohab_item_current", appcfgWR.ohab_item_current );
+     j.writeEntry( "ohab_item_power", appcfgWR.ohab_item_power );
+     j.writeEntry( "ohab_sending_interval", appcfgWR.ohab_sending_interval );
+#endif
+
+     j.writeEntry( "alexa_enabled", appcfgWR.alexa_enabled );
+     j.writeEntry( "alexa_devicename", appcfgWR.alexa_devicename );
+
+     j.writeEntry( "mqtt_enabled", appcfgWR.mqtt_enabled );
+     j.writeEntry( "mqtt_clientid", appcfgWR.mqtt_clientid );
+     j.writeEntry( "mqtt_host", appcfgWR.mqtt_host );
+     j.writeEntry( "mqtt_port", appcfgWR.mqtt_port );
+     j.writeEntry( "mqtt_intopic", appcfgWR.mqtt_intopic );
+     j.writeEntry( "mqtt_outtopic", appcfgWR.mqtt_outtopic );
+     j.writeEntry( "mqtt_useauth", appcfgWR.mqtt_useauth );
+     j.writeEntry( "mqtt_user", appcfgWR.mqtt_user );
+     j.writeEntry( "mqtt_password", appcfgWR.mqtt_password );
+#ifdef HAVE_ENERGY_SENSOR
+     j.writeEntry( "mqtt_topic_voltage", appcfgWR.mqtt_topic_voltage );
+     j.writeEntry( "mqtt_topic_current", appcfgWR.mqtt_topic_current );
+     j.writeEntry( "mqtt_topic_power", appcfgWR.mqtt_topic_power );
+     j.writeEntry( "mqtt_topic_json", appcfgWR.mqtt_topic_json );
+     j.writeEntry( "mqtt_sending_interval", appcfgWR.mqtt_sending_interval );
+#endif
+
+     j.writeEntry( "syslog_enabled", appcfgWR.syslog_enabled );
+     j.writeEntry( "syslog_host", appcfgWR.syslog_host );
+     j.writeEntry( "syslog_port", appcfgWR.syslog_port );
+     j.writeEntry( "syslog_app_name", appcfgWR.syslog_app_name );
+
+     j.writeFooter();
+     configJson.close();
+///////////
 
     FSInfo fs_info;
     SPIFFS.info(fs_info);
@@ -280,7 +340,8 @@ void App::writeConfig()
     fsTotalBytes = fs_info.totalBytes;
     fsUsedBytes = fs_info.usedBytes;
 
-    Serial.printf("\n--- SPIFFS Info ---\ntotal bytes = %d\n", fs_info.totalBytes);
+    Serial.printf("\n--- SPIFFS Info ---\ntotal bytes = %d\n",
+                  fs_info.totalBytes);
     Serial.printf("used bytes = %d\n", fs_info.usedBytes);
     Serial.printf("block size = %d\n", fs_info.blockSize);
     Serial.printf("page size = %d\n", fs_info.pageSize);
@@ -291,71 +352,161 @@ void App::writeConfig()
   }
 }
 
-void App::printConfig()
-{
+void App::printConfig(AppConfig ac) {
   Serial.println();
   Serial.println("--- App appcfguration -----------------------------------");
   Serial.println("  Security:");
-  Serial.printf("    Admin password: %s\n", appcfg.admin_password);
+  Serial.printf("    Admin password: %s\n", ac.admin_password);
   Serial.println("\n  WiFi:");
-  Serial.printf("    SSID: %s\n", appcfg.wifi_ssid);
-  Serial.printf("    Password: %s\n", appcfg.wifi_password);
-  Serial.printf("    Mode: %s\n", (appcfg.wifi_mode == 1) ? "Station" : "Access Point");
+  Serial.printf("    SSID: %s\n", ac.wifi_ssid);
+  Serial.printf("    Password: %s\n", ac.wifi_password);
+  Serial.printf("    Mode: %s\n",
+                (ac.wifi_mode == 1) ? "Station" : "Access Point");
   Serial.println("\n  Network:");
-  Serial.printf("    Mode: %s\n", (appcfg.net_mode == NET_MODE_DHCP) ? "DHCP" : "Static");
-  Serial.printf("    host address: %s\n", appcfg.net_host);
-  Serial.printf("    gateway: %s\n", appcfg.net_gateway);
-  Serial.printf("    netmask: %s\n", appcfg.net_mask);
-  Serial.printf("    dns server: %s\n", appcfg.net_dns);
+  Serial.printf("    Mode: %s\n",
+                (ac.net_mode == NET_MODE_DHCP) ? "DHCP" : "Static");
+  Serial.printf("    host address: %s\n", ac.net_host);
+  Serial.printf("    gateway: %s\n", ac.net_gateway);
+  Serial.printf("    netmask: %s\n", ac.net_mask);
+  Serial.printf("    dns server: %s\n", ac.net_dns);
   Serial.println("\n  OTA:");
-  Serial.printf("    Hostname: %s\n", appcfg.ota_hostname);
-  Serial.printf("    Password: %s\n", appcfg.ota_password);
+  Serial.printf("    Hostname: %s\n", ac.ota_hostname);
+  Serial.printf("    Password: %s\n", ac.ota_password);
   Serial.println("\n  OpenHAB:");
-  Serial.printf("    Enabled: %s\n", (appcfg.ohab_enabled ? "true" : "false"));
-  Serial.printf("    Version: %d\n", appcfg.ohab_version);
-  Serial.printf("    Host: %s\n", appcfg.ohab_host);
-  Serial.printf("    Port: %d\n", appcfg.ohab_port);
-  Serial.printf("    Use Auth: %s\n", (appcfg.ohab_useauth ? "true" : "false"));
-  Serial.printf("    User: %s\n", appcfg.ohab_user);
-  Serial.printf("    Password: %s\n", appcfg.ohab_password);
-  Serial.printf("    Itemname: %s\n", appcfg.ohab_itemname);
+  Serial.printf("    Enabled: %s\n", (ac.ohab_enabled ? "true" : "false"));
+  Serial.printf("    Version: %d\n", ac.ohab_version);
+  Serial.printf("    Host: %s\n", ac.ohab_host);
+  Serial.printf("    Port: %d\n", ac.ohab_port);
+  Serial.printf("    Use Auth: %s\n", (ac.ohab_useauth ? "true" : "false"));
+  Serial.printf("    User: %s\n", ac.ohab_user);
+  Serial.printf("    Password: %s\n", ac.ohab_password);
+  Serial.printf("    Itemname: %s\n", ac.ohab_itemname);
+#ifdef HAVE_ENERGY_SENSOR
+  Serial.printf("    Item Voltage: %s\n", ac.ohab_item_voltage);
+  Serial.printf("    Item Current: %s\n", ac.ohab_item_current);
+  Serial.printf("    Item Power: %s\n", ac.ohab_item_power);
+  Serial.printf("    Sending Interval: %ld\n", ac.ohab_sending_interval);
+#endif
   Serial.println("\n  Alexa:");
-  Serial.printf("    Enabled: %s\n", (appcfg.alexa_enabled ? "true" : "false"));
-  Serial.printf("    Deviename: %s\n", appcfg.alexa_devicename);
+  Serial.printf("    Enabled: %s\n", (ac.alexa_enabled ? "true" : "false"));
+  Serial.printf("    Deviename: %s\n", ac.alexa_devicename);
   Serial.println("\n  MQTT:");
-  Serial.printf("    Enabled: %s\n", (appcfg.mqtt_enabled ? "true" : "false"));
-  Serial.printf("    Client ID: %s\n", appcfg.mqtt_clientid);
-  Serial.printf("    Host: %s\n", appcfg.mqtt_host);
-  Serial.printf("    Port: %d\n", appcfg.mqtt_port);
-  Serial.printf("    Use Auth: %s\n", (appcfg.mqtt_useauth ? "true" : "false"));
-  Serial.printf("    User: %s\n", appcfg.mqtt_user);
-  Serial.printf("    Password: %s\n", appcfg.mqtt_password);
-  Serial.printf("    In Topic: %s\n", appcfg.mqtt_intopic);
-  Serial.printf("    Out Topic: %s\n", appcfg.mqtt_outtopic);
+  Serial.printf("    Enabled: %s\n", (ac.mqtt_enabled ? "true" : "false"));
+  Serial.printf("    Client ID: %s\n", ac.mqtt_clientid);
+  Serial.printf("    Host: %s\n", ac.mqtt_host);
+  Serial.printf("    Port: %d\n", ac.mqtt_port);
+  Serial.printf("    Use Auth: %s\n", (ac.mqtt_useauth ? "true" : "false"));
+  Serial.printf("    User: %s\n", ac.mqtt_user);
+  Serial.printf("    Password: %s\n", ac.mqtt_password);
+  Serial.printf("    In Topic: %s\n", ac.mqtt_intopic);
+  Serial.printf("    Out Topic: %s\n", ac.mqtt_outtopic);
+#ifdef HAVE_ENERGY_SENSOR
+  Serial.printf("    Topic Voltage: %s\n", ac.mqtt_topic_voltage) ;
+  Serial.printf("    Topic Current: %s\n", ac.mqtt_topic_current);
+  Serial.printf("    Topic Power: %s\n", ac.mqtt_topic_power);
+  Serial.printf("    Topic JSON: %s\n", ac.mqtt_topic_json);
+  Serial.printf("    Sending Interval: %ld\n", ac.mqtt_sending_interval);
+#endif
+
   Serial.println("\n  Syslog:");
-  Serial.printf("    Enabled: %s\n", (appcfg.syslog_enabled ? "true" : "false"));
-  Serial.printf("    Host: %s\n", appcfg.syslog_host);
-  Serial.printf("    Port: %d\n", appcfg.syslog_port);
-  Serial.printf("    App Name: %s\n", appcfg.syslog_app_name);
+  Serial.printf("    Enabled: %s\n",
+                (ac.syslog_enabled ? "true" : "false"));
+  Serial.printf("    Host: %s\n", ac.syslog_host);
+  Serial.printf("    Port: %d\n", ac.syslog_port);
+  Serial.printf("    App Name: %s\n", ac.syslog_app_name);
   Serial.println("---------------------------------------------------------");
   Serial.println();
 }
 
-void App::delayedSystemRestart()
-{
+void App::delayedSystemRestart() {
   doSystemRestart = true;
   systemRestartTimestamp = millis();
   LOG0("*** delayedSystemRestart ***\n");
 }
 
-void App::handle()
-{
-  if (doSystemRestart && (millis() - systemRestartTimestamp) > 5000)
-  {
+void App::handle() {
+  if (doSystemRestart && (millis() - systemRestartTimestamp) > 5000) {
     LOG0("*** doSystemRestart ***\n");
     writeConfig();
     restartSystem();
   }
-  
+
   delay(5); // time for IP stack
+}
+
+bool App::loadJsonConfig( const char *filename )
+{
+  bool readError = false;
+  char attributeName[128];
+
+  File tmpConfig = SPIFFS.open( filename, "r" );
+
+    uJson j = uJson(tmpConfig);
+
+    if ( j.readHeader() )
+    {
+      memcpy(&appcfgRD, &appcfg, sizeof(appcfg));
+
+      while( readError == false && j.readAttributeName( attributeName ) == true )
+      {        
+        readError |= j.readEntryChars( attributeName, "wifi_ssid", appcfgRD.wifi_ssid );
+        readError |= j.readEntryChars( attributeName, "wifi_password", appcfgRD.wifi_password );
+        readError |= j.readEntryInteger( attributeName, "wifi_mode", &appcfgRD.wifi_mode );
+        
+        readError |= j.readEntryInteger( attributeName, "net_mode", &appcfgRD.net_mode );
+        readError |= j.readEntryChars( attributeName, "net_host", appcfgRD.net_host );
+        readError |= j.readEntryChars( attributeName, "net_mask", appcfgRD.net_mask );
+        readError |= j.readEntryChars( attributeName, "net_gateway", appcfgRD.net_gateway );
+        readError |= j.readEntryChars( attributeName, "net_dns", appcfgRD.net_dns );
+
+        readError |= j.readEntryChars( attributeName, "ota_hostname", appcfgRD.ota_hostname );
+        readError |= j.readEntryChars( attributeName, "ota_password", appcfgRD.ota_password );
+
+        readError |= j.readEntryChars( attributeName, "admin_password", appcfgRD.admin_password );
+
+        readError |= j.readEntryBoolean( attributeName, "ohab_enabled", &appcfgRD.ohab_enabled );
+        readError |= j.readEntryInteger( attributeName, "ohab_version", &appcfgRD.ohab_version );
+        readError |= j.readEntryChars( attributeName, "ohab_host", appcfgRD.ohab_host );
+        readError |= j.readEntryInteger( attributeName, "ohab_port", &appcfgRD.ohab_port );
+        readError |= j.readEntryBoolean( attributeName, "ohab_useauth", &appcfgRD.ohab_useauth );
+        readError |= j.readEntryChars( attributeName, "ohab_user", appcfgRD.ohab_user );
+        readError |= j.readEntryChars( attributeName, "ohab_password", appcfgRD.ohab_password );
+        readError |= j.readEntryChars( attributeName, "ohab_itemname", appcfgRD.ohab_itemname );
+#ifdef HAVE_ENERGY_SENSOR
+        readError |= j.readEntryChars( attributeName, "ohab_item_voltage", appcfgRD.ohab_item_voltage );
+        readError |= j.readEntryChars( attributeName, "ohab_item_current", appcfgRD.ohab_item_current );
+        readError |= j.readEntryChars( attributeName, "ohab_item_power", appcfgRD.ohab_item_power );
+        readError |= j.readEntryLong( attributeName, "ohab_sending_interval", &appcfgRD.ohab_sending_interval );
+#endif
+
+        readError |= j.readEntryBoolean( attributeName, "alexa_enabled", &appcfgRD.alexa_enabled );
+        readError |= j.readEntryChars( attributeName, "alexa_devicename", appcfgRD.alexa_devicename );
+
+        readError |= j.readEntryBoolean( attributeName, "mqtt_enabled", &appcfgRD.mqtt_enabled );
+        readError |= j.readEntryChars( attributeName, "mqtt_clientid", appcfgRD.mqtt_clientid );
+        readError |= j.readEntryChars( attributeName, "mqtt_host", appcfgRD.mqtt_host );
+        readError |= j.readEntryInteger( attributeName, "mqtt_port", &appcfgRD.mqtt_port );
+        readError |= j.readEntryChars( attributeName, "mqtt_intopic", appcfgRD.mqtt_intopic );
+        readError |= j.readEntryChars( attributeName, "mqtt_outtopic", appcfgRD.mqtt_outtopic );
+        readError |= j.readEntryBoolean( attributeName, "mqtt_useauth", &appcfgRD.mqtt_useauth );
+        readError |= j.readEntryChars( attributeName, "mqtt_user", appcfgRD.mqtt_user );
+        readError |= j.readEntryChars( attributeName, "mqtt_password", appcfgRD.mqtt_password );
+#ifdef HAVE_ENERGY_SENSOR
+        readError |= j.readEntryChars( attributeName, "mqtt_topic_voltage", appcfgRD.mqtt_topic_voltage );
+        readError |= j.readEntryChars( attributeName, "mqtt_topic_current", appcfgRD.mqtt_topic_current );
+        readError |= j.readEntryChars( attributeName, "mqtt_topic_power", appcfgRD.mqtt_topic_power );
+        readError |= j.readEntryChars( attributeName, "mqtt_topic_json", appcfgRD.mqtt_topic_json );
+        readError |= j.readEntryLong( attributeName, "mqtt_sending_interval", &appcfgRD.mqtt_sending_interval );
+#endif
+
+        readError |= j.readEntryBoolean( attributeName, "syslog_enabled", &appcfgRD.syslog_enabled );
+        readError |= j.readEntryChars( attributeName, "syslog_host", appcfgRD.syslog_host );
+        readError |= j.readEntryInteger( attributeName, "syslog_port", &appcfgRD.syslog_port );
+        readError |= j.readEntryChars( attributeName, "syslog_app_name", appcfgRD.syslog_app_name );
+      }
+    }
+    
+    tmpConfig.close();
+
+  return readError;
 }

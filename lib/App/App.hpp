@@ -2,15 +2,17 @@
 #define __APP_H__
 
 #include <Arduino.h>
+#include <FS.h>
 #include <DeviceConfig.hpp>
 
 #define LOG0( format ) Serial.printf( "(%ld) " format, millis())
 #define LOG1( format, x) Serial.printf( "(%ld) " format, millis(), x )
 
 #define APP_NAME "WiFi Socket II"
-#define APP_VERSION "2.6.1beta01"
+#define APP_VERSION "2.7.0beta01"
 #define APP_AUTHOR "Dr. Thorsten Ludewig <t.ludewig@gmail.com>"
-#define APP_CONFIG_FILE "/config.bin"
+// #define APP_CONFIG_FILE "/config.bin"
+#define APP_CONFIG_FILE_JSON "/config.json"
 
 // Network mode
 #define NET_MODE_STATIC 1
@@ -76,10 +78,13 @@ typedef struct appconfig
 class App
 {
 private:
+  char initFilename[32];
   bool initialized = false;
   bool doSystemRestart;
   time_t systemRestartTimestamp;
+  bool initSPIFFS = false;
 
+  void formatSPIFFS();
   void loadConfig();
   void restartSystem();
 
@@ -90,9 +95,11 @@ public:
   App();
 
   void setup();
+  void firmwareReset();
   void defaultConfig();
   void writeConfig();
-  void printConfig();
+  bool loadJsonConfig( const char *filename );
+  void printConfig(AppConfig ac);
   void delayedSystemRestart();
   void handle();
 };
@@ -100,5 +107,6 @@ public:
 extern App app;
 extern AppConfig appcfg;
 extern AppConfig appcfgWR;
+extern AppConfig appcfgRD;
 
 #endif
