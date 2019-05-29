@@ -33,7 +33,7 @@ void setup()
   buttonPressed = false;
   app.setup();
   app.writeConfig();
-  app.printConfig();
+  app.printConfig(appcfg);
   wifiHandler.setup();
 
   attachInterrupt(digitalPinToInterrupt(POWER_BUTTON), &powerButtonPressed,
