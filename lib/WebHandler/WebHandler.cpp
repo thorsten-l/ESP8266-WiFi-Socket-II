@@ -20,6 +20,7 @@ void WebHandler::setup()
 
   server.on("/", HTTP_GET, handleRootPage);
   server.on("/setup.html", HTTP_GET, handleSetupPage );
+  server.on("/maintenance.html", HTTP_GET, handleMaintenanceSetupPage );
   server.on("/info.html", HTTP_GET, handleInfoPage );
   server.on("/savecfg", HTTP_POST, handleSavePage);
   server.on("/info", HTTP_GET, handleJsonInfo );
@@ -47,6 +48,9 @@ void WebHandler::setup()
   server.on("/layout.css", HTTP_GET, [](AsyncWebServerRequest *request) {
     handleCssFile( request, LAYOUT_CSS_GZ, LAYOUT_CSS_GZ_LEN );
   });
+
+  server.on("/config-backup", HTTP_GET, handleBackupConfiguration );
+  server.on("/config-restore", HTTP_POST, handleRestoreConfiguration, handleRestoreConfigurationCB );
 
   if (appcfg.alexa_enabled == true)
   {
