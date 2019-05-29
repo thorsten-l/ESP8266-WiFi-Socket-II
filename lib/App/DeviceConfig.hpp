@@ -26,8 +26,8 @@
 #ifdef BOARD_TYPE_DEV1
   #define WIFI_LED      LED_BUILTIN // D4, GPIO2
   #define POWER_LED     D6          // GPIO12
-  #define POWER_BUTTON  D7          // GPIO13
-  #define RELAY_PIN     D5          // GPIO14
+  #define POWER_BUTTON  D3
+  #define RELAY_PIN     D1
   #define WIFI_LED_ON   0
   #define WIFI_LED_OFF  1
   #define POWER_LED_ON  0
