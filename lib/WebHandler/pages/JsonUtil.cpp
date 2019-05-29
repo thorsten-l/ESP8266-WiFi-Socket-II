@@ -26,7 +26,7 @@ void handleJsonStatus(AsyncWebServerRequest *request, int json_state)
     message += (powerIsOn) ? "1" : "0";
   };
 
-#ifdef HAVE_ENERGY_SENSOR
+#if defined(HAVE_ENERGY_SENSOR) && defined(HAVE_HLW8012)
   char buffer[256];
   if ( powerIsOn )
   {

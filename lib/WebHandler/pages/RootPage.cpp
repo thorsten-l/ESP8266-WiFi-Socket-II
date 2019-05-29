@@ -51,7 +51,7 @@ void handleRootPage(AsyncWebServerRequest *request)
       "<a href=\"/?power=ON\" class=\"pure-button button-on\">ON</a>"
       "<a href=\"/?power=OFF\" class=\"pure-button button-off\">OFF</a>");
 
-#ifdef HAVE_ENERGY_SENSOR
+#if defined(HAVE_ENERGY_SENSOR) && defined(HAVE_HLW8012)
   prLegend(response, "Energy Sensor");
   int rid=0;
   char valueBuffer[32];

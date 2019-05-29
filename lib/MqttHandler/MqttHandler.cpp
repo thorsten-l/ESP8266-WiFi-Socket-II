@@ -110,12 +110,14 @@ void MqttHandler::handle(time_t now)
     {
       client.loop();
 
-#ifdef HAVE_ENERGY_SENSOR
+#if defined(HAVE_ENERGY_SENSOR)
       if ( appcfg.mqtt_sending_interval > 0 &&
        ( now - lastPublishTimestamp ) > (appcfg.mqtt_sending_interval*1000))
       {
         char buffer[128];
         lastPublishTimestamp = now;
+        
+#if defined(HAVE_HLW8012)
         sendValue( appcfg.mqtt_topic_voltage, hlw8012Handler.getVoltage());
         delay(5);
         sendValue( appcfg.mqtt_topic_current, hlw8012Handler.getCurrent());
@@ -125,6 +127,7 @@ void MqttHandler::handle(time_t now)
         sprintf( buffer, "{\"voltage\":%0.1f,\"current\":%0.2f,\"power\":%0.1f}", 
         hlw8012Handler.getVoltage(), hlw8012Handler.getCurrent(), hlw8012Handler.getPower() );
         sendValue( appcfg.mqtt_topic_json, buffer );
+#endif
       }
 #endif
     }
