@@ -26,6 +26,13 @@ void handleSavePage(AsyncWebServerRequest *request);
 
 void handleJsonStatus(AsyncWebServerRequest *request, int json_state );
 void handleJsonInfo(AsyncWebServerRequest *request );
+void handleBackupConfiguration(AsyncWebServerRequest *request );
+void handleRestoreConfiguration(AsyncWebServerRequest *request );
+void handleRestoreConfigurationCB(AsyncWebServerRequest *request, String filename,
+                            size_t index, uint8_t *data, size_t len,
+                            bool final);
+
+void handleMaintenanceSetupPage(AsyncWebServerRequest *request);
 
 void handleCssFile(AsyncWebServerRequest *request, const uint8_t *data, size_t length );
 
