@@ -21,8 +21,7 @@ void handleResetFirmware(AsyncWebServerRequest *request)
     response->print(F("<h3>"));
     response->print(F("Resetting firmware... restart in about 15sec."));
     response->print(F("</h3>"));
-    app.defaultConfig();
-    app.delayedSystemRestart();
+    app.firmwareReset();
   }
   else
   {
