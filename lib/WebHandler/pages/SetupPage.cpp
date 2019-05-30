@@ -137,20 +137,29 @@ String setupProcessor(const String &var)
   if (var == A_syslog_app_name)
     return String(appcfg.syslog_app_name);
 
+  if (var == "millis")
+    return String(millis());
+
   return String();
 }
 
 void handleSetupPage(AsyncWebServerRequest *request)
 {
+  LOG0("handleSetupPage\n");
   if (!request->authenticate("admin", appcfg.admin_password))
   {
+    LOG0("authenticate\n");
     return request->requestAuthentication();
   }
 
+  LOG0("build response\n");
   AsyncWebServerResponse *response =
       request->beginResponse_P(200, "text/html", SETUP_HTML, setupProcessor);
   response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   response->addHeader("Pragma", "no-cache");
   response->addHeader("Expires", "0");
+
+  LOG0("send response\n");
   request->send(response);
+  LOG0("send response done\n");
 }
