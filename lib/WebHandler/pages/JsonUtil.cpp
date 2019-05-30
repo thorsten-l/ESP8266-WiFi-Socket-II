@@ -3,8 +3,8 @@
 #include <RelayHandler.hpp>
 #include <Hlw8012Handler.hpp>
 #include <WifiHandler.hpp>
-
-char buffer[2048];
+  
+static char msgBuffer[2048];
 
 void handleJsonStatus(AsyncWebServerRequest *request, int json_state)
 {
@@ -58,7 +58,7 @@ void handleJsonStatus(AsyncWebServerRequest *request, int json_state)
 
 void handleJsonInfo(AsyncWebServerRequest *request)
 {
-  sprintf(buffer,
+  sprintf(msgBuffer,
           "{"
           "\"host_name\":\"%s\","
           "\"pioenv_name\":\"%s\","
@@ -92,7 +92,8 @@ void handleJsonInfo(AsyncWebServerRequest *request)
           "\"sketch_size\":%u,"
           "\"free_sketch_space\":%u"
           "}",
-          appcfg.ota_hostname, PIOENV_NAME, 
+          appcfg.ota_hostname, 
+          PIOENV_NAME, 
 
           ESP.getFullVersion().c_str(), 
           ESP.getCoreVersion().c_str(), 
@@ -118,7 +119,7 @@ void handleJsonInfo(AsyncWebServerRequest *request)
           ESP.getFreeHeap(), ESP.getSketchSize(), ESP.getFreeSketchSpace()
           );
 
-  String message(buffer);
+  String message(msgBuffer);
 
   AsyncWebServerResponse *response =
       request->beginResponse(200, "application/json", message);

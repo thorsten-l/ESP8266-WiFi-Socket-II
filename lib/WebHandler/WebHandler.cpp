@@ -42,11 +42,17 @@ void WebHandler::setup()
   });
 
   server.on("/pure-min.css", HTTP_GET, [](AsyncWebServerRequest *request) {
-    handleCssFile( request, PURE_MIN_CSS_GZ, PURE_MIN_CSS_GZ_LEN );
+    AsyncWebServerResponse *response = request->beginResponse_P(200, "text/css", PURE_MIN_CSS_GZ, PURE_MIN_CSS_GZ_LEN);
+    response->addHeader("Content-Encoding", "gzip");
+    response->addHeader("Cache-Control", "max-age=31536000");
+    request->send(response);
   });
 
   server.on("/layout.css", HTTP_GET, [](AsyncWebServerRequest *request) {
-    handleCssFile( request, LAYOUT_CSS_GZ, LAYOUT_CSS_GZ_LEN );
+    AsyncWebServerResponse *response = request->beginResponse_P(200, "text/css", LAYOUT_CSS_GZ, LAYOUT_CSS_GZ_LEN);
+    response->addHeader("Content-Encoding", "gzip");
+    response->addHeader("Cache-Control", "max-age=31536000");
+    request->send(response);
   });
 
   server.on("/config-backup", HTTP_GET, handleBackupConfiguration );
