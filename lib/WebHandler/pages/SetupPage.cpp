@@ -8,7 +8,7 @@ String setupProcessor(const String &var)
   String selected = F("selected");
   String checked = F("checked");
 
-  if (var == "admin_password")
+  if (var == A_admin_password)
     return String(appcfg.admin_password);
 
   // Wifi
@@ -33,9 +33,9 @@ String setupProcessor(const String &var)
     return options;
   }
 
-  if (var == "wifi_ssid")
+  if (var == A_wifi_ssid)
     return String(appcfg.wifi_ssid);
-  if (var == "wifi_password")
+  if (var == A_wifi_password)
     return String(appcfg.wifi_password);
 
   // Network
@@ -43,98 +43,98 @@ String setupProcessor(const String &var)
     return selected;
   if (var == "net_mode_static" && appcfg.net_mode == NET_MODE_STATIC)
     return selected;
-  if (var == "net_host")
+  if (var == A_net_host)
     return String(appcfg.net_host);
-  if (var == "net_gateway")
+  if (var == A_net_gateway)
     return String(appcfg.net_gateway);
-  if (var == "net_mask")
+  if (var == A_net_mask)
     return String(appcfg.net_mask);
-  if (var == "net_dns")
+  if (var == A_net_dns)
     return String(appcfg.net_dns);
 
   // OTA
-  if (var == "ota_hostname")
+  if (var == A_ota_hostname)
     return String(appcfg.ota_hostname);
-  if (var == "ota_password")
+  if (var == A_ota_password)
     return String(appcfg.ota_password);
 
   // OpenHAB
-  if (var == "ohab_enabled" && appcfg.ohab_enabled == true)
+  if (var == A_ohab_enabled && appcfg.ohab_enabled == true)
     return checked;
   if (var == "ohab_v1" && appcfg.ohab_version == 1)
     return selected;
   if (var == "ohab_v2" && appcfg.ohab_version == 2)
     return selected;
-  if (var == "ohab_itemname")
+  if (var == A_ohab_itemname)
     return String(appcfg.ohab_itemname);
-  if (var == "ohab_host")
+  if (var == A_ohab_host)
     return String(appcfg.ohab_host);
-  if (var == "ohab_port")
+  if (var == A_ohab_port)
     return String(appcfg.ohab_port);
-  if (var == "ohab_useauth" && appcfg.ohab_useauth == true)
+  if (var == A_ohab_useauth && appcfg.ohab_useauth == true)
     return checked;
-  if (var == "ohab_user")
+  if (var == A_ohab_user)
     return String(appcfg.ohab_user);
-  if (var == "ohab_password")
+  if (var == A_ohab_password)
     return String(appcfg.ohab_password);
 
 #ifdef HAVE_ENERGY_SENSOR
-  if (var == "ohab_item_voltage")
+  if (var == A_ohab_item_voltage)
     return String(appcfg.ohab_item_voltage);
-  if (var == "ohab_item_current")
+  if (var == A_ohab_item_current)
     return String(appcfg.ohab_item_current);
-  if (var == "ohab_item_power")
+  if (var == A_ohab_item_power)
     return String(appcfg.ohab_item_power);
-  if (var == "ohab_sending_interval")
+  if (var == A_ohab_sending_interval)
     return String(appcfg.ohab_sending_interval);
 #endif
 
   // Alexa
-  if (var == "alexa_enabled" && appcfg.alexa_enabled == true)
+  if (var == A_alexa_enabled && appcfg.alexa_enabled == true)
     return checked;
-  if (var == "alexa_devicename")
+  if (var == A_alexa_devicename)
     return String(appcfg.alexa_devicename);
 
   // MQTT
-  if (var == "mqtt_enabled" && appcfg.mqtt_enabled == true)
+  if (var == A_mqtt_enabled && appcfg.mqtt_enabled == true)
     return checked;
-  if (var == "mqtt_clientid")
+  if (var == A_mqtt_clientid)
     return String(appcfg.mqtt_clientid);
-  if (var == "mqtt_host")
+  if (var == A_mqtt_host)
     return String(appcfg.mqtt_host);
-  if (var == "mqtt_port")
+  if (var == A_mqtt_port)
     return String(appcfg.mqtt_port);
-  if (var == "mqtt_useauth" && appcfg.mqtt_useauth == true)
+  if (var == A_mqtt_useauth && appcfg.mqtt_useauth == true)
     return checked;
-  if (var == "mqtt_user")
+  if (var == A_mqtt_user)
     return String(appcfg.mqtt_user);
-  if (var == "mqtt_password")
+  if (var == A_mqtt_password)
     return String(appcfg.mqtt_password);
-  if (var == "mqtt_intopic")
+  if (var == A_mqtt_intopic)
     return String(appcfg.mqtt_intopic);
-  if (var == "mqtt_outtopic")
+  if (var == A_mqtt_outtopic)
     return String(appcfg.mqtt_outtopic);
 #ifdef HAVE_ENERGY_SENSOR
-  if (var == "mqtt_topic_voltage")
+  if (var == A_mqtt_topic_voltage)
     return String(appcfg.mqtt_topic_voltage);
-  if (var == "mqtt_topic_current")
+  if (var == A_mqtt_topic_current)
     return String(appcfg.mqtt_topic_current);
-  if (var == "mqtt_topic_power")
+  if (var == A_mqtt_topic_power)
     return String(appcfg.mqtt_topic_power);
-  if (var == "mqtt_topic_json")
+  if (var == A_mqtt_topic_json)
     return String(appcfg.mqtt_topic_json);
-  if (var == "mqtt_sending_interval")
+  if (var == A_mqtt_sending_interval)
     return String(appcfg.mqtt_sending_interval);
 #endif
 
   // Syslog
-  if (var == "syslog_enabled" && appcfg.syslog_enabled == true)
+  if (var == A_syslog_enabled && appcfg.syslog_enabled == true)
     return checked;
-  if (var == "syslog_host")
+  if (var == A_syslog_host)
     return String(appcfg.syslog_host);
-  if (var == "syslog_port")
+  if (var == A_syslog_port)
     return String(appcfg.syslog_port);
-  if (var == "syslog_app_name")
+  if (var == A_syslog_app_name)
     return String(appcfg.syslog_app_name);
 
   return String();

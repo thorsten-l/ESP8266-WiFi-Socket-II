@@ -275,64 +275,63 @@ void App::writeConfig() {
      uJson j = uJson( configJson );
 
      j.writeHeader();
-     j.writeEntry( "wifi_ssid", appcfgWR.wifi_ssid );
-     j.writeEntry( "wifi_password", appcfgWR.wifi_password );
-     j.writeEntry( "wifi_mode", appcfgWR.wifi_mode );
+     j.writeEntry( A_wifi_ssid, appcfgWR.wifi_ssid );
+     j.writeEntry( A_wifi_password, appcfgWR.wifi_password );
+     j.writeEntry( A_wifi_mode, appcfgWR.wifi_mode );
 
-     j.writeEntry( "net_mode", appcfgWR.net_mode );
-     j.writeEntry( "net_host", appcfgWR.net_host );
-     j.writeEntry( "net_mask", appcfgWR.net_mask );
-     j.writeEntry( "net_gateway", appcfgWR.net_gateway );
-     j.writeEntry( "net_dns", appcfgWR.net_dns );
+     j.writeEntry( A_net_mode, appcfgWR.net_mode );
+     j.writeEntry( A_net_host, appcfgWR.net_host );
+     j.writeEntry( A_net_mask, appcfgWR.net_mask );
+     j.writeEntry( A_net_gateway, appcfgWR.net_gateway );
+     j.writeEntry( A_net_dns, appcfgWR.net_dns );
 
-     j.writeEntry( "ota_hostname", appcfgWR.ota_hostname );
-     j.writeEntry( "ota_password", appcfgWR.ota_password );
+     j.writeEntry( A_ota_hostname, appcfgWR.ota_hostname );
+     j.writeEntry( A_ota_password, appcfgWR.ota_password );
 
-     j.writeEntry( "admin_password", appcfgWR.admin_password );
+     j.writeEntry( A_admin_password, appcfgWR.admin_password );
 
-     j.writeEntry( "ohab_enabled", appcfgWR.ohab_enabled );
-     j.writeEntry( "ohab_version", appcfgWR.ohab_version );
-     j.writeEntry( "ohab_host", appcfgWR.ohab_host );
-     j.writeEntry( "ohab_port", appcfgWR.ohab_port );
-     j.writeEntry( "ohab_itemname", appcfgWR.ohab_itemname );
-     j.writeEntry( "ohab_useauth", appcfgWR.ohab_useauth );
-     j.writeEntry( "ohab_user", appcfgWR.ohab_user );
-     j.writeEntry( "ohab_password", appcfgWR.ohab_password );
+     j.writeEntry( A_ohab_enabled, appcfgWR.ohab_enabled );
+     j.writeEntry( A_ohab_version, appcfgWR.ohab_version );
+     j.writeEntry( A_ohab_host, appcfgWR.ohab_host );
+     j.writeEntry( A_ohab_port, appcfgWR.ohab_port );
+     j.writeEntry( A_ohab_itemname, appcfgWR.ohab_itemname );
+     j.writeEntry( A_ohab_useauth, appcfgWR.ohab_useauth );
+     j.writeEntry( A_ohab_user, appcfgWR.ohab_user );
+     j.writeEntry( A_ohab_password, appcfgWR.ohab_password );
 #ifdef HAVE_ENERGY_SENSOR
-     j.writeEntry( "ohab_item_voltage", appcfgWR.ohab_item_voltage );
-     j.writeEntry( "ohab_item_current", appcfgWR.ohab_item_current );
-     j.writeEntry( "ohab_item_power", appcfgWR.ohab_item_power );
-     j.writeEntry( "ohab_sending_interval", appcfgWR.ohab_sending_interval );
+     j.writeEntry( A_ohab_item_voltage, appcfgWR.ohab_item_voltage );
+     j.writeEntry( A_ohab_item_current, appcfgWR.ohab_item_current );
+     j.writeEntry( A_ohab_item_power, appcfgWR.ohab_item_power );
+     j.writeEntry( A_ohab_sending_interval, appcfgWR.ohab_sending_interval );
 #endif
 
-     j.writeEntry( "alexa_enabled", appcfgWR.alexa_enabled );
-     j.writeEntry( "alexa_devicename", appcfgWR.alexa_devicename );
+     j.writeEntry( A_alexa_enabled, appcfgWR.alexa_enabled );
+     j.writeEntry( A_alexa_devicename, appcfgWR.alexa_devicename );
 
-     j.writeEntry( "mqtt_enabled", appcfgWR.mqtt_enabled );
-     j.writeEntry( "mqtt_clientid", appcfgWR.mqtt_clientid );
-     j.writeEntry( "mqtt_host", appcfgWR.mqtt_host );
-     j.writeEntry( "mqtt_port", appcfgWR.mqtt_port );
-     j.writeEntry( "mqtt_intopic", appcfgWR.mqtt_intopic );
-     j.writeEntry( "mqtt_outtopic", appcfgWR.mqtt_outtopic );
-     j.writeEntry( "mqtt_useauth", appcfgWR.mqtt_useauth );
-     j.writeEntry( "mqtt_user", appcfgWR.mqtt_user );
-     j.writeEntry( "mqtt_password", appcfgWR.mqtt_password );
+     j.writeEntry( A_mqtt_enabled, appcfgWR.mqtt_enabled );
+     j.writeEntry( A_mqtt_clientid, appcfgWR.mqtt_clientid );
+     j.writeEntry( A_mqtt_host, appcfgWR.mqtt_host );
+     j.writeEntry( A_mqtt_port, appcfgWR.mqtt_port );
+     j.writeEntry( A_mqtt_intopic, appcfgWR.mqtt_intopic );
+     j.writeEntry( A_mqtt_outtopic, appcfgWR.mqtt_outtopic );
+     j.writeEntry( A_mqtt_useauth, appcfgWR.mqtt_useauth );
+     j.writeEntry( A_mqtt_user, appcfgWR.mqtt_user );
+     j.writeEntry( A_mqtt_password, appcfgWR.mqtt_password );
 #ifdef HAVE_ENERGY_SENSOR
-     j.writeEntry( "mqtt_topic_voltage", appcfgWR.mqtt_topic_voltage );
-     j.writeEntry( "mqtt_topic_current", appcfgWR.mqtt_topic_current );
-     j.writeEntry( "mqtt_topic_power", appcfgWR.mqtt_topic_power );
-     j.writeEntry( "mqtt_topic_json", appcfgWR.mqtt_topic_json );
-     j.writeEntry( "mqtt_sending_interval", appcfgWR.mqtt_sending_interval );
+     j.writeEntry( A_mqtt_topic_voltage, appcfgWR.mqtt_topic_voltage );
+     j.writeEntry( A_mqtt_topic_current, appcfgWR.mqtt_topic_current );
+     j.writeEntry( A_mqtt_topic_power, appcfgWR.mqtt_topic_power );
+     j.writeEntry( A_mqtt_topic_json, appcfgWR.mqtt_topic_json );
+     j.writeEntry( A_mqtt_sending_interval, appcfgWR.mqtt_sending_interval );
 #endif
 
-     j.writeEntry( "syslog_enabled", appcfgWR.syslog_enabled );
-     j.writeEntry( "syslog_host", appcfgWR.syslog_host );
-     j.writeEntry( "syslog_port", appcfgWR.syslog_port );
-     j.writeEntry( "syslog_app_name", appcfgWR.syslog_app_name );
+     j.writeEntry( A_syslog_enabled, appcfgWR.syslog_enabled );
+     j.writeEntry( A_syslog_host, appcfgWR.syslog_host );
+     j.writeEntry( A_syslog_port, appcfgWR.syslog_port );
+     j.writeEntry( A_syslog_app_name, appcfgWR.syslog_app_name );
 
      j.writeFooter();
      configJson.close();
-///////////
 
     FSInfo fs_info;
     SPIFFS.info(fs_info);
@@ -431,7 +430,7 @@ void App::handle() {
     restartSystem();
   }
 
-  delay(5); // time for IP stack
+  delay(10); // time for IP stack
 }
 
 bool App::loadJsonConfig( const char *filename )
@@ -449,60 +448,60 @@ bool App::loadJsonConfig( const char *filename )
 
       while( readError == false && j.readAttributeName( attributeName ) == true )
       {        
-        readError |= j.readEntryChars( attributeName, "wifi_ssid", appcfgRD.wifi_ssid );
-        readError |= j.readEntryChars( attributeName, "wifi_password", appcfgRD.wifi_password );
-        readError |= j.readEntryInteger( attributeName, "wifi_mode", &appcfgRD.wifi_mode );
+        readError |= j.readEntryChars( attributeName, A_wifi_ssid, appcfgRD.wifi_ssid );
+        readError |= j.readEntryChars( attributeName, A_wifi_password, appcfgRD.wifi_password );
+        readError |= j.readEntryInteger( attributeName, A_wifi_mode, &appcfgRD.wifi_mode );
         
-        readError |= j.readEntryInteger( attributeName, "net_mode", &appcfgRD.net_mode );
-        readError |= j.readEntryChars( attributeName, "net_host", appcfgRD.net_host );
-        readError |= j.readEntryChars( attributeName, "net_mask", appcfgRD.net_mask );
-        readError |= j.readEntryChars( attributeName, "net_gateway", appcfgRD.net_gateway );
-        readError |= j.readEntryChars( attributeName, "net_dns", appcfgRD.net_dns );
+        readError |= j.readEntryInteger( attributeName, A_net_mode, &appcfgRD.net_mode );
+        readError |= j.readEntryChars( attributeName, A_net_host, appcfgRD.net_host );
+        readError |= j.readEntryChars( attributeName, A_net_mask, appcfgRD.net_mask );
+        readError |= j.readEntryChars( attributeName, A_net_gateway, appcfgRD.net_gateway );
+        readError |= j.readEntryChars( attributeName, A_net_dns, appcfgRD.net_dns );
 
-        readError |= j.readEntryChars( attributeName, "ota_hostname", appcfgRD.ota_hostname );
-        readError |= j.readEntryChars( attributeName, "ota_password", appcfgRD.ota_password );
+        readError |= j.readEntryChars( attributeName, A_ota_hostname, appcfgRD.ota_hostname );
+        readError |= j.readEntryChars( attributeName, A_ota_password, appcfgRD.ota_password );
 
-        readError |= j.readEntryChars( attributeName, "admin_password", appcfgRD.admin_password );
+        readError |= j.readEntryChars( attributeName, A_admin_password, appcfgRD.admin_password );
 
-        readError |= j.readEntryBoolean( attributeName, "ohab_enabled", &appcfgRD.ohab_enabled );
-        readError |= j.readEntryInteger( attributeName, "ohab_version", &appcfgRD.ohab_version );
-        readError |= j.readEntryChars( attributeName, "ohab_host", appcfgRD.ohab_host );
-        readError |= j.readEntryInteger( attributeName, "ohab_port", &appcfgRD.ohab_port );
-        readError |= j.readEntryBoolean( attributeName, "ohab_useauth", &appcfgRD.ohab_useauth );
-        readError |= j.readEntryChars( attributeName, "ohab_user", appcfgRD.ohab_user );
-        readError |= j.readEntryChars( attributeName, "ohab_password", appcfgRD.ohab_password );
-        readError |= j.readEntryChars( attributeName, "ohab_itemname", appcfgRD.ohab_itemname );
+        readError |= j.readEntryBoolean( attributeName, A_ohab_enabled, &appcfgRD.ohab_enabled );
+        readError |= j.readEntryInteger( attributeName, A_ohab_version, &appcfgRD.ohab_version );
+        readError |= j.readEntryChars( attributeName, A_ohab_host, appcfgRD.ohab_host );
+        readError |= j.readEntryInteger( attributeName, A_ohab_port, &appcfgRD.ohab_port );
+        readError |= j.readEntryBoolean( attributeName, A_ohab_useauth, &appcfgRD.ohab_useauth );
+        readError |= j.readEntryChars( attributeName, A_ohab_user, appcfgRD.ohab_user );
+        readError |= j.readEntryChars( attributeName, A_ohab_password, appcfgRD.ohab_password );
+        readError |= j.readEntryChars( attributeName, A_ohab_itemname, appcfgRD.ohab_itemname );
 #ifdef HAVE_ENERGY_SENSOR
-        readError |= j.readEntryChars( attributeName, "ohab_item_voltage", appcfgRD.ohab_item_voltage );
-        readError |= j.readEntryChars( attributeName, "ohab_item_current", appcfgRD.ohab_item_current );
-        readError |= j.readEntryChars( attributeName, "ohab_item_power", appcfgRD.ohab_item_power );
-        readError |= j.readEntryLong( attributeName, "ohab_sending_interval", &appcfgRD.ohab_sending_interval );
+        readError |= j.readEntryChars( attributeName, A_ohab_item_voltage, appcfgRD.ohab_item_voltage );
+        readError |= j.readEntryChars( attributeName, A_ohab_item_current, appcfgRD.ohab_item_current );
+        readError |= j.readEntryChars( attributeName, A_ohab_item_power, appcfgRD.ohab_item_power );
+        readError |= j.readEntryLong( attributeName, A_ohab_sending_interval, &appcfgRD.ohab_sending_interval );
 #endif
 
-        readError |= j.readEntryBoolean( attributeName, "alexa_enabled", &appcfgRD.alexa_enabled );
-        readError |= j.readEntryChars( attributeName, "alexa_devicename", appcfgRD.alexa_devicename );
+        readError |= j.readEntryBoolean( attributeName, A_alexa_enabled, &appcfgRD.alexa_enabled );
+        readError |= j.readEntryChars( attributeName, A_alexa_devicename, appcfgRD.alexa_devicename );
 
-        readError |= j.readEntryBoolean( attributeName, "mqtt_enabled", &appcfgRD.mqtt_enabled );
-        readError |= j.readEntryChars( attributeName, "mqtt_clientid", appcfgRD.mqtt_clientid );
-        readError |= j.readEntryChars( attributeName, "mqtt_host", appcfgRD.mqtt_host );
-        readError |= j.readEntryInteger( attributeName, "mqtt_port", &appcfgRD.mqtt_port );
-        readError |= j.readEntryChars( attributeName, "mqtt_intopic", appcfgRD.mqtt_intopic );
-        readError |= j.readEntryChars( attributeName, "mqtt_outtopic", appcfgRD.mqtt_outtopic );
-        readError |= j.readEntryBoolean( attributeName, "mqtt_useauth", &appcfgRD.mqtt_useauth );
-        readError |= j.readEntryChars( attributeName, "mqtt_user", appcfgRD.mqtt_user );
-        readError |= j.readEntryChars( attributeName, "mqtt_password", appcfgRD.mqtt_password );
+        readError |= j.readEntryBoolean( attributeName, A_mqtt_enabled, &appcfgRD.mqtt_enabled );
+        readError |= j.readEntryChars( attributeName, A_mqtt_clientid, appcfgRD.mqtt_clientid );
+        readError |= j.readEntryChars( attributeName, A_mqtt_host, appcfgRD.mqtt_host );
+        readError |= j.readEntryInteger( attributeName, A_mqtt_port, &appcfgRD.mqtt_port );
+        readError |= j.readEntryChars( attributeName, A_mqtt_intopic, appcfgRD.mqtt_intopic );
+        readError |= j.readEntryChars( attributeName, A_mqtt_outtopic, appcfgRD.mqtt_outtopic );
+        readError |= j.readEntryBoolean( attributeName, A_mqtt_useauth, &appcfgRD.mqtt_useauth );
+        readError |= j.readEntryChars( attributeName, A_mqtt_user, appcfgRD.mqtt_user );
+        readError |= j.readEntryChars( attributeName, A_mqtt_password, appcfgRD.mqtt_password );
 #ifdef HAVE_ENERGY_SENSOR
-        readError |= j.readEntryChars( attributeName, "mqtt_topic_voltage", appcfgRD.mqtt_topic_voltage );
-        readError |= j.readEntryChars( attributeName, "mqtt_topic_current", appcfgRD.mqtt_topic_current );
-        readError |= j.readEntryChars( attributeName, "mqtt_topic_power", appcfgRD.mqtt_topic_power );
-        readError |= j.readEntryChars( attributeName, "mqtt_topic_json", appcfgRD.mqtt_topic_json );
-        readError |= j.readEntryLong( attributeName, "mqtt_sending_interval", &appcfgRD.mqtt_sending_interval );
+        readError |= j.readEntryChars( attributeName, A_mqtt_topic_voltage, appcfgRD.mqtt_topic_voltage );
+        readError |= j.readEntryChars( attributeName, A_mqtt_topic_current, appcfgRD.mqtt_topic_current );
+        readError |= j.readEntryChars( attributeName, A_mqtt_topic_power, appcfgRD.mqtt_topic_power );
+        readError |= j.readEntryChars( attributeName, A_mqtt_topic_json, appcfgRD.mqtt_topic_json );
+        readError |= j.readEntryLong( attributeName, A_mqtt_sending_interval, &appcfgRD.mqtt_sending_interval );
 #endif
 
-        readError |= j.readEntryBoolean( attributeName, "syslog_enabled", &appcfgRD.syslog_enabled );
-        readError |= j.readEntryChars( attributeName, "syslog_host", appcfgRD.syslog_host );
-        readError |= j.readEntryInteger( attributeName, "syslog_port", &appcfgRD.syslog_port );
-        readError |= j.readEntryChars( attributeName, "syslog_app_name", appcfgRD.syslog_app_name );
+        readError |= j.readEntryBoolean( attributeName, A_syslog_enabled, &appcfgRD.syslog_enabled );
+        readError |= j.readEntryChars( attributeName, A_syslog_host, appcfgRD.syslog_host );
+        readError |= j.readEntryInteger( attributeName, A_syslog_port, &appcfgRD.syslog_port );
+        readError |= j.readEntryChars( attributeName, A_syslog_app_name, appcfgRD.syslog_app_name );
       }
     }
     

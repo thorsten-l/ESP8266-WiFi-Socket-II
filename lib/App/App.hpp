@@ -4,14 +4,14 @@
 #include <Arduino.h>
 #include <FS.h>
 #include <DeviceConfig.hpp>
+#include <ConfigAttributes.hpp>
 
 #define LOG0( format ) Serial.printf( "(%ld) " format, millis())
 #define LOG1( format, x) Serial.printf( "(%ld) " format, millis(), x )
 
 #define APP_NAME "WiFi Socket II"
-#define APP_VERSION "2.7.0beta01"
+#define APP_VERSION "2.7.0beta02"
 #define APP_AUTHOR "Dr. Thorsten Ludewig <t.ludewig@gmail.com>"
-// #define APP_CONFIG_FILE "/config.bin"
 #define APP_CONFIG_FILE_JSON "/config.json"
 
 // Network mode
