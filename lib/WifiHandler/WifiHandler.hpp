@@ -7,8 +7,11 @@ class WifiHandler
 {
 private:
   bool connected;
+  int connectCounter = 0;
   char networkBuffer[1024];
   const char* scanNetworks();
+  byte mac[6];
+  char macAddress[20];
 
 public:
   void setup();
@@ -18,6 +21,9 @@ public:
   ListNode* getScannedNetworks();
   const bool handle( time_t timestamp );
   const char *getLocalIP();
+  int getConnectCounter();
+  const char* getMacAddress();
+  const char* getPhyMode();
 };
 
 extern WifiHandler wifiHandler;

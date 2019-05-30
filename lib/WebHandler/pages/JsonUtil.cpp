@@ -2,6 +2,9 @@
 #include "pages/Pages.h"
 #include <RelayHandler.hpp>
 #include <Hlw8012Handler.hpp>
+#include <WiFiHandler.hpp>
+
+char buffer[2048];
 
 void handleJsonStatus(AsyncWebServerRequest *request, int json_state)
 {
@@ -55,7 +58,6 @@ void handleJsonStatus(AsyncWebServerRequest *request, int json_state)
 
 void handleJsonInfo(AsyncWebServerRequest *request)
 {
-  char buffer[768];
   sprintf(buffer,
           "{"
           "\"host_name\":\"%s\","
@@ -72,6 +74,18 @@ void handleJsonInfo(AsyncWebServerRequest *request)
           "\"fw_version\":\"%s\","
           "\"build_date\":\"%s\","
           "\"build_time\":\"%s\","
+
+          "\"wifi_ssid\":\"%s\","
+          "\"wifi_reconnect_counter\":%d,"
+          "\"wifi_channel\":%d,"
+          "\"wifi_phy_mode\":\"%s\","
+          "\"wifi_mac_address\":\"%s\","
+          "\"wifi_hostname\":\"%s\","
+          "\"wifi_ip_address\":\"%s\","
+          "\"wifi_gateway_ip\":\"%s\","
+          "\"wifi_subnet_mask\":\"%s\","
+          "\"wifi_dns_ip\":\"%s\","
+
           "\"spiffs_total\":%u,"
           "\"spiffs_used\":%u,"
           "\"free_heap\":%u,"
@@ -87,7 +101,20 @@ void handleJsonInfo(AsyncWebServerRequest *request)
           ESP.getChipId(),
           ESP.getCpuFreqMHz(), ESP.getFlashChipRealSize(),
           ESP.getFlashChipSpeed(), ESP.getFlashChipSize(), APP_NAME,
-          APP_VERSION, __DATE__, __TIME__, app.fsTotalBytes, app.fsUsedBytes,
+          APP_VERSION, __DATE__, __TIME__, 
+          
+          appcfg.wifi_ssid,
+          wifiHandler.getConnectCounter(),
+          WiFi.channel(),
+          wifiHandler.getPhyMode(),
+          wifiHandler.getMacAddress(),
+          WiFi.hostname().c_str(),
+          WiFi.localIP().toString().c_str(),
+          WiFi.gatewayIP().toString().c_str(),
+          WiFi.subnetMask().toString().c_str(),
+          WiFi.dnsIP().toString().c_str(),
+
+          app.fsTotalBytes, app.fsUsedBytes,
           ESP.getFreeHeap(), ESP.getSketchSize(), ESP.getFreeSketchSpace()
           );
 

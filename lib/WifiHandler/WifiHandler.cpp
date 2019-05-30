@@ -8,6 +8,8 @@
 
 WifiHandler wifiHandler;
 SimpleLinkedList wifiNetworkLists;
+const char *phyModes[] = {"11B", "11G", "11N"};
+char ipBuffer[32];
 
 static time_t lastTimestamp;
 
@@ -93,6 +95,10 @@ void WifiHandler::setup()
     digitalWrite( WIFI_LED, WIFI_LED_ON );
     connected = true;
   }
+
+  WiFi.macAddress(mac);
+  sprintf( macAddress, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0],
+                mac[1], mac[2], mac[3], mac[4], mac[5]);
 }
 
 const bool WifiHandler::handle(time_t timestamp)
@@ -125,6 +131,8 @@ const bool WifiHandler::handle(time_t timestamp)
         Serial.println("\n");
         Serial.printf("WiFi connected to %s\n", appcfg.wifi_ssid);
 
+        connectCounter++;
+
         if (appcfg.net_mode == NET_MODE_DHCP)
         {
           Serial.println("copy wifi config from dhcp response");
@@ -138,7 +146,11 @@ const bool WifiHandler::handle(time_t timestamp)
         Serial.printf(" - gateway: %s\n", WiFi.gatewayIP().toString().c_str());
         Serial.printf(" - mask: %s\n", WiFi.subnetMask().toString().c_str());
         Serial.printf(" - dns server: %s\n", WiFi.dnsIP().toString().c_str());
-
+        Serial.printf(" - WiFi Channel: %d\n", WiFi.channel());
+        Serial.printf(" - WiFi phy mode: %s\n", getPhyMode() );
+        Serial.printf(" - WiFi MAC Address: %s\n", macAddress);
+        Serial.printf(" - WiFi Hostname: %s\n", WiFi.hostname().c_str());
+ 
         if (appcfg.syslog_enabled)
         {
           syslog.logInfo(APP_NAME ", Version " APP_VERSION ", by " APP_AUTHOR);
@@ -220,11 +232,25 @@ ListNode* WifiHandler::getScannedNetworks()
   return wifiNetworkLists.getRootNode();
 }
 
-char ipBuffer[32];
 
 const char *WifiHandler::getLocalIP()
 {
   strncpy(ipBuffer, WiFi.localIP().toString().c_str(), 31);
   ipBuffer[31] = 0;
   return ipBuffer;
+}
+
+int WifiHandler::getConnectCounter()
+{
+  return connectCounter;
+}
+
+const char* WifiHandler::getMacAddress()
+{
+  return macAddress;
+}
+
+const char* WifiHandler::getPhyMode()
+{
+  return phyModes[WiFi.getPhyMode() - 1];
 }
