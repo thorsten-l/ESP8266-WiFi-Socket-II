@@ -76,18 +76,16 @@ const char SETUP_HTML[] PROGMEM =
   "<div class='panel sub-panel'>\n"
     "<div class=\"pure-control-group\"><label for=\"pgid11\">Callback Enabled</label><input id=\"pgid11\" type=\"checkbox\" name=\"ohab_enabled\" value=\"true\" %ohab_enabled%></div>\n"
     "<div class=\"pure-control-group\"><label for=\"pgid12\">OpenHAB Version</label><select id=\"pgid12\" name=\"ohab_version\"><option %ohab_v1% value=\"1\">1.8</option><option %ohab_v2% value=\"2\">&gt;=2.0</option></select></div>\n"
-    "<div class=\"pure-control-group\"><label for=\"pgid13\">Item Name</label><input id=\"pgid13\" type=\"text\" name=\"ohab_itemname\" maxlength=\"64\" value=\"%ohab_itemname%\"></div>\n"
-#ifdef HAVE_ENERGY_SENSOR
-    "<div class=\"pure-control-group\"><label for=\"emid01\">Item Voltage</label><input id=\"emid01\" type=\"text\" name=\"ohab_item_voltage\" maxlength=\"64\" value=\"%ohab_item_voltage%\"></div>\n"
-    "<div class=\"pure-control-group\"><label for=\"emid02\">Item Current</label><input id=\"emid02\" type=\"text\" name=\"ohab_item_current\" maxlength=\"64\" value=\"%ohab_item_current%\"></div>\n"
-    "<div class=\"pure-control-group\"><label for=\"emid03\">Item Power</label><input id=\"emid03\" type=\"text\" name=\"ohab_item_power\" maxlength=\"64\" value=\"%ohab_item_power%\"></div>\n"
-#endif
     "<div class=\"pure-control-group\"><label for=\"pgid14\">Host</label><input id=\"pgid14\" type=\"text\" name=\"ohab_host\" maxlength=\"64\" value=\"%ohab_host%\"></div>\n"
     "<div class=\"pure-control-group\"><label for=\"pgid15\">Port</label><input id=\"pgid15\" type=\"text\" name=\"ohab_port\" maxlength=\"64\" value=\"%ohab_port%\"></div>\n"
     "<div class=\"pure-control-group\"><label for=\"pgid16\">Use Authentication</label><input id=\"pgid16\" type=\"checkbox\" name=\"ohab_useauth\" value=\"true\" %ohab_useauth%></div>\n"
     "<div class=\"pure-control-group\"><label for=\"pgid17\">User</label><input id=\"pgid17\" type=\"text\" name=\"ohab_user\" maxlength=\"64\" value=\"%ohab_user%\"></div>\n"
     "<div class=\"pure-control-group\"><label for=\"pgid18\">Password</label><input id=\"pgid18\" type=\"text\" name=\"ohab_password\" maxlength=\"64\" value=\"%ohab_password%\"></div>\n"
+    "<div class=\"pure-control-group\"><label for=\"pgid13\">Item Name</label><input id=\"pgid13\" type=\"text\" name=\"ohab_itemname\" maxlength=\"64\" value=\"%ohab_itemname%\"></div>\n"
 #ifdef HAVE_ENERGY_SENSOR
+    "<div class=\"pure-control-group\"><label for=\"emid01\">Item Voltage</label><input id=\"emid01\" type=\"text\" name=\"ohab_item_voltage\" maxlength=\"64\" value=\"%ohab_item_voltage%\"></div>\n"
+    "<div class=\"pure-control-group\"><label for=\"emid02\">Item Current</label><input id=\"emid02\" type=\"text\" name=\"ohab_item_current\" maxlength=\"64\" value=\"%ohab_item_current%\"></div>\n"
+    "<div class=\"pure-control-group\"><label for=\"emid03\">Item Power</label><input id=\"emid03\" type=\"text\" name=\"ohab_item_power\" maxlength=\"64\" value=\"%ohab_item_power%\"></div>\n"
     "<div class=\"pure-control-group\"><label for=\"emid04\">Sending Interval</label><input id=\"emid04\" type=\"text\" name=\"ohab_sending_interval\" maxlength=\"64\" value=\"%ohab_sending_interval%\"></div>\n"
 #endif
     "</div>\n"
