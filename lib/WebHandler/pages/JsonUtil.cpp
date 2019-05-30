@@ -2,7 +2,7 @@
 #include "pages/Pages.h"
 #include <RelayHandler.hpp>
 #include <Hlw8012Handler.hpp>
-#include <WiFiHandler.hpp>
+#include <WifiHandler.hpp>
 
 char buffer[2048];
 
