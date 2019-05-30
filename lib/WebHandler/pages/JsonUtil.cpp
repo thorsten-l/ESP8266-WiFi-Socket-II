@@ -30,21 +30,21 @@ void handleJsonStatus(AsyncWebServerRequest *request, int json_state)
   };
 
 #if defined(HAVE_ENERGY_SENSOR) && defined(HAVE_HLW8012)
-  char buffer[256];
+  char ebuffer[256];
   if ( powerIsOn )
   {
-    sprintf( buffer, ",\"voltage\":%.2f,\"current\":%.2f,\"power\":%.2f", 
+    sprintf( ebuffer, ",\"voltage\":%.2f,\"current\":%.2f,\"power\":%.2f", 
       hlw8012Handler.getVoltage(), hlw8012Handler.getCurrent(), 
       hlw8012Handler.getPower()
     );
   }
   else
   {
-    sprintf( buffer, ",\"voltage\":%.2f,\"current\":0.0,\"power\":0.0", 
+    sprintf( ebuffer, ",\"voltage\":%.2f,\"current\":0.0,\"power\":0.0", 
       hlw8012Handler.getVoltage()
     );
   }
-  String m2(buffer);
+  String m2(ebuffer);
   message += m2;
 #endif
 
@@ -53,6 +53,9 @@ void handleJsonStatus(AsyncWebServerRequest *request, int json_state)
   AsyncWebServerResponse *response =
       request->beginResponse(200, "application/json", message);
   response->addHeader("Access-Control-Allow-Origin", "*");
+  response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  response->addHeader("Pragma", "no-cache");
+  response->addHeader("Expires", "0");
   request->send(response);
 }
 
@@ -123,6 +126,11 @@ void handleJsonInfo(AsyncWebServerRequest *request)
 
   AsyncWebServerResponse *response =
       request->beginResponse(200, "application/json", message);
+
   response->addHeader("Access-Control-Allow-Origin", "*");
+  response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  response->addHeader("Pragma", "no-cache");
+  response->addHeader("Expires", "0");
+
   request->send(response);
 }
