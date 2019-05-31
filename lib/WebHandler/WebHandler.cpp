@@ -1,6 +1,6 @@
 #include "WebHandler.hpp"
 #include "pages/Pages.h"
-
+#include "favicon_ico.h"
 #include <ESP8266mDNS.h>
 #include <ESP8266HTTPUpdateServer.h>
 #include <AlexaHandler.hpp>
@@ -39,6 +39,13 @@ void WebHandler::setup()
 
   server.on("/state", HTTP_GET, [](AsyncWebServerRequest *request) {
     handleJsonStatus( request, JSON_RELAY_STATE );
+  });
+
+  server.on("/favicon.ico", HTTP_GET, [](AsyncWebServerRequest *request) {
+    AsyncWebServerResponse *response = request->beginResponse_P(200, "image/x-icon", FAVICON_ICO_GZ, FAVICON_ICO_GZ_LEN );
+    response->addHeader("Content-Encoding", "gzip");
+    response->addHeader("Cache-Control", "max-age=31536000");
+    request->send(response);
   });
 
   server.on("/pure-min.css", HTTP_GET, [](AsyncWebServerRequest *request) {
