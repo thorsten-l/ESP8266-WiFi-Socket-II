@@ -420,12 +420,13 @@ void App::printConfig(AppConfig ac) {
 void App::delayedSystemRestart() {
   doSystemRestart = true;
   systemRestartTimestamp = millis();
-  LOG0("*** delayedSystemRestart ***\n");
+  LOG0("*** delayedSystemRestart ***\n" );
 }
 
-void App::handle() {
-  if (doSystemRestart && (millis() - systemRestartTimestamp) > 5000) {
-    LOG0("*** doSystemRestart ***\n");
+void App::handle( unsigned long timestamp ) {
+
+  if ( doSystemRestart && (( timestamp - systemRestartTimestamp) > 5000 )) {
+    LOG1("*** doSystemRestart *** (%lu)\n", (timestamp - systemRestartTimestamp));
     writeConfig();
     restartSystem();
   }
@@ -475,7 +476,7 @@ bool App::loadJsonConfig( const char *filename )
         readError |= j.readEntryChars( attributeName, A_ohab_item_voltage, appcfgRD.ohab_item_voltage );
         readError |= j.readEntryChars( attributeName, A_ohab_item_current, appcfgRD.ohab_item_current );
         readError |= j.readEntryChars( attributeName, A_ohab_item_power, appcfgRD.ohab_item_power );
-        readError |= j.readEntryLong( attributeName, A_ohab_sending_interval, &appcfgRD.ohab_sending_interval );
+        readError |= j.readEntryULong( attributeName, A_ohab_sending_interval, &appcfgRD.ohab_sending_interval );
 #endif
 
         readError |= j.readEntryBoolean( attributeName, A_alexa_enabled, &appcfgRD.alexa_enabled );
@@ -495,7 +496,7 @@ bool App::loadJsonConfig( const char *filename )
         readError |= j.readEntryChars( attributeName, A_mqtt_topic_current, appcfgRD.mqtt_topic_current );
         readError |= j.readEntryChars( attributeName, A_mqtt_topic_power, appcfgRD.mqtt_topic_power );
         readError |= j.readEntryChars( attributeName, A_mqtt_topic_json, appcfgRD.mqtt_topic_json );
-        readError |= j.readEntryLong( attributeName, A_mqtt_sending_interval, &appcfgRD.mqtt_sending_interval );
+        readError |= j.readEntryULong( attributeName, A_mqtt_sending_interval, &appcfgRD.mqtt_sending_interval );
 #endif
 
         readError |= j.readEntryBoolean( attributeName, A_syslog_enabled, &appcfgRD.syslog_enabled );
