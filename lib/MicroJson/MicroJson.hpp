@@ -11,10 +11,9 @@ private:
   bool firstEntry;
   char buffer[128];
 
-  bool checkAttribute( const char* n1, const char* n2, char **p );
-  bool findValueEnd( char *p1, char **p2 );
+  bool findChar( const int c );
+  int nextNotWhiteSpaceChar();
   void writeAttributeName( String entryName );
-  int readLine();
 
 public:
   uJson( File _file );
@@ -22,7 +21,7 @@ public:
   void writeHeader();
   void writeEntry( String entryName, bool value );
   void writeEntry( String entryName, int value );
-  void writeEntry( String entryName, time_t value );
+  void writeEntry( String entryName, unsigned long value );
   void writeEntry( String entryName, const char *value );
   void writeFooter();
 
@@ -30,7 +29,7 @@ public:
   bool readAttributeName( char *attributeName );
   bool readEntryBoolean( const char* n1, const char* n2, bool *value );
   bool readEntryInteger( const char* n1, const char* n2, int *value );
-  bool readEntryLong( const char* n1, const char* n2, long int *value );
+  bool readEntryULong( const char* n1, const char* n2, unsigned long *value );
   bool readEntryChars( const char* n1, const char* n2, char *value );
   bool readFooter();
 };

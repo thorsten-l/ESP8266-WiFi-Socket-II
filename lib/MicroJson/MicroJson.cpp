@@ -1,46 +1,54 @@
-#include <App.hpp>
 #include <Arduino.h>
 #include <FS.h>
 
 #include "MicroJson.hpp"
 
-uJson::uJson(File _file) {
+uJson::uJson(File _file)
+{
   file = _file;
   firstEntry = true;
 }
 
-void uJson::writeAttributeName(String entryName) {
-  if (firstEntry == false) {
+void uJson::writeAttributeName(String entryName)
+{
+  if (firstEntry == false)
+  {
     file.write(",\n");
-  } else {
+  }
+  else
+  {
     firstEntry = false;
   }
 
-  file.write("\"");
+  file.write("  \"");
   file.write(entryName.c_str());
-  file.write("\":");
+  file.write("\": ");
 }
 
 void uJson::writeHeader() { file.write("{\n"); }
 
-void uJson::writeEntry(String entryName, bool value) {
+void uJson::writeEntry(String entryName, bool value)
+{
   writeAttributeName(entryName);
   file.write((value) ? "true" : "false");
 }
 
-void uJson::writeEntry(String entryName, int value) {
+void uJson::writeEntry(String entryName, int value)
+{
   writeAttributeName(entryName);
   sprintf(buffer, "%d", value);
   file.write((const char *)buffer);
 }
 
-void uJson::writeEntry(String entryName, time_t value) {
+void uJson::writeEntry(String entryName, unsigned long value)
+{
   writeAttributeName(entryName);
   sprintf(buffer, "%lu", value);
   file.write((const char *)buffer);
 }
 
-void uJson::writeEntry(String entryName, const char *value) {
+void uJson::writeEntry(String entryName, const char *value)
+{
   writeAttributeName(entryName);
   file.write("\"");
   file.write(value);
@@ -49,167 +57,162 @@ void uJson::writeEntry(String entryName, const char *value) {
 
 void uJson::writeFooter() { file.write("\n}\n"); }
 
-int uJson::readLine()
+bool uJson::findChar(const int c)
 {
-  int i = file.readBytesUntil( '\n', (uint8_t*)buffer, 127 );
-  buffer[i] = 0;
-  return i;
+  return nextNotWhiteSpaceChar() == c;
 }
 
-bool uJson::readHeader() 
-{ 
-  return readLine() > 0 && strcmp( "{", buffer ) == 0; 
+int uJson::nextNotWhiteSpaceChar()
+{
+  int r;
+  while ((r = file.read()) >= 0 && (r == ' ' || r == '\r' || r == '\n' || r == '\t' || r == ',' ));
+  return r;
 }
 
-bool uJson::checkAttribute( const char* n1, const char* n2, char **p )
+bool uJson::readHeader() { return findChar('{'); }
+
+bool uJson::readEntryBoolean(const char *n1, const char *n2, bool *value)
 {
-  if ( strcmp( n1, n2 ) == 0 )
+  if (strcmp(n1, n2) == 0)
   {
-    *p = buffer + strlen(n1) + 2;
-    if ( **p == ':' )
-    {
-      *p = *p + 1;
-      return true;
-    }
-  }
+    char nbuffer[16];
+    int i = 0;
+    int r = nextNotWhiteSpaceChar();
   
-  return false;
-}
+    while( r > 0 && i < 16 && r != ' ' && r != '\t' && r != '\r' && r != '\n' && r != ',' )
+    {
+      nbuffer[i++] = r;
+      r = file.read();
+    }
+  
+    if ( r > 0 && i < 16 )
+    {
+      nbuffer[i] = 0;
 
-bool uJson::findValueEnd( char *p1, char **p2 )
-{
-  int i=0;
-  while ( i<128 && *p1 != '\r' && *p1 != '\n' && *p1 != '\"' && *p1 != ',' && *p1 != 0 )
-  {
-    p1++;
-    i++;
-  }
-  *p2 = p1;
-  return i<128;
-}
-
-
-bool uJson::readEntryBoolean( const char* n1, const char* n2, bool *value ) 
-{ 
-   char * p1 = NULL, *p2;
-
-   if ( checkAttribute( n1, n2, &p1 ))
-   {   
-      if ( p1 != NULL && findValueEnd( p1, &p2 ))
+      if (strcmp("true", nbuffer) == 0)
       {
-        *p2 = 0;
-        if ( strcmp( "true", p1 ) == 0 )
-        {
-          *value = true;
-          return false;
-        }
-        if ( strcmp( "false", p1 ) == 0 )
-        {
-          *value = false;
-          return false;
-        }
-      }
-   }
-   else
-   {
-     return false;
-   }
-   
-   return true; 
-}
-
-
-bool uJson::readEntryInteger( const char* n1, const char* n2, int *value ) 
-{
-   char * p1 = NULL, *p2;
-
-   if ( checkAttribute( n1, n2, &p1 ))
-   {   
-      if ( p1 != NULL && findValueEnd( p1, &p2 ))
-      {
-        *p2 = 0;
-        if ( sscanf( p1, "%d", value ) == 1 )
-        {
-          return false;
-        }
-      }
-   }
-   else
-   {
-     return false;
-   }
-   
-   return true; 
-}
-
-bool uJson::readEntryLong( const char* n1, const char* n2, long int *value ) 
-{ 
-   char * p1 = NULL, *p2;
-
-   if ( checkAttribute( n1, n2, &p1 ))
-   {   
-      if ( p1 != NULL && findValueEnd( p1, &p2 ))
-      {
-        *p2 = 0;
-        if ( sscanf( p1, "%ld", value ) == 1 )
-        {
-          return false;
-        }
-      }
-   }
-   else
-   {
-     return false;
-   }
-   
-   return true;
-}
-
-bool uJson::readEntryChars( const char* n1, const char* n2, char *value ) 
-{ 
-   char * p1 = NULL, *p2;
-
-   if ( checkAttribute( n1, n2, &p1 ))
-   {  
-      if ( p1 == NULL || *p1 != '"' )
-      {
-        return true;
-      } 
-
-      p1++;
-
-      if ( findValueEnd( p1, &p2 ))
-      {
-        *p2 = 0;
-        strcpy( value, p1 );
+        *value = true;
         return false;
       }
-   }
-   else
-   {
-     return false;
-   }
-   
-   return true;
+      if (strcmp("false", nbuffer) == 0)
+      {
+        *value = false;
+        return false;
+      }
+    }
+  }
+  else
+  {
+    return false;
+  }
+
+  return true;
 }
 
-bool uJson::readAttributeName( char *attributeName ) 
-{ 
-  bool attributeNameFound = false;
-
-  readLine();
-  
-  if ( buffer[0] == '"' )
+bool uJson::readEntryInteger(const char *n1, const char *n2, int *value)
+{
+  if (strcmp(n1, n2) == 0)
   {
-    char *p = index( buffer+1, '"' );
-    if ( p != NULL && p[1] == ':' )
+    char nbuffer[32];
+    int i = 0;
+    int r = nextNotWhiteSpaceChar();
+  
+    while( r > 0 && i < 32 && r != ' ' && r != '\t' && r != '\r' && r != '\n' && r != ',' )
     {
-      int len = p-(buffer+1);
-      strncpy( attributeName, buffer+1, len );
-      attributeName[len] = 0;
+      nbuffer[i++] = r;
+      r = file.read();
+    }
+  
+    if ( r > 0 && i < 32 )
+    {
+      nbuffer[i] = 0;
+      if ( sscanf( nbuffer, "%d", value ) == 1 )
+      {
+        return false;
+      }
+    }
+  }
+  else
+  {
+    return false;
+  }
+ 
+  return true;
+}
+
+bool uJson::readEntryULong(const char *n1, const char *n2,
+                           unsigned long *value)
+{
+  if (strcmp(n1, n2) == 0)
+  {
+    char nbuffer[32];
+    int i = 0;
+    int r = nextNotWhiteSpaceChar();
+  
+    while( r > 0 && i < 32 && r != ' ' && r != '\t' && r != '\r' && r != '\n' && r != ',' )
+    {
+      nbuffer[i++] = r;
+      r = file.read();
+    }
+  
+    if ( r > 0 && i < 32 )
+    {
+      nbuffer[i] = 0;
+      if ( sscanf( nbuffer, "%lu", value ) == 1 )
+      {
+        return false;
+      }
+    }
+  }
+  else
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool uJson::readEntryChars(const char *n1, const char *n2, char *value)
+{
+  if (strcmp(n1, n2) == 0 && findChar('"'))
+  {
+    int i = 0;
+    int r;
+    while ((r = file.read()) >= 0 && r != '"' && i < 64)
+    {
+      value[i++] = r;
+    }
+    if (r == '"' && i < 64)
+    {
+      value[i] = 0;
+      return false;
+    }
+  }
+  else
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool uJson::readAttributeName(char *attributeName)
+{
+  bool attributeNameFound = false;
+  if (findChar('"') == true)
+  {
+    int i = 0;
+    int r;
+    while ((r = file.read()) >= 0 && r != '"' && i < 128)
+    {
+      attributeName[i++] = r;
+    }
+    if (r == '"' && i < 128 && findChar(':'))
+    {
+      attributeName[i] = 0;
       attributeNameFound = true;
     }
   }
 
-  return attributeNameFound; 
+  return attributeNameFound;
 }
