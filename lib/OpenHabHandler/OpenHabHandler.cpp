@@ -200,7 +200,7 @@ void OpenHabHandler::sendValue( const char* itemname, const float value )
     }
 }
 
-void OpenHabHandler::handle( time_t now )
+void OpenHabHandler::handle( unsigned long now )
 {
 #ifdef HAVE_ENERGY_SENSOR
   if ( appcfg.ohab_enabled && appcfg.ohab_sending_interval > 0 )

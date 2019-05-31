@@ -36,7 +36,7 @@ void Hlw8012Handler::setup()
     hlw8012.setCurrentMultiplier(18000);
 }
 
-void Hlw8012Handler::handle(time_t timestamp)
+void Hlw8012Handler::handle(unsigned long timestamp)
 {
     if (( timestamp - lastReadTimestamp ) >= UPDATE_TIME )
     {

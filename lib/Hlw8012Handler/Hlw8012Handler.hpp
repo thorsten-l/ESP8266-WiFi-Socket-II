@@ -9,14 +9,14 @@
 class Hlw8012Handler
 {
 private:
-  time_t lastReadTimestamp = 0;
+  unsigned long lastReadTimestamp = 0;
   double voltage;
   double current;
   int activePower;
 
 public:
   void setup();
-  void handle(time_t timestamp);
+  void handle(unsigned long timestamp);
   double getVoltage();
   double getCurrent();
   double getPower();

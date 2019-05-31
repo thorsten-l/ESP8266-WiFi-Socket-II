@@ -10,11 +10,11 @@
 #include <WifiHandler.hpp>
 #include <Hlw8012Handler.hpp>
 
-time_t lifeTicker;
-time_t maxLoopTime;
-time_t lastLoopTimestamp;
-time_t thisLoopTimestamp;
-time_t debounceTimestamp;
+unsigned long lifeTicker;
+unsigned long maxLoopTime;
+unsigned long lastLoopTimestamp;
+unsigned long thisLoopTimestamp;
+unsigned long debounceTimestamp;
 bool buttonPressed;
 
 void ICACHE_RAM_ATTR powerButtonPressed()
@@ -82,5 +82,5 @@ void loop()
 #endif
 
   relayHandler.handle();
-  app.handle();
+  app.handle(thisLoopTimestamp);
 }

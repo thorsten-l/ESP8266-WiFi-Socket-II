@@ -83,7 +83,7 @@ void MqttHandler::setup()
   initialized = true;
 }
 
-void MqttHandler::handle(time_t now)
+void MqttHandler::handle( unsigned long now)
 {
   if (appcfg.mqtt_enabled && wifiHandler.isReady())
   {
@@ -114,19 +114,19 @@ void MqttHandler::handle(time_t now)
       if ( appcfg.mqtt_sending_interval > 0 &&
        ( now - lastPublishTimestamp ) > (appcfg.mqtt_sending_interval*1000))
       {
-        char buffer[128];
         lastPublishTimestamp = now;
         
 #if defined(HAVE_HLW8012)
+        char hbuffer[128];
         sendValue( appcfg.mqtt_topic_voltage, hlw8012Handler.getVoltage());
         delay(5);
         sendValue( appcfg.mqtt_topic_current, hlw8012Handler.getCurrent());
         delay(5);
         sendValue( appcfg.mqtt_topic_power, hlw8012Handler.getPower());
         delay(5);
-        sprintf( buffer, "{\"voltage\":%0.1f,\"current\":%0.2f,\"power\":%0.1f}", 
+        sprintf( hbuffer, "{\"voltage\":%0.1f,\"current\":%0.2f,\"power\":%0.1f}", 
         hlw8012Handler.getVoltage(), hlw8012Handler.getCurrent(), hlw8012Handler.getPower() );
-        sendValue( appcfg.mqtt_topic_json, buffer );
+        sendValue( appcfg.mqtt_topic_json, hbuffer );
 #endif
       }
 #endif

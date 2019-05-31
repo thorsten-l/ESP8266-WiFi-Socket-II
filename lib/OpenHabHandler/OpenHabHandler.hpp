@@ -6,7 +6,7 @@
 class OpenHabHandler
 {
 private:
-  time_t lastSendTimestamp;
+  unsigned long lastSendTimestamp;
   void sendValue( const char* itemname, const float value );
   void sendValueV1( const char* itemname, const float value );
   void sendValueV2( const char* itemname, const float value );  
@@ -16,7 +16,7 @@ private:
 public:
   OpenHabHandler();
   void sendValue( const char* value );
-  void handle( time_t now );
+  void handle( unsigned long now );
 };
 
 extern OpenHabHandler openHabHandler;
