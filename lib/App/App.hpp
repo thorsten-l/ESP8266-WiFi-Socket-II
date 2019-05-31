@@ -6,11 +6,11 @@
 #include <DeviceConfig.hpp>
 #include <ConfigAttributes.hpp>
 
-#define LOG0( format ) Serial.printf( "(%ld) " format, millis())
-#define LOG1( format, x) Serial.printf( "(%ld) " format, millis(), x )
+#define LOG0( format ) Serial.printf( "(%lu) " format, millis())
+#define LOG1( format, ... ) Serial.printf( "(%lu) " format, millis(), ##__VA_ARGS__ )
 
 #define APP_NAME "WiFi Socket II"
-#define APP_VERSION "2.7.0beta02"
+#define APP_VERSION "2.7.0beta03"
 #define APP_AUTHOR "Dr. Thorsten Ludewig <t.ludewig@gmail.com>"
 #define APP_CONFIG_FILE_JSON "/config.json"
 
@@ -47,7 +47,7 @@ typedef struct appconfig
   char ohab_item_voltage[64];
   char ohab_item_current[64];
   char ohab_item_power[64];
-  time_t ohab_sending_interval;
+  unsigned long ohab_sending_interval;
 #endif
   bool alexa_enabled;
   char alexa_devicename[64];
@@ -66,7 +66,7 @@ typedef struct appconfig
   char mqtt_topic_current[64];
   char mqtt_topic_power[64];
   char mqtt_topic_json[64];
-  time_t mqtt_sending_interval;
+  unsigned long mqtt_sending_interval;
 #endif
 
   bool syslog_enabled;
@@ -81,7 +81,7 @@ private:
   char initFilename[32];
   bool initialized = false;
   bool doSystemRestart;
-  time_t systemRestartTimestamp;
+  unsigned long systemRestartTimestamp;
   bool initSPIFFS = false;
 
   void formatSPIFFS();
@@ -101,7 +101,7 @@ public:
   bool loadJsonConfig( const char *filename );
   void printConfig(AppConfig ac);
   void delayedSystemRestart();
-  void handle();
+  void handle( unsigned long timestamp );
 };
 
 extern App app;
