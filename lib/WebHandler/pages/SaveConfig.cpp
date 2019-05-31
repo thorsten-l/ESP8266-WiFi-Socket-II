@@ -44,17 +44,6 @@ void handleSavePage(AsyncWebServerRequest *request)
     return request->requestAuthentication();
   }
 
-  AsyncResponseStream *response = request->beginResponseStream("text/html");
-  response->printf(TEMPLATE_HEADER, APP_NAME " - Save Configuration");
-  response->print("<pre>");
-
-  int params = request->params();
-
-  for (int i = 0; i < params; i++)
-  {
-    AsyncWebParameter *p = request->getParam(i);
-    response->printf("%s = '%s'\n", p->name().c_str(), p->value().c_str());
-  }
 
   // Security
   paramChars(request, appcfgWR.admin_password, A_admin_password,
@@ -134,9 +123,13 @@ void handleSavePage(AsyncWebServerRequest *request)
   paramChars(request, appcfgWR.syslog_app_name, A_syslog_app_name,
              DEFAULT_SYSLOG_APP_NAME);
 
-  response->println("</pre>");
-  response->println("<h2 style='color: red'>Restarting System</h2>");
+  AsyncResponseStream *response = request->beginResponseStream("text/html");
+  response->printf( TEMPLATE_HEADER, APP_NAME " - Save Configuration" );
+  response->println("<h2>Configuration saved.</h2>");
+  response->println("<h3 style='color: red'>Restarting System ... takes about 30s</h3>");
   response->print(TEMPLATE_FOOTER);
+  LOG0( "*** save config parsed ... sending response\n" );
   request->send(response);
+  LOG0( "*** response send\n" );
   app.delayedSystemRestart();
 }
