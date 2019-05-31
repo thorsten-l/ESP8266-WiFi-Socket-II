@@ -72,7 +72,7 @@ void handleUpdateFirmware(AsyncWebServerRequest *request)
 
   if( updateSucceed )
   {
-    response->print(F("Upload succeed... restart in about 15sec."));
+    response->print(F("Upload succeed... restart in about 30sec."));
   }
   else
   {
