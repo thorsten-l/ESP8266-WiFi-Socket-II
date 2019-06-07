@@ -53,4 +53,10 @@
   #define CURRENT_MODE LOW
 #endif
 
+#ifdef BOARD_TYPE_SHELLY1
+  #define POWER_BUTTON_IS_MULTIMODE
+  #define POWER_BUTTON  5
+  #define RELAY_PIN     4
+#endif
+
 #endif

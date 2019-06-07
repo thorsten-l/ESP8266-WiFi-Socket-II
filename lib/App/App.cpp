@@ -122,7 +122,9 @@ void App::firmwareReset() {
 }
 
 void App::formatSPIFFS() {
+#ifdef WIFI_LED
   digitalWrite(WIFI_LED, WIFI_LED_ON);
+#endif
 
   ESP.eraseConfig();
 
@@ -134,7 +136,9 @@ void App::formatSPIFFS() {
   } else {
     LOG0("\nERROR: format filesystem.\n");
   }
+#ifdef WIFI_LED
   digitalWrite(WIFI_LED, WIFI_LED_OFF);
+#endif
 }
 
 void App::restartSystem() {
@@ -149,9 +153,17 @@ void App::restartSystem() {
 
 void App::setup() {
   Serial.begin(74880);
+
+#ifdef BOARD_TYPE_SHELLY1
+  pinMode(POWER_BUTTON, INPUT);
+#else
   pinMode(POWER_BUTTON, INPUT_PULLUP);
+#endif
+
+#ifdef WIFI_LED
   pinMode(WIFI_LED, OUTPUT);
   digitalWrite(WIFI_LED, WIFI_LED_OFF);
+#endif
 
 #if defined(BOARD_TYPE_OBI_V1)
   pinMode(RELAY_TRIGGER_OFF, OUTPUT);
@@ -165,17 +177,25 @@ void App::setup() {
 #endif
 
 #if defined(BOARD_TYPE_OBI_V2) || defined(BOARD_TYPE_DEV1) ||                  \
-    defined(BOARD_TYPE_BW_SHP6)
+    defined(BOARD_TYPE_BW_SHP6) || defined(BOARD_TYPE_SHELLY1)
+
+#ifdef POWER_LED
   pinMode(POWER_LED, OUTPUT);
-  pinMode(RELAY_PIN, OUTPUT);
   digitalWrite(POWER_LED, POWER_LED_OFF);
+#endif
+
+  pinMode(RELAY_PIN, OUTPUT);
   digitalWrite(RELAY_PIN, LOW);
 #endif
 
   for (int i = 0; i < 5; i++) {
+  #ifdef WIFI_LED
     digitalWrite(WIFI_LED, WIFI_LED_ON);
+  #endif
     delay(500);
+  #ifdef WIFI_LED
     digitalWrite(WIFI_LED, WIFI_LED_OFF);
+  #endif
     delay(500);
   }
 
@@ -208,20 +228,26 @@ void App::setup() {
     initSPIFFS = true;
   }
   
+#ifndef POWER_BUTTON_IS_MULTIMODE
   if (digitalRead(POWER_BUTTON) == false) {
     Serial.println();
     LOG0("*** Firmware RESET ***\n");
     Serial.println();
 
     for (int i = 0; i < 15; i++) {
+    #ifdef WIFI_LED
       digitalWrite(WIFI_LED, WIFI_LED_ON);
+    #endif
       delay(100);
+    #ifdef WIFI_LED
       digitalWrite(WIFI_LED, WIFI_LED_OFF);
+    #endif
       delay(100);
     }
     
     initSPIFFS = true;
   }
+#endif
 
   if(initSPIFFS == true)
   {

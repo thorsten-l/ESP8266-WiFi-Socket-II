@@ -15,7 +15,9 @@ static time_t lastTimestamp;
 
 static void wifiOff()
 {
+#ifdef WIFI_LED
   digitalWrite(WIFI_LED, WIFI_LED_OFF);
+#endif
   WiFi.persistent(false);
   WiFi.mode(WIFI_OFF);
   WiFi.setOutputPower(0.0f);
@@ -91,8 +93,9 @@ void WifiHandler::setup()
     WiFi.softAP(appcfg.wifi_ssid, appcfg.wifi_password);
     Serial.print("AP IP address: ");
     Serial.println(WiFi.softAPIP());
-
+#ifdef WIFI_LED
     digitalWrite( WIFI_LED, WIFI_LED_ON );
+#endif
     connected = true;
   }
 
@@ -163,13 +166,17 @@ const bool WifiHandler::handle(time_t timestamp)
         }
 
         Serial.println();
+#ifdef WIFI_LED
         digitalWrite(WIFI_LED, WIFI_LED_ON );
+#endif
         connected = true;
       }
       else
       {
         Serial.print(".");
+#ifdef WIFI_LED
         digitalWrite(WIFI_LED, digitalRead(WIFI_LED) ^ true);
+#endif
       }
     }
   }

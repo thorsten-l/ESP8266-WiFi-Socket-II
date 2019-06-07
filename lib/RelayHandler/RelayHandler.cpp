@@ -27,8 +27,10 @@ void RelayHandler::on()
       digitalWrite( RELAY_TRIGGER_ON, 1 );
     #endif
 
-    #if defined(BOARD_TYPE_OBI_V2) || defined(BOARD_TYPE_DEV1) || defined(BOARD_TYPE_BW_SHP6)
+    #if defined(BOARD_TYPE_OBI_V2) || defined(BOARD_TYPE_DEV1) || defined(BOARD_TYPE_BW_SHP6) || defined(BOARD_TYPE_SHELLY1)
+#ifdef POWER_LED
       digitalWrite( POWER_LED, POWER_LED_ON );
+#endif
       digitalWrite( RELAY_PIN, 1 );
     #endif
 
@@ -52,8 +54,10 @@ void RelayHandler::off()
       digitalWrite( RELAY_TRIGGER_OFF, 1 );
     #endif
 
-    #if defined(BOARD_TYPE_OBI_V2) || defined(BOARD_TYPE_DEV1) || defined(BOARD_TYPE_BW_SHP6)
+    #if defined(BOARD_TYPE_OBI_V2) || defined(BOARD_TYPE_DEV1) || defined(BOARD_TYPE_BW_SHP6) || defined(BOARD_TYPE_SHELLY1)
+#ifdef POWER_LED
       digitalWrite( POWER_LED, POWER_LED_OFF );
+#endif
       digitalWrite( RELAY_PIN, LOW );
     #endif
 

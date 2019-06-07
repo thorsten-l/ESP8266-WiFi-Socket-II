@@ -93,7 +93,8 @@ void handleJsonInfo(AsyncWebServerRequest *request)
           "\"spiffs_used\":%u,"
           "\"free_heap\":%u,"
           "\"sketch_size\":%u,"
-          "\"free_sketch_space\":%u"
+          "\"free_sketch_space\":%u,"
+          "\"power_button_state\": %d"
           "}",
           appcfg.ota_hostname, 
           PIOENV_NAME, 
@@ -119,7 +120,8 @@ void handleJsonInfo(AsyncWebServerRequest *request)
           WiFi.dnsIP().toString().c_str(),
 
           app.fsTotalBytes, app.fsUsedBytes,
-          ESP.getFreeHeap(), ESP.getSketchSize(), ESP.getFreeSketchSpace()
+          ESP.getFreeHeap(), ESP.getSketchSize(), ESP.getFreeSketchSpace(),
+          digitalRead(POWER_BUTTON)
           );
 
   String message(msgBuffer);

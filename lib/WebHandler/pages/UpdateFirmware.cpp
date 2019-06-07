@@ -30,7 +30,9 @@ void handleUpdateProgressCB(AsyncWebServerRequest *request, String filename,
   {
     Serial.printf("\rprogress: %u", Update.progress());
     alter ^= 1;
+#ifdef WIFI_LED
     digitalWrite( WIFI_LED, alter );
+#endif
   }
 
   if (Update.write(data, len) != len)
@@ -45,12 +47,16 @@ void handleUpdateProgressCB(AsyncWebServerRequest *request, String filename,
 
     if (!Update.end(true))
     {
+#ifdef WIFI_LED
       digitalWrite( WIFI_LED, WIFI_LED_ON );
+#endif
       Update.printError(Serial);
     }
     else
     {
+#ifdef WIFI_LED
       digitalWrite( WIFI_LED, WIFI_LED_OFF );
+#endif
       updateSucceed = true;
       app.delayedSystemRestart();
       Serial.println("Update complete");
