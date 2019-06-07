@@ -1,5 +1,16 @@
 # CHANGES
 
+## release 2.7.0
+
+- simple favicon added
+- reorder openhab settings
+- show millis as comment in setup page
+- relpace all inline strings with define macros
+- detailed WiFi info added to /state restful info
+- new functions for backup and restore
+- remove maintenance from setup page, now it has an own page
+- Using JSON file format to store config
+
 ## release 2.6.0
 
 - Implementation for BlitzWolf SHP6 inclusive energy monitor
