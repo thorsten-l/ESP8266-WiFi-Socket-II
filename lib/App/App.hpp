@@ -10,13 +10,18 @@
 #define LOG1( format, ... ) Serial.printf( "(%lu) " format, millis(), ##__VA_ARGS__ )
 
 #define APP_NAME "WiFi Socket II"
-#define APP_VERSION "2.8.0beta01"
+#define APP_VERSION "2.8.0beta02"
 #define APP_AUTHOR "Dr. Thorsten Ludewig <t.ludewig@gmail.com>"
 #define APP_CONFIG_FILE_JSON "/config.json"
 
 // Network mode
 #define NET_MODE_STATIC 1
 #define NET_MODE_DHCP 2
+
+// Power-Button Mode
+#define POWER_BUTTON_MODE_SWITCH          1
+#define POWER_BUTTON_MODE_TOGGLE          2
+#define POWER_BUTTON_MODE_TOGGLE_SWITCH   3
 
 typedef struct appconfig
 {
@@ -73,6 +78,11 @@ typedef struct appconfig
   char syslog_host[64];
   int syslog_port;
   char syslog_app_name[64];
+
+#ifdef POWER_BUTTON_IS_MULTIMODE
+  int power_button_mode;
+#endif
+
 } AppConfig;
 
 class App
