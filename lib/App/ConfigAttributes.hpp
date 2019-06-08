@@ -53,4 +53,6 @@
 #define A_syslog_port "syslog_port"
 #define A_syslog_app_name "syslog_app_name"
 
+#define A_power_button_mode "power_button_mode"
+
 #endif

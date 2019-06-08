@@ -123,6 +123,10 @@ void handleSavePage(AsyncWebServerRequest *request)
   paramChars(request, appcfgWR.syslog_app_name, A_syslog_app_name,
              DEFAULT_SYSLOG_APP_NAME);
 
+#ifdef POWER_BUTTON_IS_MULTIMODE
+  appcfgWR.power_button_mode = paramInt(request, A_power_button_mode, DEFAULT_POWER_BUTTON_MODE);
+#endif
+
   AsyncResponseStream *response = request->beginResponseStream("text/html");
   response->printf( TEMPLATE_HEADER, APP_NAME " - Save Configuration" );
   response->println("<h2>Configuration saved.</h2>");

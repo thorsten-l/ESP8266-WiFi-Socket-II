@@ -108,6 +108,10 @@ void App::defaultConfig() {
   appcfg.mqtt_sending_interval = DEFAULT_MQTT_SENDING_INTERVAL;
 #endif
 
+#ifdef POWER_BUTTON_IS_MULTIMODE
+  appcfg.power_button_mode = DEFAULT_POWER_BUTTON_MODE;
+#endif
+
   memcpy(&appcfgWR, &appcfg, sizeof(appcfg));
   memcpy(&appcfgRD, &appcfg, sizeof(appcfg));
 }
@@ -197,9 +201,9 @@ void App::setup() {
     digitalWrite(WIFI_LED, WIFI_LED_OFF);
   #endif
     delay(500);
+    Serial.println();
   }
 
-  Serial.println();
   Serial.println("\n\n");
   Serial.println("\n\n");
   Serial.println(F(APP_NAME ", Version " APP_VERSION ", by " APP_AUTHOR));
@@ -356,6 +360,10 @@ void App::writeConfig() {
      j.writeEntry( A_syslog_port, appcfgWR.syslog_port );
      j.writeEntry( A_syslog_app_name, appcfgWR.syslog_app_name );
 
+#ifdef POWER_BUTTON_IS_MULTIMODE
+     j.writeEntry( A_power_button_mode, appcfgWR.power_button_mode );
+#endif
+
      j.writeFooter();
      configJson.close();
 
@@ -439,6 +447,10 @@ void App::printConfig(AppConfig ac) {
   Serial.printf("    Host: %s\n", ac.syslog_host);
   Serial.printf("    Port: %d\n", ac.syslog_port);
   Serial.printf("    App Name: %s\n", ac.syslog_app_name);
+#ifdef POWER_BUTTON_IS_MULTIMODE
+  Serial.println("\n  Power button:");
+  Serial.printf("    Mode: %d\n", ac.power_button_mode);
+#endif
   Serial.println("---------------------------------------------------------");
   Serial.println();
 }
@@ -529,6 +541,10 @@ bool App::loadJsonConfig( const char *filename )
         readError |= j.readEntryChars( attributeName, A_syslog_host, appcfgRD.syslog_host );
         readError |= j.readEntryInteger( attributeName, A_syslog_port, &appcfgRD.syslog_port );
         readError |= j.readEntryChars( attributeName, A_syslog_app_name, appcfgRD.syslog_app_name );
+
+#ifdef POWER_BUTTON_IS_MULTIMODE
+        readError |= j.readEntryInteger( attributeName, A_power_button_mode, &appcfgRD.power_button_mode );
+#endif
       }
     }
     

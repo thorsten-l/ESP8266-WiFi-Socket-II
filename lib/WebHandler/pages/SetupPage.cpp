@@ -140,6 +140,16 @@ String setupProcessor(const String &var)
   if (var == "millis")
     return String(millis());
 
+#ifdef POWER_BUTTON_IS_MULTIMODE
+  // Power Button Mode
+  if (var == "power_button_mode_switch" && appcfg.power_button_mode == POWER_BUTTON_MODE_SWITCH)
+    return selected;
+  if (var == "power_button_mode_toggle" && appcfg.power_button_mode == POWER_BUTTON_MODE_TOGGLE)
+    return selected;
+  if (var == "power_button_mode_toggle_switch" && appcfg.power_button_mode == POWER_BUTTON_MODE_TOGGLE_SWITCH)
+    return selected;
+#endif
+
   return String();
 }
 

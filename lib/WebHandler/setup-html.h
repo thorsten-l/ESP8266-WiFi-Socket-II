@@ -27,7 +27,19 @@ const char SETUP_HTML[] PROGMEM =
   "<div class=\"main\">\n"
   "<div class=\"content\">\n"
   "<form class=\"pure-form pure-form-aligned\" action=\"savecfg\" method=\"POST\">\n"
+
+#ifdef POWER_BUTTON_IS_MULTIMODE
+  "<div class='accordion'>Hardware</div>\n"
+  "<div class='panel'>\n"
+  "<fieldset>\n"
   
+  "<div class='accordion'>Power Button</div>\n"
+  "<div class='panel sub-panel'>\n"
+    "<div class=\"pure-control-group\"><label for=\"pbmid1\">Mode</label><select id=\"pbmid1\" name=\"power_button_mode\"><option %power_button_mode_switch% value=\"1\">Switch</option><option %power_button_mode_toggle% value=\"2\">Toggle</option><option %power_button_mode_toggle_switch% value=\"3\">Toggle Switch</option></select></div>\n"
+  "</div>\n"
+  "</fieldset></div>\n"
+#endif
+
   "<div class='accordion'>Security</div>\n"
   "<div class='panel'>\n"
   "<fieldset>\n"
