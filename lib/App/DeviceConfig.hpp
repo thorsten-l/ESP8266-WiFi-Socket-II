@@ -32,7 +32,6 @@
   #define WIFI_LED_OFF  1
   #define POWER_LED_ON  0
   #define POWER_LED_OFF 1
-  #define POWER_BUTTON_IS_MULTIMODE
 #endif
 
 #ifdef BOARD_TYPE_BW_SHP6
