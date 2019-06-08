@@ -72,7 +72,9 @@ void handleUpdateFirmware(AsyncWebServerRequest *request)
   }
 
   AsyncResponseStream *response = request->beginResponseStream("text/html");
-  response->printf(TEMPLATE_HEADER, APP_NAME " - Firmware Update");
+  response->print(TEMPLATE_HEADER);
+  response->print(META_REFRESH);
+  response->printf(TEMPLATE_BODY, APP_NAME " - Firmware Update");
 
   response->print(F("<h3>"));
 

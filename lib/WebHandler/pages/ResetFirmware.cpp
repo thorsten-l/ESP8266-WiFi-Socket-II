@@ -11,7 +11,9 @@ void handleResetFirmware(AsyncWebServerRequest *request)
   bool doReset = paramBool( request, "doreset" );
 
   AsyncResponseStream *response = request->beginResponseStream("text/html");
-  response->printf(TEMPLATE_HEADER, APP_NAME " - Firmware Reset");
+  response->print(TEMPLATE_HEADER);
+  response->print(META_REFRESH);
+  response->printf(TEMPLATE_BODY, APP_NAME " - Firmware Reset");
   response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   response->addHeader("Pragma", "no-cache");
   response->addHeader("Expires", "0");

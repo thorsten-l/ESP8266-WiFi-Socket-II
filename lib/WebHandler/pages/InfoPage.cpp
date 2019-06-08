@@ -3,7 +3,8 @@
 void handleInfoPage(AsyncWebServerRequest *request)
 {
   AsyncResponseStream *response = request->beginResponseStream("text/html");
-  response->printf(TEMPLATE_HEADER, APP_NAME " - Info");
+  response->print(TEMPLATE_HEADER);
+  response->printf(TEMPLATE_BODY, APP_NAME " - Info");
 
   response->print("<form class='pure-form'>");
 

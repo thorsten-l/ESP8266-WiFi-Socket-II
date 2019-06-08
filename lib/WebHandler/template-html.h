@@ -1,6 +1,9 @@
 #ifndef __TEMPLATE_HTML_H__
 #define __TEMPLATE_HTML_H__
 
+const char META_REFRESH[] =
+  "<meta http-equiv=\"refresh\" content=\"30; URL=/\">";
+
 // file name = info.html, length = 2183
 const char TEMPLATE_HEADER[] =
   "<!DOCTYPE html>"
@@ -9,7 +12,9 @@ const char TEMPLATE_HEADER[] =
   "<title>WiFi Socket II</title>"
   "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">"
   "<link rel=\"stylesheet\" href=\"/pure-min.css\">"
-  "<link rel=\"stylesheet\" href=\"/layout.css\">"
+  "<link rel=\"stylesheet\" href=\"/layout.css\">";
+
+const char TEMPLATE_BODY[] =
   "</head>"
   "<body>"
   "<div class=\"custom-menu-wrapper\">"

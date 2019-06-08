@@ -48,7 +48,9 @@ void handleRestoreConfiguration(AsyncWebServerRequest *request) {
   }
 
   AsyncResponseStream *response = request->beginResponseStream("text/html");
-  response->printf(TEMPLATE_HEADER, APP_NAME " - Firmware Update");
+  response->print(TEMPLATE_HEADER);
+  response->print(META_REFRESH);
+  response->printf(TEMPLATE_BODY, APP_NAME " - Restore configuration");
   response->print(F("<h3>"));
 
   if ( uploadSucceed == false )
@@ -57,7 +59,7 @@ void handleRestoreConfiguration(AsyncWebServerRequest *request) {
   }
   else
   {
-    response->print(F("Restore configuration succeed... restart in about 15sec."));
+    response->print(F("Restore configuration succeed... restart in about 30sec."));
   }
   
   response->print(F("</h3>"));

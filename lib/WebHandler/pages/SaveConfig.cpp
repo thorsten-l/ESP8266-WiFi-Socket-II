@@ -128,7 +128,9 @@ void handleSavePage(AsyncWebServerRequest *request)
 #endif
 
   AsyncResponseStream *response = request->beginResponseStream("text/html");
-  response->printf( TEMPLATE_HEADER, APP_NAME " - Save Configuration" );
+  response->print(TEMPLATE_HEADER);
+  response->print(META_REFRESH);
+  response->printf( TEMPLATE_BODY, APP_NAME " - Save Configuration" );
   response->println("<h2>Configuration saved.</h2>");
   response->println("<h3 style='color: red'>Restarting System ... takes about 30s</h3>");
   response->print(TEMPLATE_FOOTER);

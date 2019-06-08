@@ -36,7 +36,8 @@ void handleRootPage(AsyncWebServerRequest *request)
   sprintf(titleBuffer, APP_NAME " - %s", appcfg.ota_hostname);
 
   AsyncResponseStream *response = request->beginResponseStream("text/html");
-  response->printf(TEMPLATE_HEADER, titleBuffer);
+  response->print(TEMPLATE_HEADER);
+  response->printf(TEMPLATE_BODY, titleBuffer);
 
   response->print("<form class='pure-form pure-form-aligned'><fieldset>");
   prLegend(response, "Current Status");
