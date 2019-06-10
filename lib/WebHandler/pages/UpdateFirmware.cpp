@@ -2,6 +2,8 @@
 
 static bool updateSucceed;
 static int alter;
+static bool validFilename;
+static char filenameBuffer[256];
 
 void handleUpdateProgressCB(AsyncWebServerRequest *request, String filename,
                             size_t index, uint8_t *data, size_t len,
@@ -17,49 +19,72 @@ void handleUpdateProgressCB(AsyncWebServerRequest *request, String filename,
   if (!index)
   {
     Serial.println("Update firmware via HTTP");
+    Serial.print( "Filename: ");
+    Serial.println( filename );
+
+    if( filename.endsWith( String( "." PIOENV_NAME ".bin" )) == true )
+    {
+      validFilename = true;
+    }
+    else
+    {
+      validFilename = false;
+      strcpy( filenameBuffer, filename.c_str() );
+      Serial.println( "ERROR: invalid filename" );
+    }
+    
     updateSucceed = false;
     alter = 0;
 
-    Update.runAsync(true);
-    if (!Update.begin(free_space))
-    {
-      Update.printError(Serial);
+    if ( validFilename == true )
+    { 
+      Update.runAsync(true);
+      if (!Update.begin(free_space))
+      {
+        Update.printError(Serial);
+      }
     }
   }
   else
   {
-    Serial.printf("\rprogress: %u", Update.progress());
-    alter ^= 1;
+    if ( validFilename == true )
+    { 
+      Serial.printf("\rprogress: %u", Update.progress());
+      alter ^= 1;
 #ifdef WIFI_LED
-    digitalWrite( WIFI_LED, alter );
+      digitalWrite( WIFI_LED, alter );
 #endif
+    }
   }
 
-  if (Update.write(data, len) != len)
+  if ( validFilename == true )
   {
-    Serial.println();
-    Update.printError(Serial);
-  }
-
-  if (final)
-  {
-    Serial.println();
-
-    if (!Update.end(true))
+    if ( Update.write(data, len) != len)
     {
-#ifdef WIFI_LED
-      digitalWrite( WIFI_LED, WIFI_LED_ON );
-#endif
+      Serial.println();
       Update.printError(Serial);
     }
-    else
+
+    if (final)
     {
+      Serial.println();
+
+      if (!Update.end(true))
+      {
 #ifdef WIFI_LED
-      digitalWrite( WIFI_LED, WIFI_LED_OFF );
+        digitalWrite( WIFI_LED, WIFI_LED_ON );
 #endif
-      updateSucceed = true;
-      app.delayedSystemRestart();
-      Serial.println("Update complete");
+        Update.printError(Serial);
+      }
+      else
+      {
+#ifdef WIFI_LED
+        digitalWrite( WIFI_LED, WIFI_LED_OFF );
+#endif
+        updateSucceed = true;
+        app.delayedSystemRestart();
+        Serial.println("Update complete");
+      }
     }
   }
 }
@@ -84,10 +109,17 @@ void handleUpdateFirmware(AsyncWebServerRequest *request)
   }
   else
   {
-    response->print(F("ERROR: Upload failed!"));
+    response->print(F("ERROR: Upload failed!<br/>"));
   }
 
   response->print(F("</h3>"));
+
+  if ( validFilename == false )
+  {
+    response->print(F("Invalid firmware filename: <tt>"));
+    response->print( filenameBuffer );
+    response->print(F("</tt><br/>firmware filename must ends with: '<tt>." PIOENV_NAME ".bin</tt>'" ));
+  }
 
   response->print(TEMPLATE_FOOTER);
   request->send(response);
