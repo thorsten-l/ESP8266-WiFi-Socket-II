@@ -2,14 +2,17 @@
 #include <DefaultAppConfig.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
+#include <DNSServer.h>
 #include <Syslog.hpp>
 #include <LinkedList.hpp>
 #include "WifiHandler.hpp"
 
 WifiHandler wifiHandler;
+
 SimpleLinkedList wifiNetworkLists;
 const char *phyModes[] = {"11B", "11G", "11N"};
 char ipBuffer[32];
+DNSServer dnsServer;
 
 static time_t lastTimestamp;
 
@@ -54,7 +57,7 @@ static void wifiInitStationMode()
     LOG0("use dhcp server");
   }
 
-  WiFi.begin( appcfg.wifi_ssid, appcfg.wifi_password );
+  WiFi.begin(appcfg.wifi_ssid, appcfg.wifi_password);
 }
 
 void WifiHandler::setup()
@@ -69,7 +72,7 @@ void WifiHandler::setup()
 
   wifiOff();
 
-  if ( isInStationMode() )
+  if (isInStationMode())
   {
     wifiInitStationMode();
   }
@@ -93,99 +96,113 @@ void WifiHandler::setup()
     WiFi.softAP(appcfg.wifi_ssid, appcfg.wifi_password);
     Serial.print("AP IP address: ");
     Serial.println(WiFi.softAPIP());
+
+    dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
+    dnsServer.start(53, "*", WiFi.softAPIP());
+    LOG0( "DNS server started.\n" );
+
 #ifdef WIFI_LED
-    digitalWrite( WIFI_LED, WIFI_LED_ON );
+    digitalWrite(WIFI_LED, WIFI_LED_ON);
 #endif
     connected = true;
   }
 
   WiFi.macAddress(mac);
-  sprintf( macAddress, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0],
-                mac[1], mac[2], mac[3], mac[4], mac[5]);
+  sprintf(macAddress, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0],
+          mac[1], mac[2], mac[3], mac[4], mac[5]);
 }
 
 const bool WifiHandler::handle(time_t timestamp)
 {
-  if (timestamp - lastTimestamp >= 500 && isInStationMode())
+  if (isInStationMode())
   {
-    lastTimestamp = timestamp;
-    int status = WiFi.status();
-
-    if (connected)
+    if (timestamp - lastTimestamp >= 500)
     {
-      if (status == WL_CONNECTED)
+      lastTimestamp = timestamp;
+      int status = WiFi.status();
+
+      if (connected)
       {
-        return true;
+        if (status == WL_CONNECTED)
+        {
+          return true;
+        }
+        else
+        {
+          LOG0("WARNING: WiFi connection lost!\n");
+
+          wifiOff();
+          wifiInitStationMode();
+
+          connected = false;
+        }
       }
       else
       {
-        LOG0("WARNING: WiFi connection lost!\n");
-
-        wifiOff();
-        wifiInitStationMode();
-
-        connected = false;
-      }
-    }
-    else
-    {
-      if (status == WL_CONNECTED)
-      {
-        Serial.println("\n");
-        Serial.printf("WiFi connected to %s\n", appcfg.wifi_ssid);
-
-        connectCounter++;
-
-        if (appcfg.net_mode == NET_MODE_DHCP)
+        if (status == WL_CONNECTED)
         {
-          Serial.println("copy wifi config from dhcp response");
-          strncpy(appcfg.net_host, WiFi.localIP().toString().c_str(), 63);
-          strncpy(appcfg.net_gateway, WiFi.gatewayIP().toString().c_str(), 63);
-          strncpy(appcfg.net_mask, WiFi.subnetMask().toString().c_str(), 63);
-          strncpy(appcfg.net_dns, WiFi.dnsIP().toString().c_str(), 63);
-        }
-        
-        Serial.printf(" - host ip address: %s\n", WiFi.localIP().toString().c_str());
-        Serial.printf(" - gateway: %s\n", WiFi.gatewayIP().toString().c_str());
-        Serial.printf(" - mask: %s\n", WiFi.subnetMask().toString().c_str());
-        Serial.printf(" - dns server: %s\n", WiFi.dnsIP().toString().c_str());
-        Serial.printf(" - WiFi Channel: %d\n", WiFi.channel());
-        Serial.printf(" - WiFi phy mode: %s\n", getPhyMode() );
-        Serial.printf(" - WiFi MAC Address: %s\n", macAddress);
-        Serial.printf(" - WiFi Hostname: %s\n", WiFi.hostname().c_str());
- 
-        if (appcfg.syslog_enabled)
-        {
-          syslog.logInfo(APP_NAME ", Version " APP_VERSION ", by " APP_AUTHOR);
-          syslog.logInfo("Build date: " __DATE__ " " __TIME__);
-          syslog.logInfo("WiFi connected");
-          syslog.logInfo("  host ip addr:", appcfg.net_host);
-          syslog.logInfo("  netmask:", appcfg.net_mask);
-          syslog.logInfo("  gateway:", appcfg.net_gateway);
-          syslog.logInfo("  dns server:", appcfg.net_dns);
-        }
+          Serial.println("\n");
+          Serial.printf("WiFi connected to %s\n", appcfg.wifi_ssid);
 
-        Serial.println();
+          connectCounter++;
+
+          if (appcfg.net_mode == NET_MODE_DHCP)
+          {
+            Serial.println("copy wifi config from dhcp response");
+            strncpy(appcfg.net_host, WiFi.localIP().toString().c_str(), 63);
+            strncpy(appcfg.net_gateway, WiFi.gatewayIP().toString().c_str(), 63);
+            strncpy(appcfg.net_mask, WiFi.subnetMask().toString().c_str(), 63);
+            strncpy(appcfg.net_dns, WiFi.dnsIP().toString().c_str(), 63);
+          }
+
+          Serial.printf(" - host ip address: %s\n", WiFi.localIP().toString().c_str());
+          Serial.printf(" - gateway: %s\n", WiFi.gatewayIP().toString().c_str());
+          Serial.printf(" - mask: %s\n", WiFi.subnetMask().toString().c_str());
+          Serial.printf(" - dns server: %s\n", WiFi.dnsIP().toString().c_str());
+          Serial.printf(" - WiFi Channel: %d\n", WiFi.channel());
+          Serial.printf(" - WiFi phy mode: %s\n", getPhyMode());
+          Serial.printf(" - WiFi MAC Address: %s\n", macAddress);
+          Serial.printf(" - WiFi Hostname: %s\n", WiFi.hostname().c_str());
+
+          if (appcfg.syslog_enabled)
+          {
+            syslog.logInfo(APP_NAME ", Version " APP_VERSION ", by " APP_AUTHOR);
+            syslog.logInfo("Build date: " __DATE__ " " __TIME__);
+            syslog.logInfo("WiFi connected");
+            syslog.logInfo("  host ip addr:", appcfg.net_host);
+            syslog.logInfo("  netmask:", appcfg.net_mask);
+            syslog.logInfo("  gateway:", appcfg.net_gateway);
+            syslog.logInfo("  dns server:", appcfg.net_dns);
+          }
+
+          Serial.println();
 #ifdef WIFI_LED
-        digitalWrite(WIFI_LED, WIFI_LED_ON );
+          digitalWrite(WIFI_LED, WIFI_LED_ON);
 #endif
-        connected = true;
-      }
-      else
-      {
-        Serial.print(".");
+          connected = true;
+          MDNS.update();
+        }
+        else
+        {
+          Serial.print(".");
 #ifdef WIFI_LED
-        digitalWrite(WIFI_LED, digitalRead(WIFI_LED) ^ true);
+          digitalWrite(WIFI_LED, digitalRead(WIFI_LED) ^ true);
 #endif
+        }
       }
     }
   }
+  else // AP-Mode
+  {
+    dnsServer.processNextRequest();
+  }
+
   return connected;
 }
 
 const bool WifiHandler::isInStationMode()
 {
-  return ( appcfg.wifi_mode == WIFI_STA );
+  return (appcfg.wifi_mode == WIFI_STA);
 }
 
 const bool WifiHandler::isConnected()
@@ -198,18 +215,18 @@ const bool WifiHandler::isReady()
   return isConnected() && isInStationMode();
 }
 
-const char* WifiHandler::scanNetworks()
+const char *WifiHandler::scanNetworks()
 {
   networkBuffer[0] = 0;
 
-  Serial.println( "\nScanning WiFi networks...");
+  Serial.println("\nScanning WiFi networks...");
   int n = WiFi.scanNetworks(false, false);
-  Serial.println( "done.");
+  Serial.println("done.");
 
   if (n == 0)
   {
     Serial.println("no networks found");
-    strcpy( networkBuffer, "no networks found" );
+    strcpy(networkBuffer, "no networks found");
   }
   else
   {
@@ -219,11 +236,11 @@ const char* WifiHandler::scanNetworks()
 
     for (int i = 0; i < n; ++i)
     {
-      l += sprintf( networkBuffer+l, "%2d: %s (%d)%s\n", i+1,
-                    WiFi.SSID(i).c_str(), WiFi.RSSI(i),
-                    (WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*");
+      l += sprintf(networkBuffer + l, "%2d: %s (%d)%s\n", i + 1,
+                   WiFi.SSID(i).c_str(), WiFi.RSSI(i),
+                   (WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*");
       wifiNetworkLists.put(WiFi.SSID(i).c_str());
-      delay( 5 );
+      delay(5);
     }
   }
 
@@ -234,11 +251,10 @@ const char* WifiHandler::scanNetworks()
   return networkBuffer;
 }
 
-ListNode* WifiHandler::getScannedNetworks()
+ListNode *WifiHandler::getScannedNetworks()
 {
   return wifiNetworkLists.getRootNode();
 }
-
 
 const char *WifiHandler::getLocalIP()
 {
@@ -252,12 +268,12 @@ int WifiHandler::getConnectCounter()
   return connectCounter;
 }
 
-const char* WifiHandler::getMacAddress()
+const char *WifiHandler::getMacAddress()
 {
   return macAddress;
 }
 
-const char* WifiHandler::getPhyMode()
+const char *WifiHandler::getPhyMode()
 {
   return phyModes[WiFi.getPhyMode() - 1];
 }
