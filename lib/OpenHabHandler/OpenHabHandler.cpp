@@ -7,8 +7,6 @@
 
 OpenHabHandler openHabHandler;
 
-static WiFiClient wifiClient;
-
 OpenHabHandler::OpenHabHandler()
 {
   lastSendTimestamp = 0;
@@ -26,6 +24,7 @@ void OpenHabHandler::sendValueV1( const char* value )
 
   LOG1("URL=%s\n",urlBuffer);
 
+  WiFiClient wifiClient;
   http.begin( wifiClient, urlBuffer );
   if ( appcfg.ohab_useauth )
   {
@@ -38,10 +37,10 @@ void OpenHabHandler::sendValueV1( const char* value )
   {
     LOG1("[HTTP] GET... code: %d\n", httpCode);
 
-    if (httpCode == HTTP_CODE_OK)
-    {
-      http.getString();
-    }
+    //if (httpCode == HTTP_CODE_OK)
+    //{
+    //  http.getString();
+    //}
   }
   else
   {
@@ -49,6 +48,7 @@ void OpenHabHandler::sendValueV1( const char* value )
   }
 
   http.end();
+  wifiClient.stop();
 }
 
 void OpenHabHandler::sendValueV2( const char* value )
@@ -63,6 +63,7 @@ void OpenHabHandler::sendValueV2( const char* value )
 
   LOG1("URL=%s\n",urlBuffer);
 
+  WiFiClient wifiClient;
   http.begin( wifiClient, urlBuffer );
   http.addHeader("Cache-Control", "no-cache");
   http.addHeader("Accept", "application/json");
@@ -79,10 +80,10 @@ void OpenHabHandler::sendValueV2( const char* value )
   {
     LOG1("[HTTP] POST... code: %d\n", httpCode);
 
-    if (httpCode == HTTP_CODE_OK)
-    {
-      http.getString();
-    }
+    //if (httpCode == HTTP_CODE_OK)
+    //{
+    //  http.getString();
+    //}
   }
   else
   {
@@ -90,6 +91,7 @@ void OpenHabHandler::sendValueV2( const char* value )
   }
 
   http.end();
+  wifiClient.stop();
 }
 
 void OpenHabHandler::sendValue( const char* value )
@@ -105,6 +107,7 @@ void OpenHabHandler::sendValue( const char* value )
       sendValueV2( value );
     }
   }
+  LOG0( "OpenHAB item value send.\n" );
 }
 
 void OpenHabHandler::sendValueV1( const char* itemname, const float value )
@@ -117,6 +120,7 @@ void OpenHabHandler::sendValueV1( const char* itemname, const float value )
 
   LOG1("URL=%s\n",urlBuffer);
 
+  WiFiClient wifiClient;
   http.begin( wifiClient, urlBuffer );
 
   if ( appcfg.ohab_useauth )
@@ -130,10 +134,10 @@ void OpenHabHandler::sendValueV1( const char* itemname, const float value )
   {
     LOG1("[HTTP] GET... code: %d\n", httpCode);
 
-    if (httpCode == HTTP_CODE_OK)
-    {
-      http.getString();
-    }
+    //if (httpCode == HTTP_CODE_OK)
+    //{
+    //  http.getString();
+    //}
   }
   else
   {
@@ -141,6 +145,7 @@ void OpenHabHandler::sendValueV1( const char* itemname, const float value )
   }
 
   http.end();
+  wifiClient.stop();
 }
 
 void OpenHabHandler::sendValueV2( const char* itemname, const float value )
@@ -156,6 +161,7 @@ void OpenHabHandler::sendValueV2( const char* itemname, const float value )
 
   LOG1("URL=%s\n",urlBuffer);
 
+  WiFiClient wifiClient;
   http.begin( wifiClient, urlBuffer );
   http.addHeader("Cache-Control", "no-cache");
   http.addHeader("Accept", "application/json");
@@ -172,10 +178,10 @@ void OpenHabHandler::sendValueV2( const char* itemname, const float value )
   {
     LOG1("[HTTP] POST... code: %d\n", httpCode);
 
-    if (httpCode == HTTP_CODE_OK)
-    {
-      http.getString();
-    }
+    //if (httpCode == HTTP_CODE_OK)
+    //{
+    //  http.getString();
+    //}
   }
   else
   {
@@ -183,6 +189,7 @@ void OpenHabHandler::sendValueV2( const char* itemname, const float value )
   }
 
   http.end();
+  wifiClient.stop();
 }
 
 void OpenHabHandler::sendValue( const char* itemname, const float value )
@@ -198,6 +205,7 @@ void OpenHabHandler::sendValue( const char* itemname, const float value )
         sendValueV2( itemname, value );
       }
     }
+  LOG0( "OpenHAB float value send.\n" );
 }
 
 void OpenHabHandler::handle( unsigned long now )
