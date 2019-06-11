@@ -27,8 +27,8 @@ def copyFirmware(source, target, env):
   print "PIOENV = " + pioEnv
   print "copy firmware to file:"
   print firmwarePath
- 
   copyfile( target[0].path, firmwarePath )
+  print "size=%d bytes" % os.path.getsize( firmwarePath ) 
 
 env.AddPostAction( "$BUILD_DIR/firmware.bin", copyFirmware )
 env.Append(CPPDEFINES=[("PIOENV", "\\\"" + env['PIOENV'] + "\\\"")])
