@@ -19,7 +19,7 @@ volatile unsigned long buttonTimestamp;
 volatile bool buttonPressed;
 volatile bool lastButtonState;
 
-#define DEBOUNCE_TIME 100
+#define DEBOUNCE_TIME 200
 
 void ICACHE_RAM_ATTR powerButtonPressed()
 {
@@ -42,7 +42,7 @@ void setup()
 
 #ifndef POWER_BUTTON_IS_MULTIMODE
   attachInterrupt(digitalPinToInterrupt(POWER_BUTTON), &powerButtonPressed,
-                  FALLING);
+                  RISING);
 #else
   lastButtonState = digitalRead( POWER_BUTTON );
   attachInterrupt(digitalPinToInterrupt(POWER_BUTTON), &powerButtonPressed,
