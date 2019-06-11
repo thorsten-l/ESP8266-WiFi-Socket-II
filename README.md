@@ -6,8 +6,6 @@
 
 - BlitzWolf SHP6, [https://www.blitzwolf.com/2300W-EU-WIFI-Smart-Socket-p-300.html](https://www.blitzwolf.com/2300W-EU-WIFI-Smart-Socket-p-300.html)
 
-> At this it time the performance of the OpenHAB Callbacks for the energy monitor is really bad!. It is much faster to use a MQTT broker or the RESTFul API. In a future release i will implement the HTTP requests asynchronously and non-blocking.
-
 - OBI Version 2, [https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806](https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806)
 
 - OBI Version 1, [https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko/p/2291706](https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko/p/2291706)

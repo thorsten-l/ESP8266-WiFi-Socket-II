@@ -19,14 +19,18 @@ volatile unsigned long buttonTimestamp;
 volatile bool buttonPressed;
 volatile bool lastButtonState;
 
-#define DEBOUNCE_TIME 200
+#ifdef POWER_BUTTON_IS_MULTIMODE
+#define DEBOUNCE_TIME 150
+#else
+#define DEBOUNCE_TIME 500
+#endif
 
 void ICACHE_RAM_ATTR powerButtonPressed()
 {
   if ((millis() - debounceTimestamp > DEBOUNCE_TIME)) // button debouncing
   {
     buttonPressed = true;
-    LOG0("Button pressed\n");
+    LOG1( "Button pressed %d\n", digitalRead(POWER_BUTTON));
   }
 
   debounceTimestamp = millis();
@@ -42,7 +46,7 @@ void setup()
 
 #ifndef POWER_BUTTON_IS_MULTIMODE
   attachInterrupt(digitalPinToInterrupt(POWER_BUTTON), &powerButtonPressed,
-                  RISING);
+                  FALLING);
 #else
   lastButtonState = digitalRead( POWER_BUTTON );
   attachInterrupt(digitalPinToInterrupt(POWER_BUTTON), &powerButtonPressed,
