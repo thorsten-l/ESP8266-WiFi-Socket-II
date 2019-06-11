@@ -1,5 +1,15 @@
 # CHANGES
 
+## release 2.8.0
+
+- captive portal implementation
+- captive portal DNS server for AP mode
+- OpenHAB callback performance improvements
+- check for invalid firmware filename implemented
+- copy firmware.bin to firmware-version.pioenv.bin
+- refresh to root page after 30s
+- implementation for Shelly 1 OS switch
+
 ## release 2.7.0
 
 - simple favicon added
