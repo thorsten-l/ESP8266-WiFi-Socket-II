@@ -9,6 +9,11 @@
 WebHandler webHandler;
 static AsyncWebServer server(80);
 
+void captivePortal(AsyncWebServerRequest *request)
+{
+  request->redirect("http://wifi.socket/captive.txt");
+}
+
 WebHandler::WebHandler() 
 { 
   initialized = false; 
@@ -31,6 +36,14 @@ void WebHandler::setup()
     relayHandler.delayedOn();
     handleJsonStatus( request, JSON_RELAY_ON );
   });
+
+  if ( appcfg.wifi_mode == WIFI_AP )
+  {
+    server.on("/captive.txt", HTTP_GET, [](AsyncWebServerRequest *request) {
+      request->send(200, "text/plain", 
+        "\n\n  Please enter http://wifi.socket or http://192.168.192.1 into your browser.");
+    });
+  }
 
   server.on("/off", HTTP_GET, [](AsyncWebServerRequest *request) {
     relayHandler.delayedOff();
@@ -88,7 +101,14 @@ void WebHandler::setup()
   }
   else
   {
-    server.onNotFound([](AsyncWebServerRequest *request) { request->send(404); });
+    if ( appcfg.wifi_mode == WIFI_AP )
+    {
+      server.onNotFound( captivePortal );
+    }
+    else
+    {
+      server.onNotFound([](AsyncWebServerRequest *request) { request->send(404); });
+    }  
   }
 
   MDNS.addService("http", "tcp", 80);
