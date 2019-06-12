@@ -1,5 +1,9 @@
 # CHANGES
 
+## release 2.8.2
+
+- LED night mode, switch off all leds after a specified timeout, for Robert :-)
+
 ## release 2.8.1
 
 - root page state is more responsive
