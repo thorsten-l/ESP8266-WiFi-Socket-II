@@ -1,5 +1,9 @@
 # CHANGES
 
+## release 2.8.1
+
+- root page state is more responsive
+
 ## release 2.8.0
 
 - captive portal implementation
