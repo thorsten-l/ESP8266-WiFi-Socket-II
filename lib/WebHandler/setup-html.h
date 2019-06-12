@@ -28,15 +28,26 @@ const char SETUP_HTML[] PROGMEM =
   "<div class=\"content\">\n"
   "<form class=\"pure-form pure-form-aligned\" action=\"savecfg\" method=\"POST\">\n"
 
-#ifdef POWER_BUTTON_IS_MULTIMODE
+#if defined(POWER_BUTTON_IS_MULTIMODE) || defined(WIFI_LED)
   "<div class='accordion'>Hardware</div>\n"
   "<div class='panel'>\n"
   "<fieldset>\n"
-  
+
+#if defined(WIFI_LED)
+  "<div class='accordion'>LED Night Mode</div>\n"
+  "<div class='panel sub-panel'>\n"
+    "<div class=\"pure-control-group\"><label for=\"wlid1\">Enabled</label><input id=\"wlid1\" type=\"checkbox\" name=\"led_night_mode_enabled\" value=\"true\" %led_night_mode_enabled%></div>\n"
+    "<div class=\"pure-control-group\"><label for=\"wlid2\">Timeout</label><input id=\"wlid2\" type=\"text\" name=\"led_night_mode_timeout\" maxlength=\"64\" value=\"%led_night_mode_timeout%\"></div>\n"
+  "</div>\n"
+#endif
+
+#if defined(POWER_BUTTON_IS_MULTIMODE)
   "<div class='accordion'>Power Button</div>\n"
   "<div class='panel sub-panel'>\n"
     "<div class=\"pure-control-group\"><label for=\"pbmid1\">Mode</label><select id=\"pbmid1\" name=\"power_button_mode\"><option %power_button_mode_switch% value=\"1\">Switch</option><option %power_button_mode_toggle% value=\"2\">Toggle</option><option %power_button_mode_toggle_switch% value=\"3\">Toggle Switch</option></select></div>\n"
   "</div>\n"
+#endif
+
   "</fieldset></div>\n"
 #endif
 

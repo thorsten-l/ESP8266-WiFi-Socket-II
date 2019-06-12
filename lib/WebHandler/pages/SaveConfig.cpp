@@ -127,6 +127,11 @@ void handleSavePage(AsyncWebServerRequest *request)
   appcfgWR.power_button_mode = paramInt(request, A_power_button_mode, DEFAULT_POWER_BUTTON_MODE);
 #endif
 
+#ifdef WIFI_LED
+  appcfgWR.led_night_mode_enabled = paramBool(request, A_led_night_mode_enabled);
+  appcfgWR.led_night_mode_timeout = paramInt(request, A_led_night_mode_timeout, DEFAULT_LED_NIGHT_MODE_TIMEOUT);
+#endif
+
   AsyncResponseStream *response = request->beginResponseStream("text/html");
   response->print(TEMPLATE_HEADER);
   response->print(META_REFRESH);

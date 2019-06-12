@@ -12,7 +12,6 @@ void handleRootPage(AsyncWebServerRequest *request)
   webPowerState = relayHandler.isDelayedPowerOn();
 
   // LOG1( "webPowerState (1) = %d\n", webPowerState );
-
   if (request->hasParam("power"))
   {
     AsyncWebParameter *p = request->getParam("power");
@@ -32,7 +31,7 @@ void handleRootPage(AsyncWebServerRequest *request)
     return;
   }
 
-  LOG1( "webPowerState (3) = %d\n", webPowerState );
+  // LOG1( "webPowerState (3) = %d\n", webPowerState );
   char titleBuffer[100];
   sprintf(titleBuffer, APP_NAME " - %s", appcfg.ota_hostname);
 

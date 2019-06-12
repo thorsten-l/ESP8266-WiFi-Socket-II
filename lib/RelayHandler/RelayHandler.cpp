@@ -21,20 +21,20 @@ void RelayHandler::on()
 
   if( powerOn == false )
   {
+    powerOn = true;
+
     #if defined(BOARD_TYPE_OBI_V1)
+      app.showLeds();
       digitalWrite( RELAY_TRIGGER_ON, 0 );
       delay(5);
       digitalWrite( RELAY_TRIGGER_ON, 1 );
     #endif
 
     #if defined(BOARD_TYPE_OBI_V2) || defined(BOARD_TYPE_DEV1) || defined(BOARD_TYPE_BW_SHP6) || defined(BOARD_TYPE_SHELLY1)
-#ifdef POWER_LED
-      digitalWrite( POWER_LED, POWER_LED_ON );
-#endif
+      app.powerLedOn();
       digitalWrite( RELAY_PIN, 1 );
     #endif
 
-    powerOn = true;
     openHabHandler.sendValue("ON");
     mqttHandler.sendValue( appcfg.mqtt_outtopic, "ON");
     alexaHandler.sendValue(true);
@@ -48,20 +48,20 @@ void RelayHandler::off()
 
   if( powerOn == true )
   {
+    powerOn = false;
+
     #if defined(BOARD_TYPE_OBI_V1)
+      app.showLeds();
       digitalWrite( RELAY_TRIGGER_OFF, 0 );
       delay(5);
       digitalWrite( RELAY_TRIGGER_OFF, 1 );
     #endif
 
     #if defined(BOARD_TYPE_OBI_V2) || defined(BOARD_TYPE_DEV1) || defined(BOARD_TYPE_BW_SHP6) || defined(BOARD_TYPE_SHELLY1)
-#ifdef POWER_LED
-      digitalWrite( POWER_LED, POWER_LED_OFF );
-#endif
+      app.powerLedOff();
       digitalWrite( RELAY_PIN, LOW );
     #endif
 
-    powerOn = false;
     openHabHandler.sendValue("OFF");
     mqttHandler.sendValue( appcfg.mqtt_outtopic, "OFF");
     alexaHandler.sendValue(false);
@@ -88,6 +88,7 @@ const bool RelayHandler::isPowerOn()
 
 const bool RelayHandler::isDelayedPowerOn()
 {
+
   bool p = powerOn;
 
   if( delayAction == true )
@@ -95,7 +96,7 @@ const bool RelayHandler::isDelayedPowerOn()
     p = delayState;
   }
 
-  // LOG1( "delay power on state = %d\n", p );
+  // LOG1( "delay state %d %d %d\n", powerOn, delayAction, delayState );
 
   return p;
 }

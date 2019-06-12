@@ -1,7 +1,6 @@
 #include "pages/Pages.h"
 
 static bool updateSucceed;
-static int alter;
 static bool validFilename;
 static char filenameBuffer[256];
 
@@ -34,7 +33,6 @@ void handleUpdateProgressCB(AsyncWebServerRequest *request, String filename,
     }
     
     updateSucceed = false;
-    alter = 0;
 
     if ( validFilename == true )
     { 
@@ -50,10 +48,7 @@ void handleUpdateProgressCB(AsyncWebServerRequest *request, String filename,
     if ( validFilename == true )
     { 
       Serial.printf("\rprogress: %u", Update.progress());
-      alter ^= 1;
-#ifdef WIFI_LED
-      digitalWrite( WIFI_LED, alter );
-#endif
+      app.wifiLedToggle();
     }
   }
 
@@ -71,16 +66,12 @@ void handleUpdateProgressCB(AsyncWebServerRequest *request, String filename,
 
       if (!Update.end(true))
       {
-#ifdef WIFI_LED
-        digitalWrite( WIFI_LED, WIFI_LED_ON );
-#endif
+        app.wifiLedOn();
         Update.printError(Serial);
       }
       else
       {
-#ifdef WIFI_LED
-        digitalWrite( WIFI_LED, WIFI_LED_OFF );
-#endif
+        app.wifiLedOff();
         updateSucceed = true;
         app.delayedSystemRestart();
         Serial.println("Update complete");

@@ -18,9 +18,7 @@ static time_t lastTimestamp;
 
 static void wifiOff()
 {
-#ifdef WIFI_LED
-  digitalWrite(WIFI_LED, WIFI_LED_OFF);
-#endif
+  app.wifiLedOff();
   WiFi.persistent(false);
   WiFi.mode(WIFI_OFF);
   WiFi.setOutputPower(0.0f);
@@ -101,9 +99,7 @@ void WifiHandler::setup()
     dnsServer.start(53, "*", WiFi.softAPIP());
     LOG0( "DNS server started.\n" );
 
-#ifdef WIFI_LED
-    digitalWrite(WIFI_LED, WIFI_LED_ON);
-#endif
+    app.wifiLedOn();
     connected = true;
   }
 
@@ -176,18 +172,14 @@ const bool WifiHandler::handle(time_t timestamp)
           }
 
           Serial.println();
-#ifdef WIFI_LED
-          digitalWrite(WIFI_LED, WIFI_LED_ON);
-#endif
+          app.wifiLedOn();
           connected = true;
           MDNS.update();
         }
         else
         {
           Serial.print(".");
-#ifdef WIFI_LED
-          digitalWrite(WIFI_LED, digitalRead(WIFI_LED) ^ true);
-#endif
+          app.wifiLedToggle();
         }
       }
     }

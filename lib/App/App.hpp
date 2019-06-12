@@ -82,6 +82,11 @@ typedef struct appconfig
   int power_button_mode;
 #endif
 
+#ifdef WIFI_LED
+  bool led_night_mode_enabled;
+  int led_night_mode_timeout;  
+#endif
+
 } AppConfig;
 
 class App
@@ -92,10 +97,16 @@ private:
   bool doSystemRestart;
   unsigned long systemRestartTimestamp;
   bool initSPIFFS = false;
+  unsigned long ledStateTimestamp;
+  int wifiLedState;
+  int powerLedState;
+  bool ledNightMode;
+  bool ledActiveMode;
 
   void formatSPIFFS();
   void loadConfig();
   void restartSystem();
+  void updateLedStates( unsigned long timestamp );
 
 public:
   size_t fsTotalBytes;
@@ -111,6 +122,14 @@ public:
   void printConfig(AppConfig ac);
   void delayedSystemRestart();
   void handle( unsigned long timestamp );
+  //
+  void showLeds();
+  void wifiLedOn();
+  void wifiLedOff();
+  void wifiLedToggle();
+  void powerLedOn();
+  void powerLedOff();
+  void powerLedToggle();
 };
 
 extern App app;

@@ -50,6 +50,8 @@ App::App() {
   initSPIFFS = false;
   initialized = true;
   doSystemRestart = false;
+  ledActiveMode = false;
+  ledNightMode = false;
 }
 
 void App::defaultConfig() {
@@ -112,6 +114,11 @@ void App::defaultConfig() {
   appcfg.power_button_mode = DEFAULT_POWER_BUTTON_MODE;
 #endif
 
+#ifdef WIFI_LED
+  appcfg.led_night_mode_enabled = DEFAULT_LED_NIGHT_MODE_ENABLED;
+  appcfg.led_night_mode_timeout = DEFAULT_LED_NIGHT_MODE_TIMEOUT;
+#endif
+
   memcpy(&appcfgWR, &appcfg, sizeof(appcfg));
   memcpy(&appcfgRD, &appcfg, sizeof(appcfg));
 }
@@ -126,10 +133,7 @@ void App::firmwareReset() {
 }
 
 void App::formatSPIFFS() {
-#ifdef WIFI_LED
-  digitalWrite(WIFI_LED, WIFI_LED_ON);
-#endif
-
+  wifiLedOn();
   ESP.eraseConfig();
 
   if (SPIFFS.begin()) {
@@ -140,9 +144,7 @@ void App::formatSPIFFS() {
   } else {
     LOG0("\nERROR: format filesystem.\n");
   }
-#ifdef WIFI_LED
-  digitalWrite(WIFI_LED, WIFI_LED_OFF);
-#endif
+  wifiLedOff();
 }
 
 void App::restartSystem() {
@@ -166,7 +168,7 @@ void App::setup() {
 
 #ifdef WIFI_LED
   pinMode(WIFI_LED, OUTPUT);
-  digitalWrite(WIFI_LED, WIFI_LED_OFF);
+  wifiLedOff();
 #endif
 
 #if defined(BOARD_TYPE_OBI_V1)
@@ -185,7 +187,7 @@ void App::setup() {
 
 #ifdef POWER_LED
   pinMode(POWER_LED, OUTPUT);
-  digitalWrite(POWER_LED, POWER_LED_OFF);
+  powerLedOff();
 #endif
 
   pinMode(RELAY_PIN, OUTPUT);
@@ -193,13 +195,9 @@ void App::setup() {
 #endif
 
   for (int i = 0; i < 5; i++) {
-  #ifdef WIFI_LED
-    digitalWrite(WIFI_LED, WIFI_LED_ON);
-  #endif
+    wifiLedOn();
     delay(500);
-  #ifdef WIFI_LED
-    digitalWrite(WIFI_LED, WIFI_LED_OFF);
-  #endif
+    wifiLedOff();
     delay(500);
     Serial.println();
   }
@@ -239,13 +237,9 @@ void App::setup() {
     Serial.println();
 
     for (int i = 0; i < 15; i++) {
-    #ifdef WIFI_LED
-      digitalWrite(WIFI_LED, WIFI_LED_ON);
-    #endif
+      wifiLedOn();
       delay(100);
-    #ifdef WIFI_LED
-      digitalWrite(WIFI_LED, WIFI_LED_OFF);
-    #endif
+      wifiLedOff();
       delay(100);
     }
     
@@ -364,6 +358,11 @@ void App::writeConfig() {
      j.writeEntry( A_power_button_mode, appcfgWR.power_button_mode );
 #endif
 
+#ifdef WIFI_LED
+     j.writeEntry( A_led_night_mode_enabled, appcfgWR.led_night_mode_enabled );
+     j.writeEntry( A_led_night_mode_timeout, appcfgWR.led_night_mode_timeout );
+#endif
+
      j.writeFooter();
      configJson.close();
 
@@ -451,6 +450,13 @@ void App::printConfig(AppConfig ac) {
   Serial.println("\n  Power button:");
   Serial.printf("    Mode: %d\n", ac.power_button_mode);
 #endif
+#ifdef WIFI_LED
+  Serial.println("\n  LED night mode:");
+  Serial.printf("    Enabled: %s\n",
+                (ac.led_night_mode_enabled ? "true" : "false"));
+  Serial.printf("    led_night_mode_timeout: %ds\n", ac.led_night_mode_timeout);
+#endif
+
   Serial.println("---------------------------------------------------------");
   Serial.println();
 }
@@ -468,6 +474,8 @@ void App::handle( unsigned long timestamp ) {
     writeConfig();
     restartSystem();
   }
+ 
+  updateLedStates( timestamp );
 
   delay(10); // time for IP stack
 }
@@ -545,10 +553,123 @@ bool App::loadJsonConfig( const char *filename )
 #ifdef POWER_BUTTON_IS_MULTIMODE
         readError |= j.readEntryInteger( attributeName, A_power_button_mode, &appcfgRD.power_button_mode );
 #endif
+
+#ifdef WIFI_LED
+        readError |= j.readEntryBoolean( attributeName, A_led_night_mode_enabled, &appcfgRD.led_night_mode_enabled );
+        readError |= j.readEntryInteger( attributeName, A_led_night_mode_timeout, &appcfgRD.led_night_mode_timeout );
+#endif
       }
     }
     
     tmpConfig.close();
 
   return readError;
+}
+
+void App::wifiLedOn()
+{
+#ifdef WIFI_LED
+  wifiLedState = 1;
+  digitalWrite( WIFI_LED, WIFI_LED_ON );
+  ledStateTimestamp = millis();
+#endif
+}
+
+void App::wifiLedOff()
+{
+#ifdef WIFI_LED
+  wifiLedState = 0;
+  digitalWrite( WIFI_LED, WIFI_LED_OFF );
+  ledStateTimestamp = millis();
+#endif
+}
+
+void App::wifiLedToggle()
+{
+#ifdef WIFI_LED
+  if ( wifiLedState == 1 )
+  {
+    wifiLedOff();
+  }
+  else
+  {
+    wifiLedOn();
+  }
+#endif
+}
+
+void App::powerLedOn()
+{
+#ifdef POWER_LED
+  powerLedState = 1;
+  digitalWrite( POWER_LED, POWER_LED_ON );
+  ledStateTimestamp = millis();
+#endif
+}
+
+void App::powerLedOff()
+{
+#ifdef POWER_LED
+  powerLedState = 0;
+  digitalWrite( POWER_LED, POWER_LED_OFF );
+  ledStateTimestamp = millis();
+#endif
+}
+
+void App::powerLedToggle()
+{
+#ifdef POWER_LED
+  if ( powerLedState == 1 )
+  {
+    powerLedOff();
+  }
+  else
+  {
+    powerLedOn();
+  }
+#endif
+}
+
+void App::updateLedStates( unsigned long timestamp )
+{
+#ifdef WIFI_LED
+  if ( appcfg.led_night_mode_enabled == true )
+  {
+    if ( timestamp < (ledStateTimestamp + (appcfg.led_night_mode_timeout * 1000)))
+    {
+      if ( ledActiveMode == false )
+      {
+        ledNightMode = false;
+        ledActiveMode = true;
+        if ( wifiLedState == 1 )
+        {
+          digitalWrite( WIFI_LED, WIFI_LED_ON );
+        }
+#ifdef POWER_LED
+        if ( powerLedState == 1 )
+        {
+          digitalWrite( POWER_LED, POWER_LED_ON );
+        }
+#endif
+      }
+    }
+    else
+    {
+      if ( ledNightMode == false )
+      {
+        ledActiveMode = false;
+        ledNightMode = true;
+        digitalWrite( WIFI_LED, WIFI_LED_OFF );
+#ifdef POWER_LED   
+        digitalWrite( POWER_LED, POWER_LED_OFF ); 
+#endif
+      }    
+    }
+  }
+#endif  
+}
+
+void App::showLeds()
+{
+  ledStateTimestamp = millis();
 }

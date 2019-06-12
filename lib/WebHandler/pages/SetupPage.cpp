@@ -150,6 +150,13 @@ String setupProcessor(const String &var)
     return selected;
 #endif
 
+#ifdef WIFI_LED
+  if (var == A_led_night_mode_enabled && appcfg.led_night_mode_enabled == true)
+    return checked;
+  if (var == A_led_night_mode_timeout)
+    return String(appcfg.led_night_mode_timeout);
+#endif
+
   return String();
 }
 

@@ -55,4 +55,7 @@
 
 #define A_power_button_mode "power_button_mode"
 
+#define A_led_night_mode_enabled "led_night_mode_enabled"
+#define A_led_night_mode_timeout "led_night_mode_timeout"
+
 #endif
