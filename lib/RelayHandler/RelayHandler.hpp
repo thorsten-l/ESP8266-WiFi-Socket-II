@@ -4,9 +4,9 @@
 class RelayHandler
 {
 private:
-  bool powerOn;
-  bool delayState;
-  bool delayAction;
+  volatile bool powerOn;
+  volatile bool delayState;
+  volatile bool delayAction;
   void on();
   void off();
 
@@ -14,6 +14,7 @@ public:
   RelayHandler();
 
   const bool isPowerOn();
+  const bool isDelayedPowerOn();
   void toggle();
   void delayedOn();
   void delayedOff();

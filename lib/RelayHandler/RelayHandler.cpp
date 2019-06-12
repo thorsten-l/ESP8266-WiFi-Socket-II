@@ -86,6 +86,20 @@ const bool RelayHandler::isPowerOn()
   return powerOn;
 }
 
+const bool RelayHandler::isDelayedPowerOn()
+{
+  bool p = powerOn;
+
+  if( delayAction == true )
+  {
+    p = delayState;
+  }
+
+  // LOG1( "delay power on state = %d\n", p );
+
+  return p;
+}
+
 void RelayHandler::delayedOn()
 {
   if( powerOn == false )

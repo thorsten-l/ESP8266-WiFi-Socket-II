@@ -106,8 +106,8 @@ void OpenHabHandler::sendValue( const char* value )
     {
       sendValueV2( value );
     }
+    LOG0( "OpenHAB item value send.\n" );
   }
-  LOG0( "OpenHAB item value send.\n" );
 }
 
 void OpenHabHandler::sendValueV1( const char* itemname, const float value )

@@ -2,7 +2,7 @@
 #define __TEMPLATE_HTML_H__
 
 const char META_REFRESH[] =
-  "<meta http-equiv=\"refresh\" content=\"30; URL=/\">";
+  "<meta http-equiv=\"refresh\" content=\"40; URL=/\">";
 
 // file name = info.html, length = 2183
 const char TEMPLATE_HEADER[] =

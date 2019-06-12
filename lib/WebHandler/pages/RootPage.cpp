@@ -9,7 +9,9 @@ static bool webPowerState;
 
 void handleRootPage(AsyncWebServerRequest *request)
 {
-  webPowerState = relayHandler.isPowerOn();
+  webPowerState = relayHandler.isDelayedPowerOn();
+
+  // LOG1( "webPowerState (1) = %d\n", webPowerState );
 
   if (request->hasParam("power"))
   {
@@ -19,12 +21,10 @@ void handleRootPage(AsyncWebServerRequest *request)
     {
       if (strcmp("ON", pv) == 0)
       {
-        webPowerState = true;
         relayHandler.delayedOn();
       }
       if (strcmp("OFF", pv) == 0)
       {
-        webPowerState = false;
         relayHandler.delayedOff();
       }
     }
@@ -32,6 +32,7 @@ void handleRootPage(AsyncWebServerRequest *request)
     return;
   }
 
+  LOG1( "webPowerState (3) = %d\n", webPowerState );
   char titleBuffer[100];
   sprintf(titleBuffer, APP_NAME " - %s", appcfg.ota_hostname);
 
