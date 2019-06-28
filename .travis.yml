@@ -38,6 +38,7 @@ cache:
 install:
   - pip install -U platformio
   - platformio update
+  - platformio upgrade --dev
 
 script:
   - platformio run -e dev1 -e dev1lite -e obi_v1 -e obi_v2 -e bw_shp6 -e shelly1
