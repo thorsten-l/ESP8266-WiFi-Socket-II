@@ -2,7 +2,6 @@
 #include "pages/Pages.h"
 #include "favicon_ico.h"
 #include <ESP8266mDNS.h>
-#include <ESP8266HTTPUpdateServer.h>
 #include <AlexaHandler.hpp>
 #include <RelayHandler.hpp>
 
