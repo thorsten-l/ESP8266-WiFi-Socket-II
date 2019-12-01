@@ -5,7 +5,7 @@ Import("env")
 pioEnv = env['PIOENV']
 
 def copyFirmware(source, target, env):
-  print "------------------------------------------------------------------------------"
+  print ( "------------------------------------------------------------------------------" )
   buildFlags = env.ParseFlags(env['BUILD_FLAGS'])
   cppDefines = buildFlags.get( "CPPDEFINES" )
 
@@ -24,11 +24,11 @@ def copyFirmware(source, target, env):
 
   firmwarePath = os.path.abspath(os.path.join( os.path.join( target[0].path, os.pardir), ( "firmware-%s.%s.bin" % ( appVersion, pioEnv ))))
  
-  print "PIOENV = " + pioEnv
-  print "copy firmware to file:"
-  print firmwarePath
+  print ( "PIOENV = " + pioEnv )
+  print ( "copy firmware to file:" )
+  print ( firmwarePath )
   copyfile( target[0].path, firmwarePath )
-  print "size=%d bytes" % os.path.getsize( firmwarePath ) 
+  print ( "size=%d bytes" % os.path.getsize( firmwarePath ))
 
 env.AddPostAction( "$BUILD_DIR/firmware.bin", copyFirmware )
 env.Append(CPPDEFINES=[("PIOENV", "\\\"" + env['PIOENV'] + "\\\"")])
