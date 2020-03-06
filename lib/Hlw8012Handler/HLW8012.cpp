@@ -92,8 +92,10 @@ double HLW8012::getVoltage() {
         _voltage_pulse_width = pulseIn(_cf1_pin, HIGH, _pulse_timeout);
     }
 
+    double vpw = (double)_voltage_pulse_width;
+
     _voltage = (_voltage_pulse_width > 0) 
-        ? _voltage_multiplier / ((double)_voltage_pulse_width) / 2.0 
+        ? _voltage_multiplier / vpw / 2.0
         : 0.0;
 
     return _voltage;
@@ -237,7 +239,14 @@ void HLW8012::_checkCF1Signal() {
 // For current a frequency of 1Hz means around 15mA
 // For voltage a frequency of 1Hz means around 0.5V
 void HLW8012::_calculateDefaultMultipliers() {
-    _current_multiplier = ( 1000000.0 * 512 * V_REF / _current_resistor / 24.0 / F_OSC );
-    _voltage_multiplier = ( 1000000.0 * 512 * V_REF * _voltage_resistor / 2.0 / F_OSC );
-    _power_multiplier = ( 1000000.0 * 128 * V_REF * V_REF * _voltage_resistor / _current_resistor / 48.0 / F_OSC );
+
+#ifdef HAVE_BL0937
+    _current_multiplier = ( 531500000.0 * V_REF_BL0 / _current_resistor / 24.0 / F_OSC_BL0 ) / 1.166666 ;
+    _voltage_multiplier = ( 221380000.0 * V_REF_BL0 * _voltage_resistor / 2.0 / F_OSC_BL0 ) / 1.0474137931f;
+    _power_multiplier = ( 50850000.0 * V_REF_BL0 * V_REF_BL0 * _voltage_resistor / _current_resistor / 48.0 / F_OSC_BL0 ) / 1.1371681416;
+#else
+    _current_multiplier = ( 1000000.0 * 512 * V_REF_HLW / _current_resistor / 24.0 / F_OSC_HLW );
+    _voltage_multiplier = ( 1000000.0 * 512 * V_REF_HLW * _voltage_resistor / 2.0 / F_OSC_HLW );
+    _power_multiplier = ( 1000000.0 * 128 * V_REF_HLW * V_REF_HLW * _voltage_resistor / _current_resistor / 48.0 / F_OSC_HLW );
+#endif
 }

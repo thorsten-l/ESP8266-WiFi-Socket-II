@@ -1,0 +1,28 @@
+{
+    "build": {
+        "core": "esp8266",
+        "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_BW_SHP6 -DBOARD_TYPE_BW_SHP6_V11",
+        "f_cpu": "80000000L",
+        "f_flash": "40000000L",
+        "flash_mode": "dout",
+        "ldscript": "eagle.flash.1m64.ld",
+        "mcu": "esp8266",
+        "variant": "d1_mini"
+    },
+    "connectivity": [
+        "wifi"
+    ],
+    "frameworks": [
+        "arduino"
+    ],
+    "name": "BlitzWolf SHP6 V1.1",
+    "upload": {
+        "maximum_ram_size": 81920,
+        "maximum_size": 1048576,
+        "require_upload_port": true,
+        "resetmethod": "nodemcu",
+        "speed": 921600
+    },
+    "url": "https://www.blitzwolf.com/2300W-EU-WIFI-Smart-Socket-p-300.html",
+    "vendor": "BlitzWolf"
+}

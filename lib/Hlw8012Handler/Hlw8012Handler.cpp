@@ -32,8 +32,13 @@ void Hlw8012Handler::setup()
     attachInterrupt(CF1_PIN, hlw8012_cf1_interrupt, CHANGE);
     attachInterrupt(CF_PIN, hlw8012_cf_interrupt, CHANGE);
 
+#ifdef HAVE_BL0937
+    hlw8012.setVoltageMultiplier(252081);
+    hlw8012.setCurrentMultiplier(18000);
+#else
     hlw8012.setVoltageMultiplier(312349);
     hlw8012.setCurrentMultiplier(18000);
+#endif
 }
 
 void Hlw8012Handler::handle(unsigned long timestamp)

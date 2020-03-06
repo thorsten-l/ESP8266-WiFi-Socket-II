@@ -23,9 +23,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define HLW8012_h
 
 #include <Arduino.h>
+#include <DeviceConfig.hpp>
 
 // Internal voltage reference value
-#define V_REF               2.43
+#define V_REF_HLW               2.43
+#define V_REF_BL0               1.218
 
 // The factor of a 1mOhm resistor
 // as per recomended circuit in datasheet
@@ -34,10 +36,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // This is the factor of a voltage divider of 6x 470K upstream and 1k downstream
 // as per recomended circuit in datasheet
-#define R_VOLTAGE           2821
+#define R_VOLTAGE_HLW        ((5 * 470) + 1) //2821 //2350
+#define R_VOLTAGE_BL0        ((3 * 680) + 1) //1980 +1
 
 // Frequency of the HLW8012 internal clock
-#define F_OSC               3579000
+#define F_OSC_HLW           (3579000)
+#define F_OSC_BL0           (2000000)
 
 // Minimum delay between selecting a mode and reading a sample
 #define READING_INTERVAL    3000
@@ -112,8 +116,12 @@ class HLW8012 {
         unsigned char _sel_pin;
 
         double _current_resistor = R_CURRENT;
-        double _voltage_resistor = R_VOLTAGE;
 
+#ifdef HAVE_BL0937
+        double _voltage_resistor = R_VOLTAGE_BL0;
+#else
+        double _voltage_resistor = R_VOLTAGE_HLW;
+#endif
         double _current_multiplier; // Unit: us/A
         double _voltage_multiplier; // Unit: us/V
         double _power_multiplier;   // Unit: us/W

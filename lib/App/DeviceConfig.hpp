@@ -53,6 +53,26 @@
   #define CURRENT_MODE LOW
 #endif
 
+#ifdef BOARD_TYPE_BW_SHP6_V11
+  #define WIFI_LED      2 
+  #define POWER_LED     0
+  #define POWER_BUTTON  13
+  #define RELAY_PIN     15
+  #define WIFI_LED_ON   0
+  #define WIFI_LED_OFF  1
+  #define POWER_LED_ON  0
+  #define POWER_LED_OFF 1
+
+  #define HAVE_ENERGY_SENSOR
+  #define HAVE_HLW8012
+  #define HAVE_BL0937
+  #define SEL_PIN 12
+  #define CF1_PIN 4
+  #define CF_PIN 5
+  #define UPDATE_TIME 2000
+  #define CURRENT_MODE LOW
+#endif
+
 #ifdef BOARD_TYPE_SHELLY1
   #define POWER_BUTTON_IS_MULTIMODE
   #define POWER_BUTTON  5
