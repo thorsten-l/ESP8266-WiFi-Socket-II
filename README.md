@@ -6,6 +6,8 @@
 
 - BlitzWolf SHP6, [https://www.blitzwolf.com/2300W-EU-WIFI-Smart-Socket-p-300.html](https://www.blitzwolf.com/2300W-EU-WIFI-Smart-Socket-p-300.html)
 
+- BlitzWolf SHP6 (V.1.1, 15A, 3450W), [https://www.blitzwolf.com/3450W-EU-WIFI-Smart-Socket-p-412.html](https://www.blitzwolf.com/3450W-EU-WIFI-Smart-Socket-p-412.html)
+
 - OBI Version 2, [https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806](https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko-weiss/p/4077806)
 
 - OBI Version 1, [https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko/p/2291706](https://www.obi.de/hausfunksteuerung/wifi-stecker-schuko/p/2291706)

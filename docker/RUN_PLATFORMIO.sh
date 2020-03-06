@@ -9,4 +9,5 @@ docker run -it --rm \
     -e obi_v1 \
     -e obi_v2 \
     -e bw_shp6 \
+    -e bw_shp6_v11 \
     -e shelly1

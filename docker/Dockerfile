@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget unzip git 
  && python -m pip install --upgrade pip setuptools
 
 RUN pip install -U platformio
-RUN pio platform install espressif8266@2.2.2 --with-package framework-arduinoespressif8266
+RUN pio platform install espressif8266@2.2.3 --with-package framework-arduinoespressif8266
 RUN pio platform install espressif8266 --with-package framework-arduinoespressif8266
 
 RUN /usr/local/bin/platformio update
