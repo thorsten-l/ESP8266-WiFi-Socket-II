@@ -465,20 +465,31 @@ void App::printConfig(AppConfig ac) {
 void App::delayedSystemRestart() {
   doSystemRestart = true;
   systemRestartTimestamp = millis();
+  systemRestartCounter = 6;
   LOG0("*** delayedSystemRestart ***\n" );
 }
 
 void App::handle( unsigned long timestamp ) {
 
-  if ( doSystemRestart && (( timestamp - systemRestartTimestamp) > 5000 )) {
-    LOG1("*** doSystemRestart *** (%lu)\n", (timestamp - systemRestartTimestamp));
-    writeConfig();
-    restartSystem();
+  if ( doSystemRestart && (( timestamp - systemRestartTimestamp) > 1000 )) {
+
+    systemRestartCounter--;
+
+    if ( systemRestartCounter > 0 )
+    {
+      LOG1( "*** system restart in %us ***\n", systemRestartCounter );
+    }
+    else
+    {
+      LOG1("*** do system restart *** (%lu)\n", (timestamp - systemRestartTimestamp));
+      writeConfig();
+      restartSystem();
+    }
+
+    systemRestartTimestamp = millis();
   }
  
   updateLedStates( timestamp );
-
-  delay(10); // time for IP stack
 }
 
 bool App::loadJsonConfig( const char *filename )

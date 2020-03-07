@@ -96,6 +96,7 @@ private:
   bool initialized = false;
   bool doSystemRestart;
   unsigned long systemRestartTimestamp;
+  unsigned int systemRestartCounter;
   bool initSPIFFS = false;
   unsigned long ledStateTimestamp;
   int wifiLedState;
