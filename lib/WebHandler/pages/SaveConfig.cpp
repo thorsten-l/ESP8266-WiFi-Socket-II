@@ -139,8 +139,7 @@ void handleSavePage(AsyncWebServerRequest *request)
   response->println("<h2>Configuration saved.</h2>");
   response->println("<h3 style='color: red'>Restarting System ... takes about 30s</h3>");
   response->print(TEMPLATE_FOOTER);
+  app.delayedSystemRestart();
   LOG0( "*** save config parsed ... sending response\n" );
   request->send(response);
-  LOG0( "*** response send\n" );
-  app.delayedSystemRestart();
 }

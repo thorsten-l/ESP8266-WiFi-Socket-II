@@ -178,5 +178,4 @@ void handleSetupPage(AsyncWebServerRequest *request)
 
   LOG0("send response\n");
   request->send(response);
-  LOG0("send response done\n");
 }
