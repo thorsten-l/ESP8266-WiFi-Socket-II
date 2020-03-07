@@ -141,4 +141,6 @@ void loop()
 
   relayHandler.handle();
   app.handle(thisLoopTimestamp);
+
+  delay(20); // time for IP stack
 }
