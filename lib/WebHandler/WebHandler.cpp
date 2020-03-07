@@ -10,7 +10,7 @@ static AsyncWebServer server(80);
 
 void captivePortal(AsyncWebServerRequest *request)
 {
-  request->redirect("http://wifi.socket/captive.txt");
+  request->redirect("http://wifi.socket/captive.html");
 }
 
 WebHandler::WebHandler() 
@@ -38,9 +38,9 @@ void WebHandler::setup()
 
   if ( appcfg.wifi_mode == WIFI_AP )
   {
-    server.on("/captive.txt", HTTP_GET, [](AsyncWebServerRequest *request) {
-      request->send(200, "text/plain", 
-        "\n\n  Please enter http://wifi.socket or http://192.168.192.1 into your browser.");
+    server.on("/captive.html", HTTP_GET, [](AsyncWebServerRequest *request) {
+      request->send(200, "text/html", 
+        F("Please enter <b><a target='_blank' href='http://wifi.socket'>http://wifi.socket</a></b> or <b><a target='_blank' href='http://192.168.192.1'>http://192.168.192.1</a></b> into your browser."));
     });
   }
 
