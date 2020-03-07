@@ -80,7 +80,18 @@ double HLW8012::getCurrent() {
         _current_pulse_width = pulseIn(_cf1_pin, HIGH, _pulse_timeout);
     }
 
+#ifdef HAVE_BL0937
+    if ( _current_pulse_width < 47000 )
+    {
+      _current = (_current_pulse_width > 0) ? _current_multiplier / _current_pulse_width / 2 : 0;
+    }
+    else
+    {
+      _current = 0.0;
+    }
+#else
     _current = (_current_pulse_width > 0) ? _current_multiplier / _current_pulse_width / 2 : 0;
+#endif
     return _current;
 
 }
@@ -93,10 +104,7 @@ double HLW8012::getVoltage() {
     }
 
     double vpw = (double)_voltage_pulse_width;
-
-    _voltage = (_voltage_pulse_width > 0) 
-        ? _voltage_multiplier / vpw / 2.0
-        : 0.0;
+    _voltage = (_voltage_pulse_width > 0) ? _voltage_multiplier / vpw / 2.0 : 0.0;
 
     return _voltage;
 }

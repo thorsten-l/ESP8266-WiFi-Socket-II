@@ -34,7 +34,7 @@ void Hlw8012Handler::setup()
 
 #ifdef HAVE_BL0937
     hlw8012.setVoltageMultiplier(252081);
-    hlw8012.setCurrentMultiplier(18000);
+    hlw8012.setCurrentMultiplier(21000);
 #else
     hlw8012.setVoltageMultiplier(312349);
     hlw8012.setCurrentMultiplier(18000);
