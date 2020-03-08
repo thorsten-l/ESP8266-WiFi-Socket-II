@@ -8,7 +8,8 @@ AppConfig appcfg;
 AppConfig appcfgWR;
 AppConfig appcfgRD;
 
-static void showChipInfo() {
+static void showChipInfo()
+{
   Serial.println("-- CHIPINFO --");
   Serial.printf("Chip Id = %08X\n", ESP.getChipId());
 
@@ -31,9 +32,12 @@ static void showChipInfo() {
                                  ? "DIO"
                                  : ideMode == FM_DOUT ? "DOUT" : "UNKNOWN"));
 
-  if (ideSize != realSize) {
+  if (ideSize != realSize)
+  {
     Serial.println("Flash Chip configuration wrong!\n");
-  } else {
+  }
+  else
+  {
     Serial.println("Flash Chip configuration ok.\n");
   }
 
@@ -44,8 +48,9 @@ static void showChipInfo() {
   Serial.println();
 }
 
-App::App() {
-  sprintf( initFilename, "/%08X.ini", ESP.getChipId());
+App::App()
+{
+  sprintf(initFilename, "/%08X.ini", ESP.getChipId());
   defaultConfig();
   initSPIFFS = false;
   initialized = true;
@@ -54,7 +59,8 @@ App::App() {
   ledNightMode = false;
 }
 
-void App::defaultConfig() {
+void App::defaultConfig()
+{
   strncpy(appcfg.wifi_ssid, DEFAULT_WIFI_SSID, 63);
   strncpy(appcfg.wifi_password, DEFAULT_WIFI_PASSWORD, 63);
   appcfg.wifi_mode = DEFAULT_WIFI_MODE;
@@ -123,31 +129,38 @@ void App::defaultConfig() {
   memcpy(&appcfgRD, &appcfg, sizeof(appcfg));
 }
 
-void App::firmwareReset() {
-  if (SPIFFS.begin()) {
+void App::firmwareReset()
+{
+  if (SPIFFS.begin())
+  {
     LOG0("Removing init file\n");
-    SPIFFS.remove( initFilename );
+    SPIFFS.remove(initFilename);
     SPIFFS.end();
-  }  
+  }
   delayedSystemRestart();
 }
 
-void App::formatSPIFFS() {
+void App::formatSPIFFS()
+{
   wifiLedOn();
   ESP.eraseConfig();
 
-  if (SPIFFS.begin()) {
+  if (SPIFFS.begin())
+  {
     LOG0("File system format started...\n");
     SPIFFS.format();
     LOG0("File system format finished.\n");
     SPIFFS.end();
-  } else {
+  }
+  else
+  {
     LOG0("\nERROR: format filesystem.\n");
   }
   wifiLedOff();
 }
 
-void App::restartSystem() {
+void App::restartSystem()
+{
   // watchdogTicker.detach();
   ESP.eraseConfig();
   LOG0("*** restarting system ***\n");
@@ -157,7 +170,8 @@ void App::restartSystem() {
   ESP.reset();
 }
 
-void App::setup() {
+void App::setup()
+{
   Serial.begin(74880);
 
 #ifdef BOARD_TYPE_SHELLY1
@@ -182,8 +196,8 @@ void App::setup() {
   digitalWrite(RELAY_TRIGGER_OFF, 1);
 #endif
 
-#if defined(BOARD_TYPE_OBI_V2) || defined(BOARD_TYPE_DEV1) ||                  \
-    defined(BOARD_TYPE_BW_SHP6) || defined(BOARD_TYPE_BW_SHP6_V11) ||  \
+#if defined(BOARD_TYPE_OBI_V2) || defined(BOARD_TYPE_DEV1) ||         \
+    defined(BOARD_TYPE_BW_SHP6) || defined(BOARD_TYPE_BW_SHP6_V11) || \
     defined(BOARD_TYPE_SHELLY1)
 
 #ifdef POWER_LED
@@ -195,7 +209,8 @@ void App::setup() {
   digitalWrite(RELAY_PIN, LOW);
 #endif
 
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 5; i++)
+  {
     wifiLedOn();
     delay(500);
     wifiLedOff();
@@ -211,52 +226,54 @@ void App::setup() {
 
   showChipInfo();
 
-  if ( SPIFFS.begin())
+  if (SPIFFS.begin())
   {
-    if ( SPIFFS.exists(initFilename))
+    if (SPIFFS.exists(initFilename))
     {
-      LOG1( "Init file %s found.\n", initFilename );
+      LOG1("Init file %s found.\n", initFilename);
       initSPIFFS = false;
     }
     else
     {
-      LOG1( "WARNING: Init file %s does not exist.\n", initFilename );
+      LOG1("WARNING: Init file %s does not exist.\n", initFilename);
       initSPIFFS = true;
     }
-    
+
     SPIFFS.end();
   }
   else
   {
     initSPIFFS = true;
   }
-  
+
 #ifndef POWER_BUTTON_IS_MULTIMODE
-  if (digitalRead(POWER_BUTTON) == false) {
+  if (digitalRead(POWER_BUTTON) == false)
+  {
     Serial.println();
     LOG0("*** Firmware RESET ***\n");
     Serial.println();
 
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 15; i++)
+    {
       wifiLedOn();
       delay(100);
       wifiLedOff();
       delay(100);
     }
-    
+
     initSPIFFS = true;
   }
 #endif
 
-  if(initSPIFFS == true)
+  if (initSPIFFS == true)
   {
     formatSPIFFS();
 
-    if ( SPIFFS.begin() )
+    if (SPIFFS.begin())
     {
-      LOG0( "writing init file\n" );
+      LOG0("writing init file\n");
       File initFile = SPIFFS.open(initFilename, "w");
-      initFile.write( "true" );
+      initFile.write("true");
       initFile.close();
       SPIFFS.end();
     }
@@ -270,20 +287,27 @@ void App::setup() {
   memcpy(&appcfgWR, &appcfg, sizeof(appcfg));
 }
 
-void App::loadConfig() {
-  if (!SPIFFS.begin()) {
+void App::loadConfig()
+{
+  if (!SPIFFS.begin())
+  {
     LOG0("ERROR: Failed to mount file system");
-  } else {
-    if (SPIFFS.exists(APP_CONFIG_FILE_JSON)) {
-       if( loadJsonConfig(APP_CONFIG_FILE_JSON) == false )
-       {
-         memcpy(&appcfg, &appcfgRD, sizeof(appcfg));
-       }
-       else
-       {
-         LOG0( "ERROR: loading config.json file. Using default config.\n" );
-       }
-    } else {
+  }
+  else
+  {
+    if (SPIFFS.exists(APP_CONFIG_FILE_JSON))
+    {
+      if (loadJsonConfig(APP_CONFIG_FILE_JSON) == false)
+      {
+        memcpy(&appcfg, &appcfgRD, sizeof(appcfg));
+      }
+      else
+      {
+        LOG0("ERROR: loading config.json file. Using default config.\n");
+      }
+    }
+    else
+    {
       LOG0("WARNING: appcfg file " APP_CONFIG_FILE_JSON
            " does not exist. Using default appcfg.\n");
     }
@@ -291,81 +315,85 @@ void App::loadConfig() {
   }
 }
 
-void App::writeConfig() {
-  if (!SPIFFS.begin()) {
+void App::writeConfig()
+{
+  if (!SPIFFS.begin())
+  {
     LOG0("ERROR: Failed to mount file system");
-  } else {
-     LOG0( "Writing " APP_CONFIG_FILE_JSON " file.\n" );
-     File configJson = SPIFFS.open(APP_CONFIG_FILE_JSON, "w");
-     uJson j = uJson( configJson );
+  }
+  else
+  {
+    LOG0("Writing " APP_CONFIG_FILE_JSON " file.\n");
+    File configJson = SPIFFS.open(APP_CONFIG_FILE_JSON, "w");
+    uJson j = uJson(configJson);
 
-     j.writeHeader();
-     j.writeEntry( A_wifi_ssid, appcfgWR.wifi_ssid );
-     j.writeEntry( A_wifi_password, appcfgWR.wifi_password );
-     j.writeEntry( A_wifi_mode, appcfgWR.wifi_mode );
+    j.writeHeader();
+    j.writeEntry(A_wifi_ssid, appcfgWR.wifi_ssid);
+    j.writeEntry(A_wifi_password, appcfgWR.wifi_password);
+    j.writeEntry(A_wifi_mode, appcfgWR.wifi_mode);
 
-     j.writeEntry( A_net_mode, appcfgWR.net_mode );
-     j.writeEntry( A_net_host, appcfgWR.net_host );
-     j.writeEntry( A_net_mask, appcfgWR.net_mask );
-     j.writeEntry( A_net_gateway, appcfgWR.net_gateway );
-     j.writeEntry( A_net_dns, appcfgWR.net_dns );
+    j.writeEntry(A_net_mode, appcfgWR.net_mode);
+    j.writeEntry(A_net_host, appcfgWR.net_host);
+    j.writeEntry(A_net_mask, appcfgWR.net_mask);
+    j.writeEntry(A_net_gateway, appcfgWR.net_gateway);
+    j.writeEntry(A_net_dns, appcfgWR.net_dns);
 
-     j.writeEntry( A_ota_hostname, appcfgWR.ota_hostname );
-     j.writeEntry( A_ota_password, appcfgWR.ota_password );
+    j.writeEntry(A_ota_hostname, appcfgWR.ota_hostname);
+    j.writeEntry(A_ota_password, appcfgWR.ota_password);
 
-     j.writeEntry( A_admin_password, appcfgWR.admin_password );
+    j.writeEntry(A_admin_password, appcfgWR.admin_password);
 
-     j.writeEntry( A_ohab_enabled, appcfgWR.ohab_enabled );
-     j.writeEntry( A_ohab_version, appcfgWR.ohab_version );
-     j.writeEntry( A_ohab_host, appcfgWR.ohab_host );
-     j.writeEntry( A_ohab_port, appcfgWR.ohab_port );
-     j.writeEntry( A_ohab_itemname, appcfgWR.ohab_itemname );
-     j.writeEntry( A_ohab_useauth, appcfgWR.ohab_useauth );
-     j.writeEntry( A_ohab_user, appcfgWR.ohab_user );
-     j.writeEntry( A_ohab_password, appcfgWR.ohab_password );
+    j.writeEntry(A_ohab_enabled, appcfgWR.ohab_enabled);
+    j.writeEntry(A_ohab_version, appcfgWR.ohab_version);
+    j.writeEntry(A_ohab_host, appcfgWR.ohab_host);
+    j.writeEntry(A_ohab_port, appcfgWR.ohab_port);
+    j.writeEntry(A_ohab_itemname, appcfgWR.ohab_itemname);
+    j.writeEntry(A_ohab_useauth, appcfgWR.ohab_useauth);
+    j.writeEntry(A_ohab_user, appcfgWR.ohab_user);
+    j.writeEntry(A_ohab_password, appcfgWR.ohab_password);
 #ifdef HAVE_ENERGY_SENSOR
-     j.writeEntry( A_ohab_item_voltage, appcfgWR.ohab_item_voltage );
-     j.writeEntry( A_ohab_item_current, appcfgWR.ohab_item_current );
-     j.writeEntry( A_ohab_item_power, appcfgWR.ohab_item_power );
-     j.writeEntry( A_ohab_sending_interval, appcfgWR.ohab_sending_interval );
+    j.writeEntry(A_ohab_item_voltage, appcfgWR.ohab_item_voltage);
+    j.writeEntry(A_ohab_item_current, appcfgWR.ohab_item_current);
+    j.writeEntry(A_ohab_item_power, appcfgWR.ohab_item_power);
+    j.writeEntry(A_ohab_sending_interval, appcfgWR.ohab_sending_interval);
 #endif
 
-     j.writeEntry( A_alexa_enabled, appcfgWR.alexa_enabled );
-     j.writeEntry( A_alexa_devicename, appcfgWR.alexa_devicename );
+    j.writeEntry(A_alexa_enabled, appcfgWR.alexa_enabled);
+    j.writeEntry(A_alexa_devicename, appcfgWR.alexa_devicename);
 
-     j.writeEntry( A_mqtt_enabled, appcfgWR.mqtt_enabled );
-     j.writeEntry( A_mqtt_clientid, appcfgWR.mqtt_clientid );
-     j.writeEntry( A_mqtt_host, appcfgWR.mqtt_host );
-     j.writeEntry( A_mqtt_port, appcfgWR.mqtt_port );
-     j.writeEntry( A_mqtt_intopic, appcfgWR.mqtt_intopic );
-     j.writeEntry( A_mqtt_outtopic, appcfgWR.mqtt_outtopic );
-     j.writeEntry( A_mqtt_useauth, appcfgWR.mqtt_useauth );
-     j.writeEntry( A_mqtt_user, appcfgWR.mqtt_user );
-     j.writeEntry( A_mqtt_password, appcfgWR.mqtt_password );
+    j.writeEntry(A_mqtt_enabled, appcfgWR.mqtt_enabled);
+    j.writeEntry(A_mqtt_clientid, appcfgWR.mqtt_clientid);
+    j.writeEntry(A_mqtt_host, appcfgWR.mqtt_host);
+    j.writeEntry(A_mqtt_port, appcfgWR.mqtt_port);
+    j.writeEntry(A_mqtt_intopic, appcfgWR.mqtt_intopic);
+    j.writeEntry(A_mqtt_outtopic, appcfgWR.mqtt_outtopic);
+    j.writeEntry(A_mqtt_useauth, appcfgWR.mqtt_useauth);
+    j.writeEntry(A_mqtt_user, appcfgWR.mqtt_user);
+    j.writeEntry(A_mqtt_password, appcfgWR.mqtt_password);
 #ifdef HAVE_ENERGY_SENSOR
-     j.writeEntry( A_mqtt_topic_voltage, appcfgWR.mqtt_topic_voltage );
-     j.writeEntry( A_mqtt_topic_current, appcfgWR.mqtt_topic_current );
-     j.writeEntry( A_mqtt_topic_power, appcfgWR.mqtt_topic_power );
-     j.writeEntry( A_mqtt_topic_json, appcfgWR.mqtt_topic_json );
-     j.writeEntry( A_mqtt_sending_interval, appcfgWR.mqtt_sending_interval );
+    j.writeEntry(A_mqtt_topic_voltage, appcfgWR.mqtt_topic_voltage);
+    j.writeEntry(A_mqtt_topic_current, appcfgWR.mqtt_topic_current);
+    j.writeEntry(A_mqtt_topic_power, appcfgWR.mqtt_topic_power);
+    j.writeEntry(A_mqtt_topic_json, appcfgWR.mqtt_topic_json);
+    j.writeEntry(A_mqtt_sending_interval, appcfgWR.mqtt_sending_interval);
 #endif
 
-     j.writeEntry( A_syslog_enabled, appcfgWR.syslog_enabled );
-     j.writeEntry( A_syslog_host, appcfgWR.syslog_host );
-     j.writeEntry( A_syslog_port, appcfgWR.syslog_port );
-     j.writeEntry( A_syslog_app_name, appcfgWR.syslog_app_name );
+    j.writeEntry(A_syslog_enabled, appcfgWR.syslog_enabled);
+    j.writeEntry(A_syslog_host, appcfgWR.syslog_host);
+    j.writeEntry(A_syslog_port, appcfgWR.syslog_port);
+    j.writeEntry(A_syslog_app_name, appcfgWR.syslog_app_name);
 
 #ifdef POWER_BUTTON_IS_MULTIMODE
-     j.writeEntry( A_power_button_mode, appcfgWR.power_button_mode );
+    j.writeEntry(A_power_button_mode, appcfgWR.power_button_mode);
 #endif
 
 #ifdef WIFI_LED
-     j.writeEntry( A_led_night_mode_enabled, appcfgWR.led_night_mode_enabled );
-     j.writeEntry( A_led_night_mode_timeout, appcfgWR.led_night_mode_timeout );
+    j.writeEntry(A_led_night_mode_enabled, appcfgWR.led_night_mode_enabled);
+    j.writeEntry(A_led_night_mode_timeout, appcfgWR.led_night_mode_timeout);
 #endif
 
-     j.writeFooter();
-     configJson.close();
+    j.writeFooter();
+    configJson.close();
 
     FSInfo fs_info;
     SPIFFS.info(fs_info);
@@ -385,7 +413,8 @@ void App::writeConfig() {
   }
 }
 
-void App::printConfig(AppConfig ac) {
+void App::printConfig(AppConfig ac)
+{
   Serial.println();
   Serial.println("--- App appcfguration -----------------------------------");
   Serial.println("  Security:");
@@ -434,7 +463,7 @@ void App::printConfig(AppConfig ac) {
   Serial.printf("    In Topic: %s\n", ac.mqtt_intopic);
   Serial.printf("    Out Topic: %s\n", ac.mqtt_outtopic);
 #ifdef HAVE_ENERGY_SENSOR
-  Serial.printf("    Topic Voltage: %s\n", ac.mqtt_topic_voltage) ;
+  Serial.printf("    Topic Voltage: %s\n", ac.mqtt_topic_voltage);
   Serial.printf("    Topic Current: %s\n", ac.mqtt_topic_current);
   Serial.printf("    Topic Power: %s\n", ac.mqtt_topic_power);
   Serial.printf("    Topic JSON: %s\n", ac.mqtt_topic_json);
@@ -462,22 +491,25 @@ void App::printConfig(AppConfig ac) {
   Serial.println();
 }
 
-void App::delayedSystemRestart() {
+void App::delayedSystemRestart()
+{
   doSystemRestart = true;
   systemRestartTimestamp = millis();
   systemRestartCounter = 6;
-  LOG0("*** delayedSystemRestart ***\n" );
+  LOG0("*** delayedSystemRestart ***\n");
 }
 
-void App::handle( unsigned long timestamp ) {
+void App::handle(unsigned long timestamp)
+{
 
-  if ( doSystemRestart && (( timestamp - systemRestartTimestamp) > 1000 )) {
+  if (doSystemRestart && ((timestamp - systemRestartTimestamp) > 1000))
+  {
 
     systemRestartCounter--;
 
-    if ( systemRestartCounter > 0 )
+    if (systemRestartCounter > 0)
     {
-      LOG1( "*** system restart in %us ***\n", systemRestartCounter );
+      LOG1("*** system restart in %us ***\n", systemRestartCounter);
     }
     else
     {
@@ -488,92 +520,92 @@ void App::handle( unsigned long timestamp ) {
 
     systemRestartTimestamp = millis();
   }
- 
-  updateLedStates( timestamp );
+
+  updateLedStates(timestamp);
 }
 
-bool App::loadJsonConfig( const char *filename )
+bool App::loadJsonConfig(const char *filename)
 {
   bool readError = false;
   char attributeName[128];
 
-  File tmpConfig = SPIFFS.open( filename, "r" );
+  File tmpConfig = SPIFFS.open(filename, "r");
 
-    uJson j = uJson(tmpConfig);
+  uJson j = uJson(tmpConfig);
 
-    if ( j.readHeader() )
+  if (j.readHeader())
+  {
+    memcpy(&appcfgRD, &appcfg, sizeof(appcfg));
+
+    while (readError == false && j.readAttributeName(attributeName) == true)
     {
-      memcpy(&appcfgRD, &appcfg, sizeof(appcfg));
+      readError |= j.readEntryChars(attributeName, A_wifi_ssid, appcfgRD.wifi_ssid);
+      readError |= j.readEntryChars(attributeName, A_wifi_password, appcfgRD.wifi_password);
+      readError |= j.readEntryInteger(attributeName, A_wifi_mode, &appcfgRD.wifi_mode);
 
-      while( readError == false && j.readAttributeName( attributeName ) == true )
-      {        
-        readError |= j.readEntryChars( attributeName, A_wifi_ssid, appcfgRD.wifi_ssid );
-        readError |= j.readEntryChars( attributeName, A_wifi_password, appcfgRD.wifi_password );
-        readError |= j.readEntryInteger( attributeName, A_wifi_mode, &appcfgRD.wifi_mode );
-        
-        readError |= j.readEntryInteger( attributeName, A_net_mode, &appcfgRD.net_mode );
-        readError |= j.readEntryChars( attributeName, A_net_host, appcfgRD.net_host );
-        readError |= j.readEntryChars( attributeName, A_net_mask, appcfgRD.net_mask );
-        readError |= j.readEntryChars( attributeName, A_net_gateway, appcfgRD.net_gateway );
-        readError |= j.readEntryChars( attributeName, A_net_dns, appcfgRD.net_dns );
+      readError |= j.readEntryInteger(attributeName, A_net_mode, &appcfgRD.net_mode);
+      readError |= j.readEntryChars(attributeName, A_net_host, appcfgRD.net_host);
+      readError |= j.readEntryChars(attributeName, A_net_mask, appcfgRD.net_mask);
+      readError |= j.readEntryChars(attributeName, A_net_gateway, appcfgRD.net_gateway);
+      readError |= j.readEntryChars(attributeName, A_net_dns, appcfgRD.net_dns);
 
-        readError |= j.readEntryChars( attributeName, A_ota_hostname, appcfgRD.ota_hostname );
-        readError |= j.readEntryChars( attributeName, A_ota_password, appcfgRD.ota_password );
+      readError |= j.readEntryChars(attributeName, A_ota_hostname, appcfgRD.ota_hostname);
+      readError |= j.readEntryChars(attributeName, A_ota_password, appcfgRD.ota_password);
 
-        readError |= j.readEntryChars( attributeName, A_admin_password, appcfgRD.admin_password );
+      readError |= j.readEntryChars(attributeName, A_admin_password, appcfgRD.admin_password);
 
-        readError |= j.readEntryBoolean( attributeName, A_ohab_enabled, &appcfgRD.ohab_enabled );
-        readError |= j.readEntryInteger( attributeName, A_ohab_version, &appcfgRD.ohab_version );
-        readError |= j.readEntryChars( attributeName, A_ohab_host, appcfgRD.ohab_host );
-        readError |= j.readEntryInteger( attributeName, A_ohab_port, &appcfgRD.ohab_port );
-        readError |= j.readEntryBoolean( attributeName, A_ohab_useauth, &appcfgRD.ohab_useauth );
-        readError |= j.readEntryChars( attributeName, A_ohab_user, appcfgRD.ohab_user );
-        readError |= j.readEntryChars( attributeName, A_ohab_password, appcfgRD.ohab_password );
-        readError |= j.readEntryChars( attributeName, A_ohab_itemname, appcfgRD.ohab_itemname );
+      readError |= j.readEntryBoolean(attributeName, A_ohab_enabled, &appcfgRD.ohab_enabled);
+      readError |= j.readEntryInteger(attributeName, A_ohab_version, &appcfgRD.ohab_version);
+      readError |= j.readEntryChars(attributeName, A_ohab_host, appcfgRD.ohab_host);
+      readError |= j.readEntryInteger(attributeName, A_ohab_port, &appcfgRD.ohab_port);
+      readError |= j.readEntryBoolean(attributeName, A_ohab_useauth, &appcfgRD.ohab_useauth);
+      readError |= j.readEntryChars(attributeName, A_ohab_user, appcfgRD.ohab_user);
+      readError |= j.readEntryChars(attributeName, A_ohab_password, appcfgRD.ohab_password);
+      readError |= j.readEntryChars(attributeName, A_ohab_itemname, appcfgRD.ohab_itemname);
 #ifdef HAVE_ENERGY_SENSOR
-        readError |= j.readEntryChars( attributeName, A_ohab_item_voltage, appcfgRD.ohab_item_voltage );
-        readError |= j.readEntryChars( attributeName, A_ohab_item_current, appcfgRD.ohab_item_current );
-        readError |= j.readEntryChars( attributeName, A_ohab_item_power, appcfgRD.ohab_item_power );
-        readError |= j.readEntryULong( attributeName, A_ohab_sending_interval, &appcfgRD.ohab_sending_interval );
+      readError |= j.readEntryChars(attributeName, A_ohab_item_voltage, appcfgRD.ohab_item_voltage);
+      readError |= j.readEntryChars(attributeName, A_ohab_item_current, appcfgRD.ohab_item_current);
+      readError |= j.readEntryChars(attributeName, A_ohab_item_power, appcfgRD.ohab_item_power);
+      readError |= j.readEntryULong(attributeName, A_ohab_sending_interval, &appcfgRD.ohab_sending_interval);
 #endif
 
-        readError |= j.readEntryBoolean( attributeName, A_alexa_enabled, &appcfgRD.alexa_enabled );
-        readError |= j.readEntryChars( attributeName, A_alexa_devicename, appcfgRD.alexa_devicename );
+      readError |= j.readEntryBoolean(attributeName, A_alexa_enabled, &appcfgRD.alexa_enabled);
+      readError |= j.readEntryChars(attributeName, A_alexa_devicename, appcfgRD.alexa_devicename);
 
-        readError |= j.readEntryBoolean( attributeName, A_mqtt_enabled, &appcfgRD.mqtt_enabled );
-        readError |= j.readEntryChars( attributeName, A_mqtt_clientid, appcfgRD.mqtt_clientid );
-        readError |= j.readEntryChars( attributeName, A_mqtt_host, appcfgRD.mqtt_host );
-        readError |= j.readEntryInteger( attributeName, A_mqtt_port, &appcfgRD.mqtt_port );
-        readError |= j.readEntryChars( attributeName, A_mqtt_intopic, appcfgRD.mqtt_intopic );
-        readError |= j.readEntryChars( attributeName, A_mqtt_outtopic, appcfgRD.mqtt_outtopic );
-        readError |= j.readEntryBoolean( attributeName, A_mqtt_useauth, &appcfgRD.mqtt_useauth );
-        readError |= j.readEntryChars( attributeName, A_mqtt_user, appcfgRD.mqtt_user );
-        readError |= j.readEntryChars( attributeName, A_mqtt_password, appcfgRD.mqtt_password );
+      readError |= j.readEntryBoolean(attributeName, A_mqtt_enabled, &appcfgRD.mqtt_enabled);
+      readError |= j.readEntryChars(attributeName, A_mqtt_clientid, appcfgRD.mqtt_clientid);
+      readError |= j.readEntryChars(attributeName, A_mqtt_host, appcfgRD.mqtt_host);
+      readError |= j.readEntryInteger(attributeName, A_mqtt_port, &appcfgRD.mqtt_port);
+      readError |= j.readEntryChars(attributeName, A_mqtt_intopic, appcfgRD.mqtt_intopic);
+      readError |= j.readEntryChars(attributeName, A_mqtt_outtopic, appcfgRD.mqtt_outtopic);
+      readError |= j.readEntryBoolean(attributeName, A_mqtt_useauth, &appcfgRD.mqtt_useauth);
+      readError |= j.readEntryChars(attributeName, A_mqtt_user, appcfgRD.mqtt_user);
+      readError |= j.readEntryChars(attributeName, A_mqtt_password, appcfgRD.mqtt_password);
 #ifdef HAVE_ENERGY_SENSOR
-        readError |= j.readEntryChars( attributeName, A_mqtt_topic_voltage, appcfgRD.mqtt_topic_voltage );
-        readError |= j.readEntryChars( attributeName, A_mqtt_topic_current, appcfgRD.mqtt_topic_current );
-        readError |= j.readEntryChars( attributeName, A_mqtt_topic_power, appcfgRD.mqtt_topic_power );
-        readError |= j.readEntryChars( attributeName, A_mqtt_topic_json, appcfgRD.mqtt_topic_json );
-        readError |= j.readEntryULong( attributeName, A_mqtt_sending_interval, &appcfgRD.mqtt_sending_interval );
+      readError |= j.readEntryChars(attributeName, A_mqtt_topic_voltage, appcfgRD.mqtt_topic_voltage);
+      readError |= j.readEntryChars(attributeName, A_mqtt_topic_current, appcfgRD.mqtt_topic_current);
+      readError |= j.readEntryChars(attributeName, A_mqtt_topic_power, appcfgRD.mqtt_topic_power);
+      readError |= j.readEntryChars(attributeName, A_mqtt_topic_json, appcfgRD.mqtt_topic_json);
+      readError |= j.readEntryULong(attributeName, A_mqtt_sending_interval, &appcfgRD.mqtt_sending_interval);
 #endif
 
-        readError |= j.readEntryBoolean( attributeName, A_syslog_enabled, &appcfgRD.syslog_enabled );
-        readError |= j.readEntryChars( attributeName, A_syslog_host, appcfgRD.syslog_host );
-        readError |= j.readEntryInteger( attributeName, A_syslog_port, &appcfgRD.syslog_port );
-        readError |= j.readEntryChars( attributeName, A_syslog_app_name, appcfgRD.syslog_app_name );
+      readError |= j.readEntryBoolean(attributeName, A_syslog_enabled, &appcfgRD.syslog_enabled);
+      readError |= j.readEntryChars(attributeName, A_syslog_host, appcfgRD.syslog_host);
+      readError |= j.readEntryInteger(attributeName, A_syslog_port, &appcfgRD.syslog_port);
+      readError |= j.readEntryChars(attributeName, A_syslog_app_name, appcfgRD.syslog_app_name);
 
 #ifdef POWER_BUTTON_IS_MULTIMODE
-        readError |= j.readEntryInteger( attributeName, A_power_button_mode, &appcfgRD.power_button_mode );
+      readError |= j.readEntryInteger(attributeName, A_power_button_mode, &appcfgRD.power_button_mode);
 #endif
 
 #ifdef WIFI_LED
-        readError |= j.readEntryBoolean( attributeName, A_led_night_mode_enabled, &appcfgRD.led_night_mode_enabled );
-        readError |= j.readEntryInteger( attributeName, A_led_night_mode_timeout, &appcfgRD.led_night_mode_timeout );
+      readError |= j.readEntryBoolean(attributeName, A_led_night_mode_enabled, &appcfgRD.led_night_mode_enabled);
+      readError |= j.readEntryInteger(attributeName, A_led_night_mode_timeout, &appcfgRD.led_night_mode_timeout);
 #endif
-      }
     }
-    
-    tmpConfig.close();
+  }
+
+  tmpConfig.close();
 
   return readError;
 }
@@ -582,7 +614,7 @@ void App::wifiLedOn()
 {
 #ifdef WIFI_LED
   wifiLedState = 1;
-  digitalWrite( WIFI_LED, WIFI_LED_ON );
+  digitalWrite(WIFI_LED, WIFI_LED_ON);
   ledStateTimestamp = millis();
 #endif
 }
@@ -591,7 +623,7 @@ void App::wifiLedOff()
 {
 #ifdef WIFI_LED
   wifiLedState = 0;
-  digitalWrite( WIFI_LED, WIFI_LED_OFF );
+  digitalWrite(WIFI_LED, WIFI_LED_OFF);
   ledStateTimestamp = millis();
 #endif
 }
@@ -599,7 +631,7 @@ void App::wifiLedOff()
 void App::wifiLedToggle()
 {
 #ifdef WIFI_LED
-  if ( wifiLedState == 1 )
+  if (wifiLedState == 1)
   {
     wifiLedOff();
   }
@@ -614,7 +646,7 @@ void App::powerLedOn()
 {
 #ifdef POWER_LED
   powerLedState = 1;
-  digitalWrite( POWER_LED, POWER_LED_ON );
+  digitalWrite(POWER_LED, POWER_LED_ON);
   ledStateTimestamp = millis();
 #endif
 }
@@ -623,7 +655,7 @@ void App::powerLedOff()
 {
 #ifdef POWER_LED
   powerLedState = 0;
-  digitalWrite( POWER_LED, POWER_LED_OFF );
+  digitalWrite(POWER_LED, POWER_LED_OFF);
   ledStateTimestamp = millis();
 #endif
 }
@@ -631,7 +663,7 @@ void App::powerLedOff()
 void App::powerLedToggle()
 {
 #ifdef POWER_LED
-  if ( powerLedState == 1 )
+  if (powerLedState == 1)
   {
     powerLedOff();
   }
@@ -642,43 +674,43 @@ void App::powerLedToggle()
 #endif
 }
 
-void App::updateLedStates( unsigned long timestamp )
+void App::updateLedStates(unsigned long timestamp)
 {
 #ifdef WIFI_LED
-  if ( appcfg.led_night_mode_enabled == true )
+  if (appcfg.led_night_mode_enabled == true)
   {
-    if ( timestamp < (ledStateTimestamp + (appcfg.led_night_mode_timeout * 1000)))
+    if (timestamp < (ledStateTimestamp + (appcfg.led_night_mode_timeout * 1000)))
     {
-      if ( ledActiveMode == false )
+      if (ledActiveMode == false)
       {
         ledNightMode = false;
         ledActiveMode = true;
-        if ( wifiLedState == 1 )
+        if (wifiLedState == 1)
         {
-          digitalWrite( WIFI_LED, WIFI_LED_ON );
+          digitalWrite(WIFI_LED, WIFI_LED_ON);
         }
 #ifdef POWER_LED
-        if ( powerLedState == 1 )
+        if (powerLedState == 1)
         {
-          digitalWrite( POWER_LED, POWER_LED_ON );
+          digitalWrite(POWER_LED, POWER_LED_ON);
         }
 #endif
       }
     }
     else
     {
-      if ( ledNightMode == false )
+      if (ledNightMode == false)
       {
         ledActiveMode = false;
         ledNightMode = true;
-        digitalWrite( WIFI_LED, WIFI_LED_OFF );
-#ifdef POWER_LED   
-        digitalWrite( POWER_LED, POWER_LED_OFF ); 
+        digitalWrite(WIFI_LED, WIFI_LED_OFF);
+#ifdef POWER_LED
+        digitalWrite(POWER_LED, POWER_LED_OFF);
 #endif
-      }    
+      }
     }
   }
-#endif  
+#endif
 }
 
 void App::showLeds()
