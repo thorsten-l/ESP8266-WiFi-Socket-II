@@ -157,6 +157,18 @@ String setupProcessor(const String &var)
     return String(appcfg.led_night_mode_timeout);
 #endif
 
+  if (var == A_inet_check_enabled && appcfg.inet_check_enabled == true)
+    return checked;
+  if (var == A_inet_check_period)
+    return String(appcfg.inet_check_period);
+
+  String ica = String( A_inet_check_action );
+  ica += "_";
+  ica += appcfg.inet_check_action;
+  
+  if ( var == ica )
+    return selected;
+
   return String();
 }
 

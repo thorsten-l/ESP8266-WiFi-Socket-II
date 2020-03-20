@@ -58,4 +58,8 @@
 #define A_led_night_mode_enabled "led_night_mode_enabled"
 #define A_led_night_mode_timeout "led_night_mode_timeout"
 
+#define A_inet_check_enabled "inet_check_enabled"
+#define A_inet_check_period "inet_check_period"
+#define A_inet_check_action "inet_check_action"
+
 #endif

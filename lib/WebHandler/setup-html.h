@@ -41,6 +41,21 @@ const char SETUP_HTML[] PROGMEM =
   "</div>\n"
 #endif
 
+  "<div class='accordion'>Internet Check Mode</div>\n"
+  "<div class='panel sub-panel'>\n"
+    "<div class=\"pure-control-group\"><label for=\"inetc1\">Enabled</label><input id=\"inetc1\" type=\"checkbox\" name=\"inet_check_enabled\" value=\"true\" %inet_check_enabled%></div>\n"
+    "<div class=\"pure-control-group\"><label for=\"inetc4\">Destination</label><input id=\"inetc4\" type=\"text\" readonly value=\"captive.apple.com\"></div>\n"
+    "<div class=\"pure-control-group\"><label for=\"inetc2\">Period</label><input id=\"inetc2\" type=\"text\" name=\"inet_check_period\" maxlength=\"64\" value=\"%inet_check_period%\"></div>\n"
+    "<div class=\"pure-control-group\"><label for=\"inetc3\">Mode</label><select id=\"inetc3\" name=\"inet_check_action\">"
+    "<option %inet_check_action_1% value=\"1\">On disconnect switch off</option>\n"
+    "<option %inet_check_action_2% value=\"2\">On disconnect switch on</option>\n"
+    "<option %inet_check_action_3% value=\"3\">On connect switch off</option>\n"
+    "<option %inet_check_action_4% value=\"4\">On connect switch on</option>\n"
+    "<option %inet_check_action_5% value=\"5\">Mirror connection state</option>\n"
+    "<option %inet_check_action_6% value=\"6\">Mirror inverse connection state</option>\n"
+    "</select></div>\n"
+  "</div>\n"
+
 #if defined(POWER_BUTTON_IS_MULTIMODE)
   "<div class='accordion'>Power Button</div>\n"
   "<div class='panel sub-panel'>\n"

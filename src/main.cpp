@@ -9,6 +9,7 @@
 #include <WebHandler.hpp>
 #include <WifiHandler.hpp>
 #include <Hlw8012Handler.hpp>
+#include <InternetConnectionCheckHandler.hpp>
 
 unsigned long lifeTicker;
 unsigned long maxLoopTime;
@@ -134,6 +135,8 @@ void loop()
     openHabHandler.handle(thisLoopTimestamp);
     mqttHandler.handle(thisLoopTimestamp);
   }
+
+  internetConnectionCheckHandler.handle(thisLoopTimestamp);
 
 #ifdef HAVE_HLW8012
   hlw8012Handler.handle(thisLoopTimestamp);

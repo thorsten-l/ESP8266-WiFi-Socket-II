@@ -125,6 +125,10 @@ void App::defaultConfig()
   appcfg.led_night_mode_timeout = DEFAULT_LED_NIGHT_MODE_TIMEOUT;
 #endif
 
+  appcfg.inet_check_enabled = DEFAULT_INET_CHECK_ENABLED;
+  appcfg.inet_check_period = DEFAULT_INET_CHECK_PERIOD;
+  appcfg.inet_check_action = DEFAULT_INET_CHECK_ACTION;
+
   memcpy(&appcfgWR, &appcfg, sizeof(appcfg));
   memcpy(&appcfgRD, &appcfg, sizeof(appcfg));
 }
@@ -392,6 +396,10 @@ void App::writeConfig()
     j.writeEntry(A_led_night_mode_timeout, appcfgWR.led_night_mode_timeout);
 #endif
 
+    j.writeEntry(A_inet_check_enabled, appcfgWR.inet_check_enabled);
+    j.writeEntry(A_inet_check_period, appcfgWR.inet_check_period);
+    j.writeEntry(A_inet_check_action, appcfgWR.inet_check_action);
+
     j.writeFooter();
     configJson.close();
 
@@ -486,6 +494,12 @@ void App::printConfig(AppConfig ac)
                 (ac.led_night_mode_enabled ? "true" : "false"));
   Serial.printf("    led_night_mode_timeout: %ds\n", ac.led_night_mode_timeout);
 #endif
+
+  Serial.println("\n  Internet check mode:");
+  Serial.printf("    Enabled: %s\n",
+                (ac.inet_check_enabled ? "true" : "false"));
+  Serial.printf("    inet_check_period: %ds\n", ac.inet_check_period);
+  Serial.printf("    inet_check_action: %d\n", ac.inet_check_action);
 
   Serial.println("---------------------------------------------------------");
   Serial.println();
@@ -602,6 +616,9 @@ bool App::loadJsonConfig(const char *filename)
       readError |= j.readEntryBoolean(attributeName, A_led_night_mode_enabled, &appcfgRD.led_night_mode_enabled);
       readError |= j.readEntryInteger(attributeName, A_led_night_mode_timeout, &appcfgRD.led_night_mode_timeout);
 #endif
+      readError |= j.readEntryBoolean(attributeName, A_inet_check_enabled, &appcfgRD.inet_check_enabled);
+      readError |= j.readEntryInteger(attributeName, A_inet_check_period, &appcfgRD.inet_check_period);
+      readError |= j.readEntryInteger(attributeName, A_inet_check_action, &appcfgRD.inet_check_action);
     }
   }
 

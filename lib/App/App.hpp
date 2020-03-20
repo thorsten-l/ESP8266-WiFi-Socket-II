@@ -22,6 +22,14 @@
 #define POWER_BUTTON_MODE_TOGGLE          2
 #define POWER_BUTTON_MODE_TOGGLE_SWITCH   3
 
+// Internet Check Actions
+#define INET_CHECK_ACTION_ON_DISCONNECT_SWITCH_OFF 1
+#define INET_CHECK_ACTION_ON_DISCONNECT_SWITCH_ON 2
+#define INET_CHECK_ACTION_ON_CONNECT_SWITCH_OFF 3
+#define INET_CHECK_ACTION_ON_CONNECT_SWITCH_ON 4
+#define INET_CHECK_ACTION_SHOW_CONNECTION_STATE 5
+#define INET_CHECK_ACTION_SHOW_CONNECTION_STATE_INV 6
+
 typedef struct appconfig
 {
   char wifi_ssid[64];
@@ -87,6 +95,10 @@ typedef struct appconfig
   int led_night_mode_timeout;  
 #endif
 
+  bool inet_check_enabled; // check captive.apple.de
+  int  inet_check_period;  // in seconds
+  int  inet_check_action;
+
 } AppConfig;
 
 class App
@@ -103,6 +115,7 @@ private:
   int powerLedState;
   bool ledNightMode;
   bool ledActiveMode;
+  bool internetIsConnected;
 
   void formatSPIFFS();
   void loadConfig();

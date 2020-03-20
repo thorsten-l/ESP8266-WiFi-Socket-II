@@ -132,6 +132,10 @@ void handleSavePage(AsyncWebServerRequest *request)
   appcfgWR.led_night_mode_timeout = paramInt(request, A_led_night_mode_timeout, DEFAULT_LED_NIGHT_MODE_TIMEOUT);
 #endif
 
+  appcfgWR.inet_check_enabled = paramBool(request, A_inet_check_enabled);
+  appcfgWR.inet_check_period = paramInt(request, A_inet_check_period, DEFAULT_INET_CHECK_PERIOD);
+  appcfgWR.inet_check_action = paramInt(request, A_inet_check_action, DEFAULT_INET_CHECK_ACTION);
+
   AsyncResponseStream *response = request->beginResponseStream("text/html");
   response->print(TEMPLATE_HEADER);
   response->print(META_REFRESH);
